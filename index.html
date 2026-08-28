@@ -3,32 +3,680 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Spy | Coming Soon</title>
+    <title>بازی جاسوس | Spy Game</title>
     <style>
+        :root {
+            --bg: #0f172a;
+            --card-bg: #1e293b;
+            --card-border: #334155;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --accent-green: #10b981;
+            --accent-blue: #3b82f6;
+            --accent-red: #ef4444;
+            --accent-amber: #f59e0b;
+            --accent-purple: #8b5cf6;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: system-ui, -apple-system, 'Vazirmatn', Tahoma, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
         body {
-            font-family: system-ui, -apple-system, sans-serif;
+            background-color: var(--bg);
+            color: var(--text-main);
+            min-height: 100vh;
             display: flex;
-            flex-direction: column;
             justify-content: center;
             align-items: center;
-            min-height: 100vh;
-            margin: 0;
-            background-color: #0f172a;
-            color: #f8fafc;
+            padding: 16px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 480px;
+            background-color: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 20px;
+            padding: 24px;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
+        }
+
+        h1, h2, h3 {
+            text-align: center;
+            margin-bottom: 16px;
+        }
+
+        p {
+            color: var(--text-muted);
+            text-align: center;
+            font-size: 0.95rem;
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        /* Buttons */
+        .btn {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: bold;
+            color: white;
+            cursor: pointer;
+            transition: transform 0.1s, filter 0.2s;
+            margin-top: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn:active {
+            transform: scale(0.98);
+        }
+
+        .btn-green { background-color: var(--accent-green); }
+        .btn-blue { background-color: var(--accent-blue); }
+        .btn-red { background-color: var(--accent-red); }
+        .btn-amber { background-color: var(--accent-amber); }
+        .btn-purple { background-color: var(--accent-purple); }
+        .btn-outline { background: transparent; border: 1px solid var(--card-border); color: var(--text-muted); }
+
+        /* Form Inputs */
+        .input-group {
+            margin-bottom: 14px;
+        }
+
+        .input-group label {
+            display: block;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-bottom: 6px;
+        }
+
+        .input-control {
+            width: 100%;
+            padding: 12px;
+            background: #0b1120;
+            border: 1px solid var(--card-border);
+            border-radius: 10px;
+            color: white;
+            font-size: 1rem;
+            outline: none;
+        }
+
+        .input-control:focus {
+            border-color: var(--accent-blue);
+        }
+
+        /* Toggle switch */
+        .toggle-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #0b1120;
+            padding: 12px;
+            border-radius: 10px;
+            margin-bottom: 16px;
+            border: 1px solid var(--card-border);
+        }
+
+        /* Player Grid */
+        .player-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 16px;
+        }
+
+        .player-card {
+            background: #0b1120;
+            border: 1px solid var(--card-border);
+            padding: 14px;
+            border-radius: 12px;
+            text-align: center;
+            cursor: pointer;
+            font-weight: 500;
+        }
+
+        .player-card.disabled {
+            opacity: 0.35;
+            cursor: not-allowed;
+            pointer-events: none;
+            border-color: transparent;
+        }
+
+        /* Timer */
+        .timer-display {
+            font-size: 3.8rem;
+            font-weight: 900;
+            text-align: center;
+            margin: 20px 0;
+            font-variant-numeric: tabular-nums;
+            color: var(--accent-blue);
+            transition: color 0.3s;
+        }
+
+        .timer-warning {
+            color: var(--accent-amber);
+            animation: pulse 1s infinite;
+        }
+
+        .timer-danger {
+            color: var(--accent-red);
+            animation: pulse 0.5s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.04); }
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.85);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            z-index: 100;
+        }
+
+        .modal-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            padding: 24px;
+            width: 100%;
+            max-width: 380px;
             text-align: center;
         }
-        h1 {
-            font-size: 2rem;
-            margin-bottom: 0.5rem;
+
+        .role-badge {
+            display: inline-block;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            margin-bottom: 12px;
+            font-weight: bold;
         }
-        p {
-            color: #94a3b8;
-            font-size: 1.1rem;
+
+        .role-citizen { background: rgba(16, 185, 129, 0.2); color: var(--accent-green); }
+        .role-spy { background: rgba(239, 68, 68, 0.2); color: var(--accent-red); }
+
+        .secret-box {
+            background: #0b1120;
+            padding: 16px;
+            border-radius: 12px;
+            margin: 16px 0;
+            border: 1px dashed var(--card-border);
+        }
+
+        .secret-word {
+            font-size: 1.4rem;
+            font-weight: bold;
+            color: var(--accent-amber);
+        }
+
+        /* Leaderboard */
+        .leaderboard-list {
+            list-style: none;
+            margin-bottom: 20px;
+        }
+
+        .leaderboard-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px;
+            background: #0b1120;
+            border-radius: 10px;
+            margin-bottom: 8px;
+            border: 1px solid var(--card-border);
+        }
+
+        .rank-medal {
+            font-size: 1.3rem;
+            margin-left: 8px;
         }
     </style>
 </head>
 <body>
-    <h1>سایت در حال راه‌اندازی است</h1>
-    <p>پروژه Spy به زودی در دسترس خواهد بود.</p>
+
+<div class="container">
+    <!-- 1. Welcome Screen -->
+    <div id="screen-welcome">
+        <h1>🕵️ بازی جاسوس</h1>
+        <p>یک بازی معمایی، بلوف‌زنی و هیجان‌انگیز دورهمی. جاسوس‌ها را شناسایی کنید قبل از اینکه زمان تمام شود!</p>
+        <button class="btn btn-green" onclick="showScreen('screen-setup')">شروع بازی جدید</button>
+    </div>
+
+    <!-- 2. Setup Screen -->
+    <div id="screen-setup" class="hidden">
+        <h2>تنظیمات بازی</h2>
+        <div class="input-group">
+            <label>تعداد کل بازیکنان:</label>
+            <input type="number" id="setup-players-count" class="input-control" value="4" min="3" max="20" onchange="renderNameInputs()">
+        </div>
+        <div class="input-group">
+            <label>تعداد جاسوس‌ها:</label>
+            <input type="number" id="setup-spies-count" class="input-control" value="1" min="1" max="5">
+        </div>
+        <div class="input-group">
+            <label>زمان گفتگو (دقیقه):</label>
+            <input type="number" id="setup-timer" class="input-control" value="4" min="1" max="15">
+        </div>
+        
+        <div class="toggle-container">
+            <div>
+                <div style="font-weight: bold; font-size: 0.9rem;">حذف آنی بازی</div>
+                <div style="font-size: 0.75rem; color: var(--text-muted);">در صورت حذف اشتباه شهروند، بازی خاتمه یابد؟</div>
+            </div>
+            <input type="checkbox" id="setup-sudden-death" style="transform: scale(1.3); cursor: pointer;">
+        </div>
+
+        <div class="input-group">
+            <label>نام بازیکنان:</label>
+            <div id="name-inputs-container"></div>
+        </div>
+
+        <button class="btn btn-blue" onclick="startRoleAssignment()">تایید و تقسیم نقش‌ها</button>
+        <button class="btn btn-outline" onclick="showScreen('screen-welcome')">بازگشت</button>
+    </div>
+
+    <!-- 3. Reveal Screen -->
+    <div id="screen-reveal" class="hidden">
+        <h2>مشاهده کارت‌ها</h2>
+        <p>گوشی را دست‌به‌دست بچرخانید. هر شخص فقط باید روی اسم خودش بزند و نقشش را مخفیانه ببیند.</p>
+        <div id="reveal-grid" class="player-grid"></div>
+        <button id="btn-start-discussion" class="btn btn-green hidden" onclick="startTimerScreen()">همه دیدند؛ شروع زمان گفتگو</button>
+    </div>
+
+    <!-- 4. Timer / Game Screen -->
+    <div id="screen-timer" class="hidden">
+        <h3>زمان گفت‌وگو و مذاکره</h3>
+        <p>سوالات زیرکانه بپرسید و رفتار بقیه را زیر نظر بگیرید.</p>
+        <div id="timer-text" class="timer-display">00:00</div>
+        
+        <button class="btn btn-red" onclick="openVotingScreen()">🛑 اعلام رای‌گیری و حدس جاسوس</button>
+        <button class="btn btn-outline" onclick="confirmEndGame()">پایان کل دست‌ها و مشاهده جدول</button>
+    </div>
+
+    <!-- 5. Voting Screen -->
+    <div id="screen-vote" class="hidden">
+        <h2>رای‌گیری اخراج</h2>
+        <p>با مشورت هم به توافق برسید و بازیکنی که بیشترین رای را آورده انتخاب کنید:</p>
+        <div id="vote-grid" class="player-grid"></div>
+        <button class="btn btn-outline" onclick="resumeTimer()">انصراف و ادامه گفتگو</button>
+    </div>
+
+    <!-- 6. Round Result Screen -->
+    <div id="screen-round-result" class="hidden">
+        <h2 id="result-title">نتیجه دور</h2>
+        <div class="secret-box">
+            <div id="result-desc" style="font-size: 1.1rem; line-height: 1.6;"></div>
+        </div>
+        <button id="btn-next-round" class="btn btn-green" onclick="prepareNextRound()">دور بعدی با همین بازیکنان</button>
+        <button class="btn btn-purple" onclick="showLeaderboard()">مشاهده جدول امتیازات نهایی</button>
+    </div>
+
+    <!-- 7. Leaderboard Screen -->
+    <div id="screen-leaderboard" class="hidden">
+        <h2>🏆 جدول رده‌بندی مدال‌ها</h2>
+        <p>رده‌بندی بر اساس بیشترین امتیاز کسب‌شده در طول مسابقه</p>
+        <ul id="leaderboard-list" class="leaderboard-list"></ul>
+        <button class="btn btn-green" onclick="showScreen('screen-setup')">شروع مسابقه جدید</button>
+    </div>
+</div>
+
+<!-- Popups / Modals -->
+<div id="role-modal" class="modal-overlay hidden">
+    <div class="modal-card">
+        <h3 id="modal-player-name">نام بازیکن</h3>
+        <div id="modal-role-badge" class="role-badge">نقش</div>
+        <div class="secret-box">
+            <span style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 6px;">اطلاعات شما:</span>
+            <div id="modal-secret-content" class="secret-word">کلمه</div>
+        </div>
+        <p style="font-size: 0.8rem;">پس از به‌خاطر سپردن، دکمه زیر را بزنید و گوشی را به نفر بعد بدهید.</p>
+        <button class="btn btn-blue" onclick="closeRoleModal()">متوجه شدم (مخفی کردن)</button>
+    </div>
+</div>
+
+<div id="confirm-modal" class="modal-overlay hidden">
+    <div class="modal-card">
+        <h3>آیا مطمئن هستید؟</h3>
+        <p>با تایید این گزینه، این دست تمام شده و جدول رده‌بندی نهایی نمایش داده می‌شود.</p>
+        <button class="btn btn-red" onclick="executeEndGame()">بله، اتمام مسابقه</button>
+        <button class="btn btn-outline" onclick="closeConfirmModal()">ادامه بازی</button>
+    </div>
+</div>
+
+<script>
+    // Audio synthesizer for sound cues without external files
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    function playBeep(freq = 600, duration = 0.15) {
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.frequency.value = freq;
+        osc.type = 'sine';
+        gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + duration);
+        osc.start();
+        osc.stop(audioCtx.currentTime + duration);
+    }
+
+    // Mock Dataset (Placeholders)
+    const mockWords = [
+        { word: "تست کلمه اصلی ۱", hint: "تست راهنمای جاسوس ۱" },
+        { word: "تست کلمه اصلی ۲", hint: "تست راهنمای جاسوس ۲" },
+        { word: "تست کلمه اصلی ۳", hint: "تست راهنمای جاسوس ۳" },
+        { word: "تست کلمه اصلی ۴", hint: "تست راهنمای جاسوس ۴" }
+    ];
+
+    // Game State
+    let players = [];
+    let currentWordObj = null;
+    let timerInterval = null;
+    let remainingSeconds = 0;
+    let isSuddenDeath = false;
+    let viewedCount = 0;
+
+    function showScreen(id) {
+        document.querySelectorAll('.container > div').forEach(el => el.classList.add('hidden'));
+        document.getElementById(id).classList.remove('hidden');
+    }
+
+    function renderNameInputs() {
+        const count = parseInt(document.getElementById('setup-players-count').value) || 4;
+        const container = document.getElementById('name-inputs-container');
+        container.innerHTML = '';
+        for (let i = 1; i <= count; i++) {
+            const input = document.createElement('input');
+            input.type = 'text';
+            input.className = 'input-control';
+            input.style.marginBottom = '6px';
+            input.placeholder = `نام بازیکن ${i}`;
+            input.value = players[i - 1]?.name || `بازیکن ${i}`;
+            container.appendChild(input);
+        }
+    }
+    renderNameInputs();
+
+    function startRoleAssignment() {
+        const count = parseInt(document.getElementById('setup-players-count').value);
+        const spyCount = parseInt(document.getElementById('setup-spies-count').value);
+        isSuddenDeath = document.getElementById('setup-sudden-death').checked;
+
+        if (spyCount >= count) {
+            alert("تعداد جاسوس‌ها باید کمتر از کل بازیکنان باشد!");
+            return;
+        }
+
+        const inputs = document.querySelectorAll('#name-inputs-container input');
+        const names = Array.from(inputs).map((inp, idx) => inp.value.trim() || `بازیکن ${idx + 1}`);
+
+        // Sync or preserve existing tournament scores
+        players = names.map(name => {
+            const existing = players.find(p => p.name === name);
+            return {
+                name: name,
+                score: existing ? existing.score : 0,
+                isSpy: false,
+                isAlive: true,
+                hasSeen: false
+            };
+        });
+
+        setupRoles(spyCount);
+    }
+
+    function setupRoles(spyCount) {
+        // Pick a random word
+        currentWordObj = mockWords[Math.floor(Math.random() * mockWords.length)];
+
+        // Assign Spies
+        players.forEach(p => { p.isSpy = false; p.isAlive = true; p.hasSeen = false; });
+        let assignedSpies = 0;
+        while (assignedSpies < spyCount) {
+            let randIndex = Math.floor(Math.random() * players.length);
+            if (!players[randIndex].isSpy) {
+                players[randIndex].isSpy = true;
+                assignedSpies++;
+            }
+        }
+
+        viewedCount = 0;
+        renderRevealScreen();
+        showScreen('screen-reveal');
+    }
+
+    function renderRevealScreen() {
+        const grid = document.getElementById('reveal-grid');
+        grid.innerHTML = '';
+        players.forEach((p, idx) => {
+            const card = document.createElement('div');
+            card.className = `player-card ${p.hasSeen ? 'disabled' : ''}`;
+            card.textContent = p.name;
+            card.onclick = () => openRoleModal(idx);
+            grid.appendChild(card);
+        });
+
+        const startBtn = document.getElementById('btn-start-discussion');
+        if (viewedCount === players.length) {
+            startBtn.classList.remove('hidden');
+        } else {
+            startBtn.classList.add('hidden');
+        }
+    }
+
+    let activeModalIndex = null;
+    function openRoleModal(idx) {
+        activeModalIndex = idx;
+        const player = players[idx];
+        document.getElementById('modal-player-name').textContent = player.name;
+        
+        const badge = document.getElementById('modal-role-badge');
+        const content = document.getElementById('modal-secret-content');
+
+        if (player.isSpy) {
+            badge.className = 'role-badge role-spy';
+            badge.textContent = 'شما جاسوس هستید!';
+            content.textContent = currentWordObj.hint;
+        } else {
+            badge.className = 'role-badge role-citizen';
+            badge.textContent = 'شما شهروند هستید';
+            content.textContent = currentWordObj.word;
+        }
+
+        document.getElementById('role-modal').classList.remove('hidden');
+    }
+
+    function closeRoleModal() {
+        if (activeModalIndex !== null) {
+            if (!players[activeModalIndex].hasSeen) {
+                players[activeModalIndex].hasSeen = true;
+                viewedCount++;
+            }
+        }
+        document.getElementById('role-modal').classList.add('hidden');
+        renderRevealScreen();
+    }
+
+    function startTimerScreen() {
+        const minutes = parseInt(document.getElementById('setup-timer').value) || 4;
+        remainingSeconds = minutes * 60;
+        updateTimerDisplay();
+        showScreen('screen-timer');
+
+        clearInterval(timerInterval);
+        timerInterval = setInterval(() => {
+            remainingSeconds--;
+            updateTimerDisplay();
+
+            // Sound cues
+            if (remainingSeconds === 30) playBeep(520, 0.3);
+            if (remainingSeconds <= 10 && remainingSeconds > 0) playBeep(700, 0.1);
+
+            if (remainingSeconds <= 0) {
+                clearInterval(timerInterval);
+                playBeep(900, 0.6);
+                openVotingScreen();
+            }
+        }, 1000);
+    }
+
+    function updateTimerDisplay() {
+        const timerEl = document.getElementById('timer-text');
+        const m = Math.floor(remainingSeconds / 60);
+        const s = remainingSeconds % 60;
+        timerEl.textContent = `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+
+        timerEl.className = 'timer-display';
+        if (remainingSeconds <= 10) {
+            timerEl.classList.add('timer-danger');
+        } else if (remainingSeconds <= 30) {
+            timerEl.classList.add('timer-warning');
+        }
+    }
+
+    function openVotingScreen() {
+        clearInterval(timerInterval);
+        const grid = document.getElementById('vote-grid');
+        grid.innerHTML = '';
+
+        players.filter(p => p.isAlive).forEach(p => {
+            const card = document.createElement('div');
+            card.className = 'player-card';
+            card.textContent = p.name;
+            card.onclick = () => eliminatePlayer(p);
+            grid.appendChild(card);
+        });
+
+        showScreen('screen-vote');
+    }
+
+    function resumeTimer() {
+        showScreen('screen-timer');
+        clearInterval(timerInterval);
+        timerInterval = setInterval(() => {
+            remainingSeconds--;
+            updateTimerDisplay();
+            if (remainingSeconds <= 0) {
+                clearInterval(timerInterval);
+                openVotingScreen();
+            }
+        }, 1000);
+    }
+
+    function eliminatePlayer(player) {
+        player.isAlive = false;
+        const titleEl = document.getElementById('result-title');
+        const descEl = document.getElementById('result-desc');
+        const nextBtn = document.getElementById('btn-next-round');
+
+        if (player.isSpy) {
+            // Citizen Win
+            players.filter(p => !p.isSpy).forEach(p => p.score += 2);
+            titleEl.textContent = '🎉 پیروزی شهروندان!';
+            titleEl.style.color = 'var(--accent-green)';
+            descEl.innerHTML = `<strong>${player.name}</strong> یک جاسوس بود و با موفقیت حذف شد!<br>کلمه اصلی: <span style="color:var(--accent-amber)">${currentWordObj.word}</span><br>+۲ امتیاز به تمام شهروندان تعلق گرفت.`;
+            nextBtn.classList.remove('hidden');
+            showScreen('screen-round-result');
+        } else {
+            // Wrong elimination
+            players.filter(p => p.isSpy).forEach(p => p.score += 1);
+
+            if (isSuddenDeath) {
+                titleEl.textContent = '😈 پیروزی جاسوس‌ها!';
+                titleEl.style.color = 'var(--accent-red)';
+                descEl.innerHTML = `<strong>${player.name}</strong> یک شهروند بی‌گناه بود!<br>به دلیل فعال بودن حالت حذف آنی، جاسوس‌ها برنده این دست شدند.<br>+۲ امتیاز دیگر به جاسوس‌ها اضافه شد.`;
+                players.filter(p => p.isSpy).forEach(p => p.score += 2);
+                nextBtn.classList.remove('hidden');
+                showScreen('screen-round-result');
+            } else {
+                // Check if remaining alive players can still play
+                const aliveSpies = players.filter(p => p.isAlive && p.isSpy).length;
+                const aliveCitizens = players.filter(p => p.isAlive && !p.isSpy).length;
+
+                if (aliveSpies >= aliveCitizens || aliveSpies === 0) {
+                    titleEl.textContent = '😈 پیروزی جاسوس‌ها!';
+                    titleEl.style.color = 'var(--accent-red)';
+                    descEl.innerHTML = `شهروندان نتوانستند جاسوس را پیدا کنند و تعداد برابر شد.<br>جاسوس‌ها برنده شدند!`;
+                    players.filter(p => p.isSpy).forEach(p => p.score += 2);
+                    nextBtn.classList.remove('hidden');
+                    showScreen('screen-round-result');
+                } else {
+                    titleEl.textContent = '⚠️ اشتباه بود!';
+                    titleEl.style.color = 'var(--accent-amber)';
+                    descEl.innerHTML = `<strong>${player.name}</strong> جاسوس نبود و حذف شد!<br>به ازای این اشتباه، به جاسوس‌ها +۱ امتیاز داده شد.<br>بازی با نفرات باقیمانده ادامه دارد...`;
+                    nextBtn.classList.add('hidden');
+                    showScreen('screen-round-result');
+                    setTimeout(() => {
+                        resumeTimer();
+                    }, 3000);
+                }
+            }
+        }
+    }
+
+    function prepareNextRound() {
+        const spyCount = parseInt(document.getElementById('setup-spies-count').value);
+        setupRoles(spyCount);
+    }
+
+    function confirmEndGame() {
+        document.getElementById('confirm-modal').classList.remove('hidden');
+    }
+
+    function closeConfirmModal() {
+        document.getElementById('confirm-modal').classList.add('hidden');
+    }
+
+    function executeEndGame() {
+        clearInterval(timerInterval);
+        closeConfirmModal();
+        showLeaderboard();
+    }
+
+    function showLeaderboard() {
+        const sorted = [...players].sort((a, b) => b.score - a.score);
+        const list = document.getElementById('leaderboard-list');
+        list.innerHTML = '';
+
+        const medals = ['🥇', '🥈', '🥉'];
+        sorted.forEach((p, idx) => {
+            const li = document.createElement('li');
+            li.className = 'leaderboard-item';
+            
+            const medal = medals[idx] ? `<span class="rank-medal">${medals[idx]}</span>` : `<span style="margin-left:14px; color:var(--text-muted)">#${idx+1}</span>`;
+            li.innerHTML = `
+                <div style="display:flex; align-items:center;">
+                    ${medal}
+                    <span style="font-weight:600;">${p.name}</span>
+                </div>
+                <div style="font-weight:bold; color:var(--accent-amber);">${p.score} امتیاز</div>
+            `;
+            list.appendChild(li);
+        });
+
+        showScreen('screen-leaderboard');
+    }
+</script>
 </body>
 </html>
