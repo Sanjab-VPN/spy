@@ -3,33 +3,34 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>بازی جاسوس پیشرفته | Ultimate Spy</title>
+    <title>بازی جاسوس | Spy Game Pro</title>
     <style>
         :root {
-            --bg-gradient: radial-gradient(circle at 50% 0%, #1e1b4b 0%, #0f172a 60%, #020617 100%);
-            --card-bg: rgba(30, 41, 59, 0.75);
-            --card-border: rgba(255, 255, 255, 0.12);
-            --text-main: #f8fafc;
-            --text-muted: #94a3b8;
-            --accent-green: #10b981;
-            --accent-blue: #38bdf8;
-            --accent-red: #f43f5e;
-            --accent-amber: #f59e0b;
-            --accent-purple: #a855f7;
-            --accent-cyan: #06b6d4;
+            --bg-body: #090d16;
+            --surface-card: rgba(18, 24, 38, 0.85);
+            --surface-input: rgba(10, 15, 26, 0.9);
+            --border-glow: rgba(255, 255, 255, 0.1);
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --brand-cyan: #06b6d4;
+            --brand-blue: #3b82f6;
+            --brand-emerald: #10b981;
+            --brand-rose: #f43f5e;
+            --brand-amber: #f59e0b;
+            --brand-purple: #a855f7;
         }
 
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: system-ui, -apple-system, 'Vazirmatn', Tahoma, sans-serif;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Vazirmatn', Tahoma, sans-serif;
             -webkit-tap-highlight-color: transparent;
         }
 
         body {
-            background: var(--bg-gradient);
-            color: var(--text-main);
+            background: radial-gradient(circle at 50% 10%, #1e1b4b 0%, #090d16 65%, #020408 100%);
+            color: var(--text-primary);
             min-height: 100vh;
             display: flex;
             justify-content: center;
@@ -37,36 +38,36 @@
             padding: 16px;
         }
 
-        .container {
+        .app-container {
             width: 100%;
-            max-width: 500px;
-            background: var(--card-bg);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid var(--card-border);
-            border-radius: 24px;
+            max-width: 480px;
+            background: var(--surface-card);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid var(--border-glow);
+            border-radius: 28px;
             padding: 24px;
-            box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.8), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.85), inset 0 1px 0 rgba(255, 255, 255, 0.12);
         }
 
-        h1, h2, h3, h4 {
+        h1, h2, h3 {
             text-align: center;
             margin-bottom: 12px;
             font-weight: 800;
         }
 
         h1 {
-            background: linear-gradient(135deg, #38bdf8, #a855f7);
+            background: linear-gradient(135deg, var(--brand-cyan), var(--brand-purple));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             font-size: 1.85rem;
         }
 
         p {
-            color: var(--text-muted);
+            color: var(--text-secondary);
             text-align: center;
-            font-size: 0.9rem;
-            margin-bottom: 16px;
+            font-size: 0.88rem;
+            margin-bottom: 18px;
             line-height: 1.6;
         }
 
@@ -75,9 +76,9 @@
         /* Buttons */
         .btn {
             width: 100%;
-            padding: 13px 16px;
+            padding: 13px 18px;
             border: none;
-            border-radius: 14px;
+            border-radius: 16px;
             font-size: 0.95rem;
             font-weight: 700;
             color: white;
@@ -88,34 +89,33 @@
             justify-content: center;
             align-items: center;
             gap: 8px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.35);
         }
 
         .btn:active { transform: scale(0.97); }
 
-        .btn-green { background: linear-gradient(135deg, #10b981, #059669); }
-        .btn-blue { background: linear-gradient(135deg, #38bdf8, #2563eb); }
-        .btn-red { background: linear-gradient(135deg, #f43f5e, #be123c); }
+        .btn-emerald { background: linear-gradient(135deg, #10b981, #059669); }
+        .btn-cyan { background: linear-gradient(135deg, #06b6d4, #2563eb); }
+        .btn-rose { background: linear-gradient(135deg, #f43f5e, #be123c); }
         .btn-amber { background: linear-gradient(135deg, #f59e0b, #d97706); }
         .btn-purple { background: linear-gradient(135deg, #a855f7, #7c3aed); }
-        .btn-cyan { background: linear-gradient(135deg, #06b6d4, #0284c7); }
-        .btn-outline { 
-            background: rgba(255, 255, 255, 0.05); 
-            border: 1px solid var(--card-border); 
-            color: var(--text-muted); 
+        .btn-ghost {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-glow);
+            color: var(--text-secondary);
             box-shadow: none;
         }
-        .btn-outline:hover { background: rgba(255, 255, 255, 0.1); color: var(--text-main); }
-        .btn-sm { padding: 8px 12px; font-size: 0.8rem; border-radius: 10px; width: auto; margin: 0; }
+        .btn-ghost:hover { background: rgba(255, 255, 255, 0.1); color: var(--text-primary); }
+        .btn-sm { padding: 6px 12px; font-size: 0.78rem; border-radius: 10px; width: auto; margin: 0; }
 
-        /* Form Controls */
+        /* Form Controls & Inputs */
         .input-group { margin-bottom: 12px; }
         .input-group label {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            font-size: 0.82rem;
-            color: var(--text-muted);
+            font-size: 0.8rem;
+            color: var(--text-secondary);
             margin-bottom: 6px;
             font-weight: 500;
         }
@@ -123,20 +123,68 @@
         .input-control {
             width: 100%;
             padding: 11px 14px;
-            background: rgba(15, 23, 42, 0.7);
-            border: 1px solid var(--card-border);
-            border-radius: 12px;
+            background: var(--surface-input);
+            border: 1px solid var(--border-glow);
+            border-radius: 14px;
             color: white;
             font-size: 0.95rem;
             outline: none;
-            transition: border-color 0.2s;
+            transition: all 0.2s;
         }
-        .input-control:focus { border-color: var(--accent-blue); }
+        .input-control:focus { border-color: var(--brand-cyan); box-shadow: 0 0 10px rgba(6, 182, 212, 0.25); }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        /* Modern Custom Switch */
+        .toggle-item {
+            background: rgba(15, 23, 42, 0.5);
+            border: 1px solid var(--border-glow);
+            padding: 10px 14px;
+            border-radius: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 44px;
+            height: 24px;
+            flex-shrink: 0;
+        }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            inset: 0;
+            background-color: #334155;
+            transition: 0.3s;
+            border-radius: 24px;
+        }
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: 0.3s;
+            border-radius: 50%;
+        }
+        input:checked + .slider { background-color: var(--brand-cyan); }
+        input:checked + .slider:before { transform: translateX(20px); }
 
         .info-btn {
-            background: rgba(56, 189, 248, 0.15);
-            color: var(--accent-blue);
-            border: 1px solid rgba(56, 189, 248, 0.3);
+            background: rgba(6, 182, 212, 0.15);
+            color: var(--brand-cyan);
+            border: 1px solid rgba(6, 182, 212, 0.3);
             border-radius: 50%;
             width: 20px;
             height: 20px;
@@ -149,87 +197,49 @@
             margin-right: 6px;
         }
 
-        .toggle-box {
-            background: rgba(15, 23, 42, 0.6);
-            padding: 10px 14px;
-            border-radius: 12px;
-            border: 1px solid var(--card-border);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 8px;
-        }
-
-        .grid-2 {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-        }
-
+        /* Player Grid */
         .player-card {
-            background: rgba(15, 23, 42, 0.6);
-            border: 1px solid var(--card-border);
-            padding: 14px 10px;
-            border-radius: 14px;
+            background: rgba(15, 23, 42, 0.65);
+            border: 1px solid var(--border-glow);
+            padding: 15px 12px;
+            border-radius: 16px;
             text-align: center;
             cursor: pointer;
             font-weight: 600;
             transition: all 0.2s;
         }
-        .player-card:hover { border-color: var(--accent-blue); transform: translateY(-2px); }
+        .player-card:hover { border-color: var(--brand-cyan); transform: translateY(-2px); }
         .player-card.disabled { opacity: 0.35; cursor: not-allowed; pointer-events: none; filter: grayscale(1); }
 
-        /* Timer Box */
-        .timer-container {
-            background: rgba(15, 23, 42, 0.8);
-            border: 1px solid var(--card-border);
-            border-radius: 20px;
-            padding: 16px;
+        /* Timer Block */
+        .timer-card {
+            background: rgba(10, 15, 26, 0.85);
+            border: 1px solid var(--border-glow);
+            border-radius: 24px;
+            padding: 18px;
             margin: 14px 0;
             text-align: center;
         }
 
         .timer-display {
-            font-size: 3.5rem;
+            font-size: 3.8rem;
             font-weight: 900;
             letter-spacing: 2px;
-            color: var(--accent-blue);
+            color: var(--brand-cyan);
             font-variant-numeric: tabular-nums;
             transition: color 0.3s;
         }
-        .timer-warning { color: var(--accent-amber); animation: pulse 1s infinite; }
-        .timer-danger { color: var(--accent-red); animation: pulse 0.5s infinite; }
+        .timer-warning { color: var(--brand-amber); animation: pulse 1s infinite; }
+        .timer-danger { color: var(--brand-rose); animation: pulse 0.5s infinite; }
 
         @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.03); } }
 
-        /* Assistant & Banner */
-        .assistant-box {
-            background: rgba(168, 85, 247, 0.1);
-            border: 1px solid rgba(168, 85, 247, 0.3);
-            border-radius: 14px;
-            padding: 12px;
-            margin-bottom: 12px;
-            text-align: center;
-        }
-
-        .banner-mode {
-            background: rgba(245, 158, 11, 0.15);
-            border: 1px dashed var(--accent-amber);
-            border-radius: 12px;
-            padding: 10px;
-            font-size: 0.85rem;
-            color: var(--accent-amber);
-            text-align: center;
-            margin-bottom: 12px;
-            font-weight: 600;
-        }
-
-        /* Modals */
+        /* Modals & Overlays */
         .modal-overlay {
             position: fixed;
             inset: 0;
-            background: rgba(2, 6, 23, 0.88);
-            backdrop-filter: blur(8px);
+            background: rgba(2, 4, 10, 0.88);
+            backdrop-filter: blur(10px);
             display: flex;
             justify-content: center;
             align-items: center;
@@ -238,14 +248,14 @@
         }
 
         .modal-card {
-            background: #1e293b;
-            border: 1px solid var(--card-border);
-            border-radius: 20px;
+            background: #151d30;
+            border: 1px solid var(--border-glow);
+            border-radius: 24px;
             padding: 22px;
             width: 100%;
-            max-width: 400px;
+            max-width: 390px;
             text-align: center;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.85);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.9);
         }
 
         .role-badge {
@@ -256,44 +266,44 @@
             margin-bottom: 12px;
             font-weight: bold;
         }
-        .role-citizen { background: rgba(16, 185, 129, 0.15); color: var(--accent-green); border: 1px solid rgba(16, 185, 129, 0.3); }
-        .role-spy { background: rgba(244, 63, 94, 0.15); color: var(--accent-red); border: 1px solid rgba(244, 63, 94, 0.3); }
+        .role-citizen { background: rgba(16, 185, 129, 0.15); color: var(--brand-emerald); border: 1px solid rgba(16, 185, 129, 0.3); }
+        .role-spy { background: rgba(244, 63, 94, 0.15); color: var(--brand-rose); border: 1px solid rgba(244, 63, 94, 0.3); }
 
         .secret-box {
-            background: #0b1120;
+            background: #080d1a;
             padding: 14px;
-            border-radius: 14px;
+            border-radius: 16px;
             margin: 14px 0;
             border: 1px dashed rgba(255, 255, 255, 0.15);
         }
-        .secret-word { font-size: 1.3rem; font-weight: 800; color: var(--accent-amber); }
+        .secret-word { font-size: 1.3rem; font-weight: 800; color: var(--brand-amber); }
 
         .quest-box {
-            background: rgba(56, 189, 248, 0.08);
-            border: 1px solid rgba(56, 189, 248, 0.2);
-            border-radius: 12px;
-            padding: 10px;
+            background: rgba(6, 182, 212, 0.08);
+            border: 1px solid rgba(6, 182, 212, 0.25);
+            border-radius: 14px;
+            padding: 10px 12px;
             margin-top: 10px;
             font-size: 0.82rem;
-            color: var(--accent-blue);
+            color: var(--brand-cyan);
             text-align: right;
         }
 
-        /* Leaderboard & Mini Tables */
+        /* Tables */
         .score-table {
             width: 100%;
             border-collapse: collapse;
-            margin: 14px 0;
+            margin: 12px 0;
             font-size: 0.9rem;
         }
-        .score-table th { color: var(--text-muted); font-size: 0.78rem; padding: 8px; border-bottom: 1px solid var(--card-border); }
-        .score-table td { padding: 10px 8px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); text-align: center; }
+        .score-table th { color: var(--text-secondary); font-size: 0.78rem; padding: 8px; border-bottom: 1px solid var(--border-glow); }
+        .score-table td { padding: 10px 8px; border-bottom: 1px solid rgba(255, 255, 255, 0.04); text-align: center; }
         .score-table td:first-child { text-align: right; font-weight: 600; }
 
         .accolade-card {
             background: rgba(15, 23, 42, 0.7);
-            border: 1px solid var(--card-border);
-            border-radius: 14px;
+            border: 1px solid var(--border-glow);
+            border-radius: 16px;
             padding: 12px;
             margin-bottom: 8px;
             display: flex;
@@ -306,13 +316,15 @@
 </head>
 <body>
 
-<div class="container">
+<div class="app-container">
+    <!-- 1. Welcome Screen -->
     <div id="screen-welcome">
-        <h1>🕵️ بازی جاسوس حرفه‌ای</h1>
-        <p>شناسایی افراد مرموز، چالش‌های بلوف‌زنی، نقش‌های غیرمنتظره و جدول رده‌بندی مسابقات دورهمی!</p>
-        <button class="btn btn-green" onclick="showScreen('screen-setup')">ورود به بخش تنظیمات مسابقه ⚙️</button>
+        <h1>🕵️ بازی جاسوس</h1>
+        <p>یک بازی جذاب، هیجانی و معمایی برای جمع‌های دوستانه. جاسوس‌ها را پیدا کنید یا بقیه را فریب دهید!</p>
+        <button class="btn btn-emerald" onclick="showScreen('screen-setup')">ورود به تنظیمات بازی 🎮</button>
     </div>
 
+    <!-- 2. Setup Screen -->
     <div id="screen-setup" class="hidden">
         <h2>تنظیمات مسابقه</h2>
         
@@ -327,141 +339,176 @@
             </div>
         </div>
 
-        <div class="grid-2">
-            <div class="input-group">
-                <label>زمان گفتگو (دقیقه):</label>
-                <input type="number" id="setup-timer" class="input-control" value="4" min="1" max="15">
-            </div>
-            <div class="input-group">
-                <label>فرصت زنگ اضطراری:</label>
-                <input type="number" id="setup-max-votes" class="input-control" value="2" min="1" max="5">
-            </div>
+        <div class="input-group">
+            <label>زمان گفتگو (دقیقه):</label>
+            <input type="number" id="setup-timer" class="input-control" value="4" min="1" max="15">
         </div>
 
-        <div class="toggle-box">
+        <!-- Feature Toggles (All OFF by Default) -->
+        <div class="toggle-item">
             <div style="display:flex; align-items:center;">
                 <button class="info-btn" onclick="showInfo('fool')">ℹ</button>
                 <span style="font-size:0.85rem; font-weight:600;">شهروند ساده‌لوح (Undercover)</span>
             </div>
-            <input type="checkbox" id="toggle-fool" style="transform:scale(1.2); cursor:pointer;">
+            <label class="switch">
+                <input type="checkbox" id="toggle-fool">
+                <span class="slider"></span>
+            </label>
         </div>
 
-        <div class="toggle-box">
+        <div class="toggle-item">
             <div style="display:flex; align-items:center;">
                 <button class="info-btn" onclick="showInfo('director')">ℹ</button>
-                <span style="font-size:0.85rem; font-weight:600;">دستیار هوشمند نوبت سوال‌پرسیدن</span>
+                <span style="font-size:0.85rem; font-weight:600;">دستیار هوشمند نوبت سوال</span>
             </div>
-            <input type="checkbox" id="toggle-director" checked style="transform:scale(1.2); cursor:pointer;">
+            <label class="switch">
+                <input type="checkbox" id="toggle-director">
+                <span class="slider"></span>
+            </label>
         </div>
 
-        <div class="toggle-box">
+        <div class="toggle-item">
             <div style="display:flex; align-items:center;">
                 <button class="info-btn" onclick="showInfo('oneword')">ℹ</button>
                 <span style="font-size:0.85rem; font-weight:600;">مود تک‌کلمه‌ای سرعتی</span>
             </div>
-            <input type="checkbox" id="toggle-oneword" style="transform:scale(1.2); cursor:pointer;">
+            <label class="switch">
+                <input type="checkbox" id="toggle-oneword">
+                <span class="slider"></span>
+            </label>
         </div>
 
-        <div class="toggle-box">
+        <div class="toggle-item">
             <div style="display:flex; align-items:center;">
                 <button class="info-btn" onclick="showInfo('quests')">ℹ</button>
                 <span style="font-size:0.85rem; font-weight:600;">ماموریت‌های فرعی مخفی</span>
             </div>
-            <input type="checkbox" id="toggle-quests" checked style="transform:scale(1.2); cursor:pointer;">
+            <label class="switch">
+                <input type="checkbox" id="toggle-quests">
+                <span class="slider"></span>
+            </label>
         </div>
 
-        <div class="toggle-box">
+        <div class="toggle-item">
             <div style="display:flex; align-items:center;">
                 <button class="info-btn" onclick="showInfo('wager')">ℹ</button>
                 <span style="font-size:0.85rem; font-weight:600;">سیستم شرط‌بندی روی رای</span>
             </div>
-            <input type="checkbox" id="toggle-wager" checked style="transform:scale(1.2); cursor:pointer;">
+            <label class="switch">
+                <input type="checkbox" id="toggle-wager">
+                <span class="slider"></span>
+            </label>
         </div>
 
-        <div class="toggle-box">
+        <div class="toggle-item">
             <div style="display:flex; align-items:center;">
                 <button class="info-btn" onclick="showInfo('sudden')">ℹ</button>
                 <span style="font-size:0.85rem; font-weight:600;">حالت حذف درجا (Sudden Death)</span>
             </div>
-            <input type="checkbox" id="toggle-sudden" style="transform:scale(1.2); cursor:pointer;">
+            <label class="switch">
+                <input type="checkbox" id="toggle-sudden">
+                <span class="slider"></span>
+            </label>
+        </div>
+
+        <div class="toggle-item">
+            <div style="display:flex; align-items:center;">
+                <button class="info-btn" onclick="showInfo('bell_limit')">ℹ</button>
+                <span style="font-size:0.85rem; font-weight:600;">محدودیت تعداد زنگ اضطراری</span>
+            </div>
+            <label class="switch">
+                <input type="checkbox" id="toggle-vote-limit" onchange="toggleVoteLimitInput()">
+                <span class="slider"></span>
+            </label>
+        </div>
+
+        <div id="vote-limit-box" class="input-group hidden" style="margin-top: 8px;">
+            <label>حداکثر دفعات زنگ اضطراری در هر دور:</label>
+            <input type="number" id="setup-max-votes" class="input-control" value="2" min="1" max="10">
         </div>
 
         <div class="input-group" style="margin-top:10px;">
-            <label>نوع راهنمای جاسوس:</label>
+            <label>نوع راهنمای ارائه‌شده به جاسوس:</label>
             <select id="setup-hint-type" class="input-control">
-                <option value="category">نام دسته‌بندی موضوعی</option>
+                <option value="category">دسته‌بندی کلی موضوع</option>
                 <option value="first_letter">حرف اول کلمه اصلی</option>
-                <option value="related_word">کلمه مرتبط / مترادف (تست)</option>
+                <option value="related_word">کلمه مرتبط / مترادف تستی</option>
                 <option value="random">تصادفی برای هر جاسوس</option>
-                <option value="none">بدون راهنما (چالشی‌ترین حالت)</option>
+                <option value="none">بدون هیچ راهنمایی (سخت)</option>
             </select>
         </div>
 
         <div class="input-group" style="margin-top: 14px;">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
                 <label style="margin:0;">اسامی بازیکنان:</label>
-                <button class="btn btn-outline btn-sm" onclick="confirmResetSavedNames()">🗑️ ریست اسامی ذخیره</button>
+                <button class="btn btn-ghost btn-sm" onclick="confirmResetSavedNames()">🗑️ ریست اسامی ذخیره</button>
             </div>
             <div id="name-inputs-container"></div>
         </div>
 
-        <button class="btn btn-blue" onclick="startRoleAssignment()">شروع مسابقه و پخش نقش‌ها 🚀</button>
-        <button class="btn btn-outline" onclick="showScreen('screen-welcome')">بازگشت</button>
+        <button class="btn btn-cyan" onclick="startRoleAssignment()">تقسیم نقش‌ها و ورود به بازی 🚀</button>
+        <button class="btn btn-ghost" onclick="showScreen('screen-welcome')">بازگشت</button>
     </div>
 
+    <!-- 3. Reveal Screen -->
     <div id="screen-reveal" class="hidden">
-        <h2>مشاهده کارت‌ها</h2>
-        <p>گوشی را دست‌به‌دست کنید. هرکس فقط روی اسم خودش بزند و نقشش را حفظ کند.</p>
+        <h2>کارت‌های مخفی بازیکنان</h2>
+        <p>گوشی را بچرخانید. هر بازیکن فقط اسم خود را لمس کند و کارتش را به یاد بسپارد.</p>
         <div id="reveal-grid" class="grid-2"></div>
-        <button id="btn-start-discussion" class="btn btn-green hidden" onclick="startTimerScreen()">همه دیدند؛ شروع تایمر بازی ⏳</button>
+        <button id="btn-start-discussion" class="btn btn-emerald hidden" onclick="startTimerScreen()">همه کارت‌ها را دیدند؛ شروع تایمر ⏳</button>
     </div>
 
+    <!-- 4. Timer Screen -->
     <div id="screen-timer" class="hidden">
-        <div id="oneword-banner" class="banner-mode hidden">
-            ⚡ مود تک‌کلمه‌ای فعال است: در هر نوبت فقط یک کلمه بگویید!
+        <div id="oneword-banner" class="quest-box hidden" style="text-align:center; color:var(--brand-amber); border-color:var(--brand-amber); margin-bottom:12px;">
+            ⚡ مود تک‌کلمه‌ای فعال است: فقط مجاز به گفتن یک کلمه در هر نوبت هستید!
         </div>
 
-        <div id="director-box" class="assistant-box hidden">
-            <div style="font-size:0.75rem; color:var(--accent-purple); font-weight:bold; margin-bottom:4px;">🎯 نوبت سوال پیشنهادی:</div>
-            <div id="director-text" style="font-weight:700; font-size:0.95rem;">-</div>
-            <button class="btn btn-outline btn-sm" style="margin-top:6px; display:inline-block;" onclick="generateNextQuestionPair()">پیشنهاد نوبت بعدی 🔄</button>
+        <div id="director-box" class="quest-box hidden" style="text-align:center; margin-bottom:12px;">
+            <div style="font-size:0.75rem; color:var(--brand-purple); font-weight:bold;">🎯 پیشنهاد نوبت سوال:</div>
+            <div id="director-text" style="font-weight:700; font-size:0.95rem; margin-top:3px;">-</div>
+            <button class="btn btn-ghost btn-sm" style="margin-top:6px; display:inline-block;" onclick="generateNextQuestionPair()">پیشنهاد نوبت بعدی 🔄</button>
         </div>
 
-        <div class="timer-container">
+        <div class="timer-card">
             <div id="timer-text" class="timer-display">00:00</div>
-            <div id="votes-remaining-badge" style="font-size: 0.78rem; color: var(--text-muted); margin-top: 6px;">فرصت زنگ اضطراری باقی‌مانده: ۲</div>
+            <div id="votes-remaining-badge" style="font-size: 0.78rem; color: var(--text-secondary); margin-top: 6px;">زنگ اضطراری: نامحدود</div>
         </div>
 
-        <button id="btn-emergency-vote" class="btn btn-red" onclick="openVotingScreen()">🚨 اعلام زنگ اضطراری (رای‌گیری)</button>
-        <button class="btn btn-outline" onclick="requestEndGameConfirm()">پایان کل مسابقه و مشاهده آمار نهایی 🏆</button>
+        <button id="btn-emergency-vote" class="btn btn-rose" onclick="openVotingScreen()">🚨 اعلام زنگ اضطراری (رای‌گیری)</button>
+        <button class="btn btn-ghost" onclick="requestEndGameConfirm()">پایان کل مسابقه و مشاهده کارنامه 🏆</button>
     </div>
 
+    <!-- 5. Voting Screen -->
     <div id="screen-vote" class="hidden">
-        <h2>رای‌گیری اخراج متهم</h2>
-        <p>فردی که به نظر جمع مشکوک‌ترین است را انتخاب کنید:</p>
+        <h2>رای‌گیری اخراج</h2>
+        <p>با مشورت هم، بازیکنی که بیشترین رای را آورده انتخاب کنید:</p>
         <div id="vote-grid" class="grid-2"></div>
-        <button id="btn-cancel-vote" class="btn btn-outline" onclick="resumeTimer()">انصراف و ادامه گفتگو</button>
+        <button id="btn-cancel-vote" class="btn btn-ghost" onclick="resumeTimer()">انصراف و بازگشت به گفتگو</button>
     </div>
 
+    <!-- 6. Wager Selection Screen -->
     <div id="screen-wager" class="hidden">
-        <h2>🎲 شرط‌بندی روی حذف</h2>
-        <p>کدام بازیکنان می‌خواهند روی جاسوس بودن <strong id="wager-target-name" style="color:var(--accent-red)"></strong> شرط ببندند؟</p>
+        <h2>🎲 شرط‌بندی روی اخراج</h2>
+        <p>کدام بازیکنان می‌خواهند روی جاسوس بودن <strong id="wager-target-name" style="color:var(--brand-rose)"></strong> شرط ببندند؟</p>
         <div id="wager-players-list" style="margin-bottom:14px;"></div>
-        <button class="btn btn-green" onclick="finalizeEliminationWithWagers()">ثبت نهایی و مشاهده نقش متهم ✅</button>
+        <button class="btn btn-emerald" onclick="finalizeEliminationWithWagers()">ثبت شرط‌ها و بررسی هویت متهم ✅</button>
     </div>
 
+    <!-- 7. Spy Guess Screen -->
     <div id="screen-spy-guess" class="hidden">
         <h2>🎯 فرصت حدس کلمه جاسوس!</h2>
-        <p><strong id="guess-spy-name" style="color:var(--accent-red)"></strong> لو رفت! اما فرصت دارد با حدس کلمه اصلی برنده شود.</p>
+        <p><strong id="guess-spy-name" style="color:var(--brand-rose)"></strong> لو رفت! اما فرصت دارد کلمه اصلی را حدس بزند و پیروز شود.</p>
         <div class="input-group">
             <input type="text" id="spy-guess-input" class="input-control" placeholder="کلمه حدس زده شده...">
         </div>
-        <button class="btn btn-green" onclick="evaluateSpyGuess(true)">بررسی حدس کلمه ✅</button>
-        <button class="btn btn-outline" onclick="evaluateSpyGuess(false)">انصراف از حدس (پیروزی شهروندان)</button>
+        <button class="btn btn-emerald" onclick="evaluateSpyGuess(true)">بررسی حدس کلمه ✅</button>
+        <button class="btn btn-ghost" onclick="evaluateSpyGuess(false)">انصراف از حدس (پیروزی شهروندان)</button>
     </div>
 
+    <!-- 8. Round Result Screen (Only Shown on Definite Round End) -->
     <div id="screen-round-result" class="hidden">
-        <h2 id="result-title">نتیجه این دور</h2>
+        <h2 id="result-title">نتیجه این دست</h2>
         <div class="secret-box">
             <div id="result-desc" style="font-size: 0.95rem; line-height: 1.7;"></div>
         </div>
@@ -471,20 +518,21 @@
             <thead>
                 <tr>
                     <th>بازیکن</th>
-                    <th>امتیاز این دست</th>
+                    <th>تغییر این دست</th>
                     <th>مجموع امتیاز</th>
                 </tr>
             </thead>
             <tbody id="round-leaderboard-body"></tbody>
         </table>
 
-        <button id="btn-next-round" class="btn btn-green" onclick="prepareNextRound()">دست بعدی با همین بازیکنان 🔁</button>
-        <button class="btn btn-purple" onclick="requestEndGameConfirm()">اتمام مسابقه و گزارش جامع نهایی 🏆</button>
+        <button id="btn-next-round" class="btn btn-emerald" onclick="prepareNextRound()">دست بعدی با همین بازیکنان 🔁</button>
+        <button class="btn btn-purple" onclick="requestEndGameConfirm()">اتمام مسابقه و کارنامه نهایی 🏆</button>
     </div>
 
+    <!-- 9. Final Match Leaderboard & Accolades -->
     <div id="screen-leaderboard" class="hidden">
-        <h2>🏆 کارنامه و آمار نهایی مسابقه</h2>
-        <p>مدال‌ها و عملکردهای برتر در طول تمام دست‌ها</p>
+        <h2>🏆 تابلوی افتخارات و مدال‌ها</h2>
+        <p>کارنامه کلی بازیکنان در تمام دست‌های بازی</p>
         
         <div id="accolades-container" style="margin-bottom:16px;"></div>
 
@@ -492,47 +540,59 @@
             <thead>
                 <tr>
                     <th>رتبه / نام</th>
-                    <th>دفعات برد</th>
+                    <th>تعداد برد</th>
                     <th>مجموع امتیاز</th>
                 </tr>
             </thead>
             <tbody id="final-leaderboard-body"></tbody>
         </table>
 
-        <button class="btn btn-green" onclick="showScreen('screen-setup')">شروع مسابقه جدید با تنظیمات دلخواه</button>
+        <button class="btn btn-emerald" onclick="showScreen('screen-setup')">شروع مسابقه جدید با تنظیمات دلخواه</button>
     </div>
 </div>
 
+<!-- Modal: Temporary Innocent Notice (No spoilers/scores shown) -->
+<div id="innocent-notice-modal" class="modal-overlay hidden">
+    <div class="modal-card">
+        <h3 style="color:var(--brand-amber);">⚠️ اشتباه بود!</h3>
+        <p id="innocent-notice-text" style="font-size:0.95rem; margin:14px 0; line-height:1.7;"></p>
+        <p style="font-size:0.8rem; color:var(--text-secondary);">بازی پس از چند ثانیه به‌طور خودکار با افراد باقی‌مانده ادامه می‌یابد...</p>
+    </div>
+</div>
+
+<!-- Modal: Role View -->
 <div id="role-modal" class="modal-overlay hidden">
     <div class="modal-card">
         <h3 id="modal-player-name">نام</h3>
         <div id="modal-role-badge" class="role-badge">نقش</div>
         <div class="secret-box">
-            <span style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 6px;">اطلاعات مخفی شما:</span>
-            <div id="modal-secret-content" class="secret-word">کلمه</div>
+            <span style="font-size: 0.8rem; color: var(--text-secondary); display: block; margin-bottom: 6px;">اطلاعات شما:</span>
+            <div id="modal-secret-content" class="secret-word">-</div>
         </div>
         <div id="modal-quest-box" class="quest-box hidden">
-            <strong>🎯 مأموریت مخفی شما:</strong>
+            <strong>🎯 مأموریت فرعی مخفی شما:</strong>
             <div id="modal-quest-text" style="margin-top:4px;">-</div>
         </div>
-        <button class="btn btn-blue" style="margin-top:14px;" onclick="closeRoleModal()">متوجه شدم (مخفی‌سازی)</button>
+        <button class="btn btn-cyan" style="margin-top:14px;" onclick="closeRoleModal()">متوجه شدم (مخفی‌سازی)</button>
     </div>
 </div>
 
+<!-- Modal: Info / Explanations -->
 <div id="info-modal" class="modal-overlay hidden">
     <div class="modal-card">
         <h3 id="info-modal-title">توضیحات قابلیت</h3>
         <p id="info-modal-text" style="text-align:right; font-size:0.88rem; margin:14px 0; line-height:1.7;"></p>
-        <button class="btn btn-blue" onclick="closeInfoModal()">متوجه شدم</button>
+        <button class="btn btn-cyan" onclick="closeInfoModal()">متوجه شدم</button>
     </div>
 </div>
 
+<!-- Modal: Confirmation -->
 <div id="confirm-modal" class="modal-overlay hidden">
     <div class="modal-card">
         <h3 id="confirm-modal-title">⚠️ تایید</h3>
         <p id="confirm-modal-text">آیا مطمئن هستید؟</p>
-        <button id="btn-confirm-yes" class="btn btn-red">بله</button>
-        <button class="btn btn-outline" onclick="closeConfirmModal()">خیر، انصراف</button>
+        <button id="btn-confirm-yes" class="btn btn-rose">بله</button>
+        <button class="btn btn-ghost" onclick="closeConfirmModal()">خیر، انصراف</button>
     </div>
 </div>
 
@@ -554,55 +614,55 @@
         } catch (e) {}
     }
 
-    // Mock Categories with Undercover / Fool support
+    // Purely Abstract Test Data (Zero real words)
     const mockCategories = {
-        "مکان‌ها (تست)": [
-            { word: "بیمارستان (تست)", foolWord: "درمانگاه شبانه‌روزی (تست)", hint: "محل درمان (تست)" },
-            { word: "فرودگاه (تست)", foolWord: "ترمینال اتوبوسرانی (تست)", hint: "محل سفر (تست)" },
-            { word: "سینما (تست)", foolWord: "سالن تئاتر (تست)", hint: "تماشای نمایش (تست)" }
+        "دسته‌بندی تستی الف": [
+            { word: "کلمه تست اصلی ۱", foolWord: "کلمه تست ساده‌لوح ۱", hint: "راهنمای تست ۱" },
+            { word: "کلمه تست اصلی ۲", foolWord: "کلمه تست ساده‌لوح ۲", hint: "راهنمای تست ۲" },
+            { word: "کلمه تست اصلی ۳", foolWord: "کلمه تست ساده‌لوح ۳", hint: "راهنمای تست ۳" }
         ],
-        "مشاغل (تست)": [
-            { word: "پزشک جراح (تست)", foolWord: "پرستار بخش (تست)", hint: "کادر درمان (تست)" },
-            { word: "معلم مدرسه (تست)", foolWord: "استاد دانشگاه (تست)", hint: "آموزش و تدریس (تست)" },
-            { word: "آتش‌نشان (تست)", foolWord: "امدادگر هلال‌احمر (تست)", hint: "عملیات امداد (تست)" }
+        "دسته‌بندی تستی ب": [
+            { word: "کلمه تست اصلی ۴", foolWord: "کلمه تست ساده‌لوح ۴", hint: "راهنمای تست ۴" },
+            { word: "کلمه تست اصلی ۵", foolWord: "کلمه تست ساده‌لوح ۵", hint: "راهنمای تست ۵" }
         ]
     };
 
-    // Realistic Side Quests
     const sideQuestsPool = [
-        "در حین صحبت حداقل دو بار از عبارت «دقیقاً» یا «صددرصد» استفاده کن.",
-        "سعی کن حداقل یک بار در میانه بازی به مچ دستت یا ساعت نگاه کنی.",
-        "در طول این دور، حداقل از یکی از بازیکنان یک تعریف کوتاه بکن.",
-        "به جای گفتن «نه»، حتماً از کلمه «به هیچ وجه» استفاده کن.",
+        "در طول صحبت حداقل دو بار از کلمه «دقیقاً» یا «صددرصد» استفاده کن.",
+        "یک بار در میانه بازی به مچ دستت یا ساعت نگاه کن.",
+        "در طول این دور، از یکی از بازیکنان یک تعریف کوتاه بکن.",
         "هنگام صحبت کردن، حداقل یک بار با دست چانه‌ات را لمس کن.",
-        "در طول این دست حداقل از دو نفر مختلف سوال بپرس."
+        "در طول این دست، حداقل از دو نفر مختلف سوال بپرس."
     ];
 
-    // Info Descriptions
     const infoTexts = {
         fool: {
             title: "شهروند ساده‌لوح (Undercover)",
-            desc: "یک شهروند به صورت مخفیانه کلمه‌ای بسیار نزدیک به کلمه اصلی می‌گیرد اما خودش فکر می‌کند شهروند عادی است! چون کلمه‌اش کمی فرق دارد مشکوک صحبت می‌کند و ممکن است بقیه به اشتباه به او رای دهند و جاسوس نجات پیدا کند."
+            desc: "یک شهروند به صورت مخفیانه کلمه‌ای بسیار شبیه به کلمه اصلی می‌گیرد اما خودش فکر می‌کند شهروند عادی است! چون کلمه‌اش کمی فرق دارد ممکن است مشکوک صحبت کند و توجه‌ها را به جای جاسوس واقعی به سمت خود جلب کند."
         },
         director: {
-            title: "دستیار هوشمند نوبت سوال‌پرسیدن",
-            desc: "سیستم به شکل عادلانه و نوبتی پیشنهاد می‌دهد چه کسی از چه کسی سوال بپرسد تا همه بازیکنان درگیر صحبت شوند و بازی روی چند نفر خاص متمرکز نماند."
+            title: "دستیار هوشمند نوبت سوال",
+            desc: "سیستم به شکل عادلانه پیشنهاد می‌دهد چه کسی از چه کسی سوال بپرسد تا همه افراد در بحث شرکت کنند و بازی روی چند نفر خاص قفل نشود."
         },
         oneword: {
             title: "مود تک‌کلمه‌ای سرعتی",
-            desc: "هیچ‌کس حق ندارد جمله بگوید! هر بازیکن در نوبتش فقط مجاز است دقیقاً یک کلمه برای توصیف یا پاسخ بگوید؛ بسیار سرعتی و چالشی."
+            desc: "هیچ بازیکنی حق ندارد جمله بگوید! هر فرد در نوبتش فقط مجاز است دقیقاً یک کلمه برای توصیف رمز یا پاسخ به سوال بگوید."
         },
         quests: {
             title: "ماموریت‌های فرعی مخفی",
-            desc: "روی کارت هر بازیکن یک مأموریت فرعی ساده و خنده‌دار نوشته می‌شود تا رفتارهایش کمی عجیب به نظر برسد و تشخیص جاسوس سخت‌تر و بامزه‌تر شود."
+            desc: "روی کارت هر بازیکن یک مأموریت فرعی ساده و خنده‌دار نوشته می‌شود تا رفتارهایش کمی عجیب شود و شک‌برانگیزتر به نظر برسد."
         },
         wager: {
             title: "سیستم شرط‌بندی روی رای",
-            desc: "بازیکنانی که در دست‌های قبل امتیاز کسب کرده‌اند، می‌توانند ۱ یا ۲ امتیاز از امتیازهای خود را روی درستی حدسشان شرط ببندند. اگر درست باشد ۲ برابر سود می‌کنند و اگر اشتباه باشد امتیاز شرط‌بندی کسر می‌شود."
+            desc: "بازیکنانی که در دست‌های قبل امتیاز دارند، می‌توانند ۱ یا ۲ امتیاز از امتیازهایشان را روی درست بودن رای خود شرط ببندند (سود ۲ برابری در صورت درستی، کسر امتیاز در صورت اشتباه)."
         },
         sudden: {
             title: "حالت حذف درجا (Sudden Death)",
-            desc: "اگر شهروندان به اشتباه به یک شهروند بی‌گناه رای دهند، بازی بلافاصله تمام شده و جاسوس‌ها پیروز کل این دست می‌شوند."
+            desc: "اگر شهروندان به اشتباه به یک فرد بی‌گناه رای دهند، بازی فوراً به پایان رسیده و جاسوس‌ها پیروز کل این دست می‌شوند."
+        },
+        bell_limit: {
+            title: "محدودیت تعداد زنگ اضطراری",
+            desc: "در حالت پیش‌فرض، تعداد دفعات به صدا درآوردن زنگ رای‌گیری نامحدود است. با فعال کردن این گزینه می‌توانید سقف مشخصی برای دفعات زنگ تعیین کنید."
         }
     };
 
@@ -612,16 +672,16 @@
     let currentWordObj = null;
     let timerInterval = null;
     let remainingSeconds = 0;
-    let maxEmergencyVotes = 2;
-    let remainingVotes = 2;
+    let isVoteLimited = false;
+    let remainingVotes = 999;
     let activeModalIndex = null;
     let selectedSuspect = null;
     let eliminatedSpyForGuess = null;
-    let turnHistory = [];
+    let pendingWagers = [];
     let roundPointsMap = {};
 
     function showScreen(id) {
-        document.querySelectorAll('.container > div').forEach(el => el.classList.add('hidden'));
+        document.querySelectorAll('.app-container > div').forEach(el => el.classList.add('hidden'));
         document.getElementById(id).classList.remove('hidden');
     }
 
@@ -634,6 +694,11 @@
 
     function closeInfoModal() {
         document.getElementById('info-modal').classList.add('hidden');
+    }
+
+    function toggleVoteLimitInput() {
+        const isLimited = document.getElementById('toggle-vote-limit').checked;
+        document.getElementById('vote-limit-box').classList.toggle('hidden', !isLimited);
     }
 
     // Local Storage Name Handling
@@ -668,20 +733,25 @@
     renderNameInputs();
 
     function confirmResetSavedNames() {
-        openConfirmModal("ریست اسامی ذخیره شده", "آیا مطمئنید می‌خواهید تمام اسامی ذخیره شده در مرورگر پاک شوند؟", () => {
+        openConfirmModal("ریست اسامی", "آیا مطمئنید می‌خواهید تمام اسامی ذخیره شده در مرورگر پاک شوند؟", () => {
             localStorage.removeItem('spy_saved_player_names');
             players = [];
             renderNameInputs();
         });
     }
 
-    // Role assignment & Fisher-Yates
+    // Setup Roles & Fisher-Yates
     function startRoleAssignment() {
         const count = parseInt(document.getElementById('setup-players-count').value);
         const spyCount = parseInt(document.getElementById('setup-spies-count').value);
         const isFoolActive = document.getElementById('toggle-fool').checked;
-        maxEmergencyVotes = parseInt(document.getElementById('setup-max-votes').value) || 2;
-        remainingVotes = maxEmergencyVotes;
+        isVoteLimited = document.getElementById('toggle-vote-limit').checked;
+        
+        if (isVoteLimited) {
+            remainingVotes = parseInt(document.getElementById('setup-max-votes').value) || 2;
+        } else {
+            remainingVotes = 999;
+        }
 
         if (spyCount >= count) {
             alert("تعداد جاسوس‌ها باید کمتر از کل بازیکنان باشد!");
@@ -697,7 +767,6 @@
         const names = Array.from(inputs).map((inp, idx) => inp.value.trim() || `بازیکن ${idx + 1}`);
         saveCurrentNames(names);
 
-        // Keep or initialize tournament data
         players = names.map(name => {
             const existing = players.find(p => p.name === name);
             return {
@@ -709,7 +778,7 @@
                 hasSeen: false,
                 sideQuest: null,
                 spyCustomHint: "",
-                stats: existing ? existing.stats : { spyWins: 0, citizenWins: 0, timesEliminated: 0, foolCount: 0, betsWon: 0, betsLost: 0 }
+                stats: existing ? existing.stats : { spyWins: 0, citizenWins: 0, timesEliminated: 0 }
             };
         });
 
@@ -720,13 +789,11 @@
         roundPointsMap = {};
         players.forEach(p => roundPointsMap[p.name] = 0);
 
-        // Pick Random Category & Word
         const catKeys = Object.keys(mockCategories);
         currentCategory = catKeys[Math.floor(Math.random() * catKeys.length)];
         const wordList = mockCategories[currentCategory];
         currentWordObj = wordList[Math.floor(Math.random() * wordList.length)];
 
-        // Reset state
         players.forEach(p => {
             p.isSpy = false;
             p.isFool = false;
@@ -736,25 +803,21 @@
             p.spyCustomHint = "";
         });
 
-        // Fisher-Yates Shuffle
+        // Fisher-Yates
         const indices = players.map((_, i) => i);
         for (let i = indices.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
             [indices[i], indices[j]] = [indices[j], indices[i]];
         }
 
-        // Assign Spies
         for (let i = 0; i < spyCount; i++) {
             players[indices[i]].isSpy = true;
         }
 
-        // Assign Fool (if enabled)
         if (isFoolActive && indices.length > spyCount) {
             players[indices[spyCount]].isFool = true;
-            players[indices[spyCount]].stats.foolCount++;
         }
 
-        // Configure Hint for Spies
         const hintType = document.getElementById('setup-hint-type').value;
         players.filter(p => p.isSpy).forEach(spy => {
             let actualHint = hintType;
@@ -766,10 +829,9 @@
             if (actualHint === 'none') spy.spyCustomHint = "بدون راهنما! (فقط گوش دهید و وانمود کنید)";
             else if (actualHint === 'category') spy.spyCustomHint = `دسته‌بندی موضوع: ${currentCategory}`;
             else if (actualHint === 'first_letter') spy.spyCustomHint = `حرف اول کلمه اصلی: «${currentWordObj.word.charAt(0)}»`;
-            else if (actualHint === 'related_word') spy.spyCustomHint = `کلمه مرتبط: ${currentWordObj.hint}`;
+            else if (actualHint === 'related_word') spy.spyCustomHint = `کلمه مرتبط تستی: ${currentWordObj.hint}`;
         });
 
-        // Assign Side Quests (if enabled)
         const questsEnabled = document.getElementById('toggle-quests').checked;
         if (questsEnabled) {
             players.forEach(p => {
@@ -777,7 +839,6 @@
             });
         }
 
-        turnHistory = [];
         renderRevealScreen();
         showScreen('screen-reveal');
     }
@@ -815,7 +876,6 @@
             badge.textContent = '🕵️ شما جاسوس هستید!';
             content.textContent = player.spyCustomHint;
         } else if (player.isFool) {
-            // Undercover sees their word as normal citizen
             badge.className = 'role-badge role-citizen';
             badge.textContent = '👤 شما شهروند هستید';
             content.textContent = currentWordObj.foolWord;
@@ -841,7 +901,7 @@
         renderRevealScreen();
     }
 
-    // Timer & Discussion
+    // Timer & Game Loop
     function startTimerScreen() {
         const minutes = parseInt(document.getElementById('setup-timer').value) || 4;
         remainingSeconds = minutes * 60;
@@ -897,20 +957,27 @@
     }
 
     function updateVotesUI() {
-        document.getElementById('votes-remaining-badge').textContent = `فرصت زنگ اضطراری باقی‌مانده: ${remainingVotes}`;
+        const badge = document.getElementById('votes-remaining-badge');
         const voteBtn = document.getElementById('btn-emergency-vote');
-        if (remainingVotes <= 0) {
-            voteBtn.disabled = true;
-            voteBtn.style.opacity = '0.5';
-        } else {
+        if (!isVoteLimited) {
+            badge.textContent = `زنگ اضطراری: نامحدود`;
             voteBtn.disabled = false;
             voteBtn.style.opacity = '1';
+        } else {
+            badge.textContent = `فرصت زنگ باقی‌مانده: ${remainingVotes}`;
+            if (remainingVotes <= 0) {
+                voteBtn.disabled = true;
+                voteBtn.style.opacity = '0.5';
+            } else {
+                voteBtn.disabled = false;
+                voteBtn.style.opacity = '1';
+            }
         }
     }
 
     function openVotingScreen(isTimeOut = false) {
         clearInterval(timerInterval);
-        if (!isTimeOut) {
+        if (!isTimeOut && isVoteLimited) {
             if (remainingVotes <= 0) return;
             remainingVotes--;
             updateVotesUI();
@@ -932,6 +999,7 @@
     }
 
     function resumeTimer() {
+        document.getElementById('innocent-notice-modal').classList.add('hidden');
         showScreen('screen-timer');
         clearInterval(timerInterval);
         timerInterval = setInterval(() => {
@@ -964,10 +1032,10 @@
 
         eligible.forEach(p => {
             const div = document.createElement('div');
-            div.className = 'toggle-box';
+            div.className = 'toggle-item';
             div.innerHTML = `
                 <div>
-                    <strong>${p.name}</strong> (موجودی: ${p.score} امتیاز)
+                    <strong>${p.name}</strong> (موجودی: ${p.score})
                 </div>
                 <select class="input-control wager-select" data-player="${p.name}" style="width:auto; padding:6px 10px;">
                     <option value="0">بدون شرط</option>
@@ -989,22 +1057,21 @@
     }
 
     function finalizeElimination(wagerBets) {
+        pendingWagers = wagerBets;
         const player = selectedSuspect;
         player.isAlive = false;
         player.stats.timesEliminated++;
 
         // Process Wagers
-        wagerBets.forEach(bet => {
+        pendingWagers.forEach(bet => {
             const voter = players.find(p => p.name === bet.name);
             if (player.isSpy) {
                 const winAmt = bet.amount * 2;
                 voter.score += winAmt;
                 roundPointsMap[voter.name] += winAmt;
-                voter.stats.betsWon++;
             } else {
                 voter.score -= bet.amount;
                 roundPointsMap[voter.name] -= bet.amount;
-                voter.stats.betsLost++;
             }
         });
 
@@ -1024,18 +1091,18 @@
         const descEl = document.getElementById('result-desc');
         const nextBtn = document.getElementById('btn-next-round');
 
-        // Spies get +1 for wrong elimination
+        // Secretly grant +1 point to Spies (NEVER SHOW SCORES IF CONTINUING)
         players.filter(p => p.isSpy).forEach(p => {
             p.score += 1;
             roundPointsMap[p.name] += 1;
         });
 
-        let foolNote = player.isFool ? `<br><span style="color:var(--accent-purple);">🎭 او شهروند ساده‌لوح بود (کلمه‌اش «${currentWordObj.foolWord}» بود)!</span>` : '';
+        let foolNote = player.isFool ? `<br><span style="color:var(--brand-purple);">🎭 او شهروند ساده‌لوح بود (کلمه‌اش «${currentWordObj.foolWord}» بود)!</span>` : '';
 
         if (isSudden) {
             titleEl.textContent = '😈 پیروزی جاسوس‌ها!';
-            titleEl.style.color = 'var(--accent-red)';
-            descEl.innerHTML = `<strong>${player.name}</strong> بی‌گناه بود!${foolNote}<br>به دلیل حذف درجا، جاسوس‌ها پیروز این دور شدند.<br>کلمه اصلی: <span style="color:var(--accent-amber)">${currentWordObj.word}</span>`;
+            titleEl.style.color = 'var(--brand-rose)';
+            descEl.innerHTML = `<strong>${player.name}</strong> بی‌گناه بود!${foolNote}<br>به دلیل حالت حذف درجا، جاسوس‌ها پیروز این دور شدند.<br>کلمه اصلی: <span style="color:var(--brand-amber)">${currentWordObj.word}</span>`;
             players.filter(p => p.isSpy).forEach(p => {
                 p.score += 2;
                 roundPointsMap[p.name] += 2;
@@ -1050,8 +1117,8 @@
 
             if (aliveSpies >= aliveCitizens) {
                 titleEl.textContent = '😈 پیروزی جاسوس‌ها!';
-                titleEl.style.color = 'var(--accent-red)';
-                descEl.innerHTML = `تعداد شهروندان به پایان رسید! جاسوس‌ها برنده شدند.${foolNote}<br>کلمه اصلی: <span style="color:var(--accent-amber)">${currentWordObj.word}</span>`;
+                titleEl.style.color = 'var(--brand-rose)';
+                descEl.innerHTML = `تعداد شهروندان به پایان رسید و جاسوس‌ها پیروز شدند!${foolNote}<br>کلمه اصلی: <span style="color:var(--brand-amber)">${currentWordObj.word}</span>`;
                 players.filter(p => p.isSpy).forEach(p => {
                     p.score += 2;
                     roundPointsMap[p.name] += 2;
@@ -1061,13 +1128,13 @@
                 renderRoundLeaderboard();
                 showScreen('screen-round-result');
             } else {
-                titleEl.textContent = '⚠️ اشتباه بود!';
-                titleEl.style.color = 'var(--accent-amber)';
-                descEl.innerHTML = `<strong>${player.name}</strong> جاسوس نبود و اخراج شد!${foolNote}<br>+۱ امتیاز به جاسوس‌ها داده شد. بازی ادامه دارد...`;
-                nextBtn.classList.add('hidden');
-                renderRoundLeaderboard();
-                showScreen('screen-round-result');
-                setTimeout(() => { resumeTimer(); }, 3500);
+                // Game continues without leaking roles or scores
+                const noticeText = document.getElementById('innocent-notice-text');
+                noticeText.innerHTML = `<strong>${player.name}</strong> جاسوس نبود و از بازی اخراج شد!`;
+                document.getElementById('innocent-notice-modal').classList.remove('hidden');
+                setTimeout(() => {
+                    resumeTimer();
+                }, 3000);
             }
         }
     }
@@ -1081,9 +1148,9 @@
             eliminatedSpyForGuess.score += 3;
             roundPointsMap[eliminatedSpyForGuess.name] += 3;
             eliminatedSpyForGuess.stats.spyWins++;
-            titleEl.textContent = '🎯 پیروزی شگفت‌انگیز جاسوس!';
-            titleEl.style.color = 'var(--accent-purple)';
-            descEl.innerHTML = `<strong>${eliminatedSpyForGuess.name}</strong> کلمه اصلی (<span style="color:var(--accent-amber)">${currentWordObj.word}</span>) را حدس زد و برنده شد!<br>+۳ امتیاز به جاسوس تعلق گرفت.`;
+            titleEl.textContent = '🎯 پیروزی فوق‌العاده جاسوس!';
+            titleEl.style.color = 'var(--brand-purple)';
+            descEl.innerHTML = `<strong>${eliminatedSpyForGuess.name}</strong> کلمه اصلی (<span style="color:var(--brand-amber)">${currentWordObj.word}</span>) را درست حدس زد و برنده شد!<br>+۳ امتیاز به جاسوس رسید.`;
         } else {
             players.filter(p => !p.isSpy).forEach(p => {
                 p.score += 2;
@@ -1091,8 +1158,8 @@
                 p.stats.citizenWins++;
             });
             titleEl.textContent = '🎉 پیروزی شهروندان!';
-            titleEl.style.color = 'var(--accent-green)';
-            descEl.innerHTML = `جاسوس نتوانست کلمه را حدس بزند!<br>کلمه اصلی: <span style="color:var(--accent-amber)">${currentWordObj.word}</span><br>+۲ امتیاز به تمام شهروندان رسید.`;
+            titleEl.style.color = 'var(--brand-emerald)';
+            descEl.innerHTML = `جاسوس نتوانست کلمه را حدس بزند!<br>کلمه اصلی: <span style="color:var(--brand-amber)">${currentWordObj.word}</span><br>+۲ امتیاز به شهروندان رسید.`;
         }
 
         document.getElementById('btn-next-round').classList.remove('hidden');
@@ -1111,8 +1178,8 @@
             const ptsSign = roundPts > 0 ? `+${roundPts}` : roundPts;
             tr.innerHTML = `
                 <td>${p.name}</td>
-                <td style="color:${roundPts > 0 ? 'var(--accent-green)' : (roundPts < 0 ? 'var(--accent-red)' : 'var(--text-muted)')}; font-weight:bold;">${ptsSign}</td>
-                <td style="color:var(--accent-amber); font-weight:bold;">${p.score}</td>
+                <td style="color:${roundPts > 0 ? 'var(--brand-emerald)' : (roundPts < 0 ? 'var(--brand-rose)' : 'var(--text-secondary)')}; font-weight:bold;">${ptsSign}</td>
+                <td style="color:var(--brand-amber); font-weight:bold;">${p.score}</td>
             `;
             tbody.appendChild(tr);
         });
@@ -1125,7 +1192,7 @@
     }
 
     function requestEndGameConfirm() {
-        openConfirmModal("پایان مسابقه", "آیا مطمئن هستید که می‌خواهید مسابقه تمام شود و کارنامه نهایی را ببینید؟", () => {
+        openConfirmModal("پایان مسابقه", "آیا مطمئن هستید که می‌خواهید مسابقه تمام شود و جدول رده‌بندی کلی را ببینید؟", () => {
             clearInterval(timerInterval);
             showFinalStatsScreen();
         });
@@ -1143,12 +1210,12 @@
             tr.innerHTML = `
                 <td>${medal}${p.name}</td>
                 <td>${p.stats.citizenWins + p.stats.spyWins} برد</td>
-                <td style="color:var(--accent-amber); font-weight:bold; font-size:1rem;">${p.score}</td>
+                <td style="color:var(--brand-amber); font-weight:bold; font-size:1rem;">${p.score}</td>
             `;
             tbody.appendChild(tr);
         });
 
-        // Generate Accolades
+        // Accolades
         const accolades = document.getElementById('accolades-container');
         accolades.innerHTML = '';
 
@@ -1161,8 +1228,8 @@
                 <div class="accolade-card">
                     <div class="accolade-icon">🕵️</div>
                     <div>
-                        <div style="font-weight:bold; color:var(--accent-red);">زیرک‌ترین جاسوس: ${topSpy.name}</div>
-                        <div style="font-size:0.75rem; color:var(--text-muted);">${topSpy.stats.spyWins} بار فریب کامل شهروندان</div>
+                        <div style="font-weight:bold; color:var(--brand-rose);">زیرک‌ترین جاسوس: ${topSpy.name}</div>
+                        <div style="font-size:0.75rem; color:var(--text-secondary);">${topSpy.stats.spyWins} بار فریب کامل شهروندان</div>
                     </div>
                 </div>
             `;
@@ -1173,8 +1240,8 @@
                 <div class="accolade-card">
                     <div class="accolade-icon">🔍</div>
                     <div>
-                        <div style="font-weight:bold; color:var(--accent-green);">کارآگاه تیزبین: ${topCitizen.name}</div>
-                        <div style="font-size:0.75rem; color:var(--text-muted);">${topCitizen.stats.citizenWins} برد موفق در لباس شهروند</div>
+                        <div style="font-weight:bold; color:var(--brand-emerald);">کارآگاه تیزبین: ${topCitizen.name}</div>
+                        <div style="font-size:0.75rem; color:var(--text-secondary);">${topCitizen.stats.citizenWins} برد موفق در لباس شهروند</div>
                     </div>
                 </div>
             `;
@@ -1185,8 +1252,8 @@
                 <div class="accolade-card">
                     <div class="accolade-icon">🪓</div>
                     <div>
-                        <div style="font-weight:bold; color:var(--accent-amber);">قربانی‌ترین بازیکن: ${martyr.name}</div>
-                        <div style="font-size:0.75rem; color:var(--text-muted);">${martyr.stats.timesEliminated} بار حذف و اخراج از بازی</div>
+                        <div style="font-weight:bold; color:var(--brand-amber);">قربانی‌ترین بازیکن: ${martyr.name}</div>
+                        <div style="font-size:0.75rem; color:var(--text-secondary);">${martyr.stats.timesEliminated} بار حذف و اخراج از بازی</div>
                     </div>
                 </div>
             `;
@@ -1195,7 +1262,7 @@
         showScreen('screen-leaderboard');
     }
 
-    // Confirmation Modal Helper
+    // Modal Confirmation Helper
     let confirmCallback = null;
     function openConfirmModal(title, text, onConfirm) {
         document.getElementById('confirm-modal-title').textContent = title;
