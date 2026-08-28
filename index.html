@@ -3,19 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>بازی جاسوس | Spy Game</title>
+    <title>بازی جاسوس پیشرفته | Ultimate Spy</title>
     <style>
         :root {
-            --bg: #0f172a;
-            --card-bg: #1e293b;
-            --card-border: #334155;
+            --bg-gradient: radial-gradient(circle at 50% 0%, #1e1b4b 0%, #0f172a 60%, #020617 100%);
+            --card-bg: rgba(30, 41, 59, 0.75);
+            --card-border: rgba(255, 255, 255, 0.12);
             --text-main: #f8fafc;
             --text-muted: #94a3b8;
             --accent-green: #10b981;
-            --accent-blue: #3b82f6;
-            --accent-red: #ef4444;
+            --accent-blue: #38bdf8;
+            --accent-red: #f43f5e;
             --accent-amber: #f59e0b;
-            --accent-purple: #8b5cf6;
+            --accent-purple: #a855f7;
+            --accent-cyan: #06b6d4;
         }
 
         * {
@@ -27,7 +28,7 @@
         }
 
         body {
-            background-color: var(--bg);
+            background: var(--bg-gradient);
             color: var(--text-main);
             min-height: 100vh;
             display: flex;
@@ -38,373 +39,621 @@
 
         .container {
             width: 100%;
-            max-width: 480px;
-            background-color: var(--card-bg);
+            max-width: 500px;
+            background: var(--card-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
             border: 1px solid var(--card-border);
-            border-radius: 20px;
+            border-radius: 24px;
             padding: 24px;
-            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
+            box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.8), inset 0 1px 0 rgba(255, 255, 255, 0.15);
         }
 
-        h1, h2, h3 {
+        h1, h2, h3, h4 {
             text-align: center;
-            margin-bottom: 16px;
+            margin-bottom: 12px;
+            font-weight: 800;
+        }
+
+        h1 {
+            background: linear-gradient(135deg, #38bdf8, #a855f7);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-size: 1.85rem;
         }
 
         p {
             color: var(--text-muted);
             text-align: center;
-            font-size: 0.95rem;
-            margin-bottom: 20px;
+            font-size: 0.9rem;
+            margin-bottom: 16px;
             line-height: 1.6;
         }
 
-        .hidden {
-            display: none !important;
-        }
+        .hidden { display: none !important; }
 
         /* Buttons */
         .btn {
             width: 100%;
-            padding: 14px;
+            padding: 13px 16px;
             border: none;
-            border-radius: 12px;
-            font-size: 1rem;
-            font-weight: bold;
+            border-radius: 14px;
+            font-size: 0.95rem;
+            font-weight: 700;
             color: white;
             cursor: pointer;
-            transition: transform 0.1s, filter 0.2s;
+            transition: all 0.2s ease;
             margin-top: 10px;
             display: flex;
             justify-content: center;
             align-items: center;
             gap: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
         }
 
-        .btn:active {
-            transform: scale(0.98);
+        .btn:active { transform: scale(0.97); }
+
+        .btn-green { background: linear-gradient(135deg, #10b981, #059669); }
+        .btn-blue { background: linear-gradient(135deg, #38bdf8, #2563eb); }
+        .btn-red { background: linear-gradient(135deg, #f43f5e, #be123c); }
+        .btn-amber { background: linear-gradient(135deg, #f59e0b, #d97706); }
+        .btn-purple { background: linear-gradient(135deg, #a855f7, #7c3aed); }
+        .btn-cyan { background: linear-gradient(135deg, #06b6d4, #0284c7); }
+        .btn-outline { 
+            background: rgba(255, 255, 255, 0.05); 
+            border: 1px solid var(--card-border); 
+            color: var(--text-muted); 
+            box-shadow: none;
         }
+        .btn-outline:hover { background: rgba(255, 255, 255, 0.1); color: var(--text-main); }
+        .btn-sm { padding: 8px 12px; font-size: 0.8rem; border-radius: 10px; width: auto; margin: 0; }
 
-        .btn-green { background-color: var(--accent-green); }
-        .btn-blue { background-color: var(--accent-blue); }
-        .btn-red { background-color: var(--accent-red); }
-        .btn-amber { background-color: var(--accent-amber); }
-        .btn-purple { background-color: var(--accent-purple); }
-        .btn-outline { background: transparent; border: 1px solid var(--card-border); color: var(--text-muted); }
-
-        /* Form Inputs */
-        .input-group {
-            margin-bottom: 14px;
-        }
-
+        /* Form Controls */
+        .input-group { margin-bottom: 12px; }
         .input-group label {
-            display: block;
-            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 0.82rem;
             color: var(--text-muted);
             margin-bottom: 6px;
+            font-weight: 500;
         }
 
         .input-control {
             width: 100%;
-            padding: 12px;
-            background: #0b1120;
+            padding: 11px 14px;
+            background: rgba(15, 23, 42, 0.7);
             border: 1px solid var(--card-border);
-            border-radius: 10px;
+            border-radius: 12px;
             color: white;
-            font-size: 1rem;
+            font-size: 0.95rem;
             outline: none;
+            transition: border-color 0.2s;
         }
+        .input-control:focus { border-color: var(--accent-blue); }
 
-        .input-control:focus {
-            border-color: var(--accent-blue);
-        }
-
-        /* Toggle switch */
-        .toggle-container {
-            display: flex;
+        .info-btn {
+            background: rgba(56, 189, 248, 0.15);
+            color: var(--accent-blue);
+            border: 1px solid rgba(56, 189, 248, 0.3);
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            font-size: 0.75rem;
+            display: inline-flex;
+            justify-content: center;
             align-items: center;
-            justify-content: space-between;
-            background: #0b1120;
-            padding: 12px;
-            border-radius: 10px;
-            margin-bottom: 16px;
-            border: 1px solid var(--card-border);
+            cursor: pointer;
+            font-weight: bold;
+            margin-right: 6px;
         }
 
-        /* Player Grid */
-        .player-grid {
+        .toggle-box {
+            background: rgba(15, 23, 42, 0.6);
+            padding: 10px 14px;
+            border-radius: 12px;
+            border: 1px solid var(--card-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .grid-2 {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 10px;
-            margin-bottom: 16px;
         }
 
         .player-card {
-            background: #0b1120;
+            background: rgba(15, 23, 42, 0.6);
             border: 1px solid var(--card-border);
-            padding: 14px;
-            border-radius: 12px;
+            padding: 14px 10px;
+            border-radius: 14px;
             text-align: center;
             cursor: pointer;
-            font-weight: 500;
+            font-weight: 600;
+            transition: all 0.2s;
         }
+        .player-card:hover { border-color: var(--accent-blue); transform: translateY(-2px); }
+        .player-card.disabled { opacity: 0.35; cursor: not-allowed; pointer-events: none; filter: grayscale(1); }
 
-        .player-card.disabled {
-            opacity: 0.35;
-            cursor: not-allowed;
-            pointer-events: none;
-            border-color: transparent;
-        }
-
-        /* Timer */
-        .timer-display {
-            font-size: 3.8rem;
-            font-weight: 900;
+        /* Timer Box */
+        .timer-container {
+            background: rgba(15, 23, 42, 0.8);
+            border: 1px solid var(--card-border);
+            border-radius: 20px;
+            padding: 16px;
+            margin: 14px 0;
             text-align: center;
-            margin: 20px 0;
-            font-variant-numeric: tabular-nums;
+        }
+
+        .timer-display {
+            font-size: 3.5rem;
+            font-weight: 900;
+            letter-spacing: 2px;
             color: var(--accent-blue);
+            font-variant-numeric: tabular-nums;
             transition: color 0.3s;
         }
+        .timer-warning { color: var(--accent-amber); animation: pulse 1s infinite; }
+        .timer-danger { color: var(--accent-red); animation: pulse 0.5s infinite; }
 
-        .timer-warning {
+        @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.03); } }
+
+        /* Assistant & Banner */
+        .assistant-box {
+            background: rgba(168, 85, 247, 0.1);
+            border: 1px solid rgba(168, 85, 247, 0.3);
+            border-radius: 14px;
+            padding: 12px;
+            margin-bottom: 12px;
+            text-align: center;
+        }
+
+        .banner-mode {
+            background: rgba(245, 158, 11, 0.15);
+            border: 1px dashed var(--accent-amber);
+            border-radius: 12px;
+            padding: 10px;
+            font-size: 0.85rem;
             color: var(--accent-amber);
-            animation: pulse 1s infinite;
+            text-align: center;
+            margin-bottom: 12px;
+            font-weight: 600;
         }
 
-        .timer-danger {
-            color: var(--accent-red);
-            animation: pulse 0.5s infinite;
-        }
-
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.04); }
-        }
-
-        /* Modal */
+        /* Modals */
         .modal-overlay {
             position: fixed;
             inset: 0;
-            background: rgba(0, 0, 0, 0.85);
+            background: rgba(2, 6, 23, 0.88);
+            backdrop-filter: blur(8px);
             display: flex;
             justify-content: center;
             align-items: center;
             padding: 20px;
-            z-index: 100;
+            z-index: 1000;
         }
 
         .modal-card {
-            background: var(--card-bg);
+            background: #1e293b;
             border: 1px solid var(--card-border);
-            border-radius: 16px;
-            padding: 24px;
+            border-radius: 20px;
+            padding: 22px;
             width: 100%;
-            max-width: 380px;
+            max-width: 400px;
             text-align: center;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.85);
         }
 
         .role-badge {
             display: inline-block;
-            padding: 6px 16px;
-            border-radius: 20px;
+            padding: 6px 18px;
+            border-radius: 30px;
             font-size: 0.85rem;
             margin-bottom: 12px;
             font-weight: bold;
         }
-
-        .role-citizen { background: rgba(16, 185, 129, 0.2); color: var(--accent-green); }
-        .role-spy { background: rgba(239, 68, 68, 0.2); color: var(--accent-red); }
+        .role-citizen { background: rgba(16, 185, 129, 0.15); color: var(--accent-green); border: 1px solid rgba(16, 185, 129, 0.3); }
+        .role-spy { background: rgba(244, 63, 94, 0.15); color: var(--accent-red); border: 1px solid rgba(244, 63, 94, 0.3); }
 
         .secret-box {
             background: #0b1120;
-            padding: 16px;
+            padding: 14px;
+            border-radius: 14px;
+            margin: 14px 0;
+            border: 1px dashed rgba(255, 255, 255, 0.15);
+        }
+        .secret-word { font-size: 1.3rem; font-weight: 800; color: var(--accent-amber); }
+
+        .quest-box {
+            background: rgba(56, 189, 248, 0.08);
+            border: 1px solid rgba(56, 189, 248, 0.2);
             border-radius: 12px;
-            margin: 16px 0;
-            border: 1px dashed var(--card-border);
+            padding: 10px;
+            margin-top: 10px;
+            font-size: 0.82rem;
+            color: var(--accent-blue);
+            text-align: right;
         }
 
-        .secret-word {
-            font-size: 1.4rem;
-            font-weight: bold;
-            color: var(--accent-amber);
+        /* Leaderboard & Mini Tables */
+        .score-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 14px 0;
+            font-size: 0.9rem;
         }
+        .score-table th { color: var(--text-muted); font-size: 0.78rem; padding: 8px; border-bottom: 1px solid var(--card-border); }
+        .score-table td { padding: 10px 8px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); text-align: center; }
+        .score-table td:first-child { text-align: right; font-weight: 600; }
 
-        /* Leaderboard */
-        .leaderboard-list {
-            list-style: none;
-            margin-bottom: 20px;
-        }
-
-        .leaderboard-item {
+        .accolade-card {
+            background: rgba(15, 23, 42, 0.7);
+            border: 1px solid var(--card-border);
+            border-radius: 14px;
+            padding: 12px;
+            margin-bottom: 8px;
             display: flex;
             align-items: center;
-            justify-content: space-between;
-            padding: 12px;
-            background: #0b1120;
-            border-radius: 10px;
-            margin-bottom: 8px;
-            border: 1px solid var(--card-border);
+            gap: 12px;
+            text-align: right;
         }
-
-        .rank-medal {
-            font-size: 1.3rem;
-            margin-left: 8px;
-        }
+        .accolade-icon { font-size: 1.8rem; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <!-- 1. Welcome Screen -->
     <div id="screen-welcome">
-        <h1>🕵️ بازی جاسوس</h1>
-        <p>یک بازی معمایی، بلوف‌زنی و هیجان‌انگیز دورهمی. جاسوس‌ها را شناسایی کنید قبل از اینکه زمان تمام شود!</p>
-        <button class="btn btn-green" onclick="showScreen('screen-setup')">شروع بازی جدید</button>
+        <h1>🕵️ بازی جاسوس حرفه‌ای</h1>
+        <p>شناسایی افراد مرموز، چالش‌های بلوف‌زنی، نقش‌های غیرمنتظره و جدول رده‌بندی مسابقات دورهمی!</p>
+        <button class="btn btn-green" onclick="showScreen('screen-setup')">ورود به بخش تنظیمات مسابقه ⚙️</button>
     </div>
 
-    <!-- 2. Setup Screen -->
     <div id="screen-setup" class="hidden">
-        <h2>تنظیمات بازی</h2>
-        <div class="input-group">
-            <label>تعداد کل بازیکنان:</label>
-            <input type="number" id="setup-players-count" class="input-control" value="4" min="3" max="20" onchange="renderNameInputs()">
-        </div>
-        <div class="input-group">
-            <label>تعداد جاسوس‌ها:</label>
-            <input type="number" id="setup-spies-count" class="input-control" value="1" min="1" max="5">
-        </div>
-        <div class="input-group">
-            <label>زمان گفتگو (دقیقه):</label>
-            <input type="number" id="setup-timer" class="input-control" value="4" min="1" max="15">
-        </div>
+        <h2>تنظیمات مسابقه</h2>
         
-        <div class="toggle-container">
-            <div>
-                <div style="font-weight: bold; font-size: 0.9rem;">حذف آنی بازی</div>
-                <div style="font-size: 0.75rem; color: var(--text-muted);">در صورت حذف اشتباه شهروند، بازی خاتمه یابد؟</div>
+        <div class="grid-2">
+            <div class="input-group">
+                <label>تعداد بازیکنان:</label>
+                <input type="number" id="setup-players-count" class="input-control" value="4" min="3" max="20" onchange="renderNameInputs()">
             </div>
-            <input type="checkbox" id="setup-sudden-death" style="transform: scale(1.3); cursor: pointer;">
+            <div class="input-group">
+                <label>تعداد جاسوس‌ها:</label>
+                <input type="number" id="setup-spies-count" class="input-control" value="1" min="1" max="5">
+            </div>
         </div>
 
-        <div class="input-group">
-            <label>نام بازیکنان:</label>
+        <div class="grid-2">
+            <div class="input-group">
+                <label>زمان گفتگو (دقیقه):</label>
+                <input type="number" id="setup-timer" class="input-control" value="4" min="1" max="15">
+            </div>
+            <div class="input-group">
+                <label>فرصت زنگ اضطراری:</label>
+                <input type="number" id="setup-max-votes" class="input-control" value="2" min="1" max="5">
+            </div>
+        </div>
+
+        <div class="toggle-box">
+            <div style="display:flex; align-items:center;">
+                <button class="info-btn" onclick="showInfo('fool')">ℹ</button>
+                <span style="font-size:0.85rem; font-weight:600;">شهروند ساده‌لوح (Undercover)</span>
+            </div>
+            <input type="checkbox" id="toggle-fool" style="transform:scale(1.2); cursor:pointer;">
+        </div>
+
+        <div class="toggle-box">
+            <div style="display:flex; align-items:center;">
+                <button class="info-btn" onclick="showInfo('director')">ℹ</button>
+                <span style="font-size:0.85rem; font-weight:600;">دستیار هوشمند نوبت سوال‌پرسیدن</span>
+            </div>
+            <input type="checkbox" id="toggle-director" checked style="transform:scale(1.2); cursor:pointer;">
+        </div>
+
+        <div class="toggle-box">
+            <div style="display:flex; align-items:center;">
+                <button class="info-btn" onclick="showInfo('oneword')">ℹ</button>
+                <span style="font-size:0.85rem; font-weight:600;">مود تک‌کلمه‌ای سرعتی</span>
+            </div>
+            <input type="checkbox" id="toggle-oneword" style="transform:scale(1.2); cursor:pointer;">
+        </div>
+
+        <div class="toggle-box">
+            <div style="display:flex; align-items:center;">
+                <button class="info-btn" onclick="showInfo('quests')">ℹ</button>
+                <span style="font-size:0.85rem; font-weight:600;">ماموریت‌های فرعی مخفی</span>
+            </div>
+            <input type="checkbox" id="toggle-quests" checked style="transform:scale(1.2); cursor:pointer;">
+        </div>
+
+        <div class="toggle-box">
+            <div style="display:flex; align-items:center;">
+                <button class="info-btn" onclick="showInfo('wager')">ℹ</button>
+                <span style="font-size:0.85rem; font-weight:600;">سیستم شرط‌بندی روی رای</span>
+            </div>
+            <input type="checkbox" id="toggle-wager" checked style="transform:scale(1.2); cursor:pointer;">
+        </div>
+
+        <div class="toggle-box">
+            <div style="display:flex; align-items:center;">
+                <button class="info-btn" onclick="showInfo('sudden')">ℹ</button>
+                <span style="font-size:0.85rem; font-weight:600;">حالت حذف درجا (Sudden Death)</span>
+            </div>
+            <input type="checkbox" id="toggle-sudden" style="transform:scale(1.2); cursor:pointer;">
+        </div>
+
+        <div class="input-group" style="margin-top:10px;">
+            <label>نوع راهنمای جاسوس:</label>
+            <select id="setup-hint-type" class="input-control">
+                <option value="category">نام دسته‌بندی موضوعی</option>
+                <option value="first_letter">حرف اول کلمه اصلی</option>
+                <option value="related_word">کلمه مرتبط / مترادف (تست)</option>
+                <option value="random">تصادفی برای هر جاسوس</option>
+                <option value="none">بدون راهنما (چالشی‌ترین حالت)</option>
+            </select>
+        </div>
+
+        <div class="input-group" style="margin-top: 14px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+                <label style="margin:0;">اسامی بازیکنان:</label>
+                <button class="btn btn-outline btn-sm" onclick="confirmResetSavedNames()">🗑️ ریست اسامی ذخیره</button>
+            </div>
             <div id="name-inputs-container"></div>
         </div>
 
-        <button class="btn btn-blue" onclick="startRoleAssignment()">تایید و تقسیم نقش‌ها</button>
+        <button class="btn btn-blue" onclick="startRoleAssignment()">شروع مسابقه و پخش نقش‌ها 🚀</button>
         <button class="btn btn-outline" onclick="showScreen('screen-welcome')">بازگشت</button>
     </div>
 
-    <!-- 3. Reveal Screen -->
     <div id="screen-reveal" class="hidden">
         <h2>مشاهده کارت‌ها</h2>
-        <p>گوشی را دست‌به‌دست بچرخانید. هر شخص فقط باید روی اسم خودش بزند و نقشش را مخفیانه ببیند.</p>
-        <div id="reveal-grid" class="player-grid"></div>
-        <button id="btn-start-discussion" class="btn btn-green hidden" onclick="startTimerScreen()">همه دیدند؛ شروع زمان گفتگو</button>
+        <p>گوشی را دست‌به‌دست کنید. هرکس فقط روی اسم خودش بزند و نقشش را حفظ کند.</p>
+        <div id="reveal-grid" class="grid-2"></div>
+        <button id="btn-start-discussion" class="btn btn-green hidden" onclick="startTimerScreen()">همه دیدند؛ شروع تایمر بازی ⏳</button>
     </div>
 
-    <!-- 4. Timer / Game Screen -->
     <div id="screen-timer" class="hidden">
-        <h3>زمان گفت‌وگو و مذاکره</h3>
-        <p>سوالات زیرکانه بپرسید و رفتار بقیه را زیر نظر بگیرید.</p>
-        <div id="timer-text" class="timer-display">00:00</div>
-        
-        <button class="btn btn-red" onclick="openVotingScreen()">🛑 اعلام رای‌گیری و حدس جاسوس</button>
-        <button class="btn btn-outline" onclick="confirmEndGame()">پایان کل دست‌ها و مشاهده جدول</button>
-    </div>
-
-    <!-- 5. Voting Screen -->
-    <div id="screen-vote" class="hidden">
-        <h2>رای‌گیری اخراج</h2>
-        <p>با مشورت هم به توافق برسید و بازیکنی که بیشترین رای را آورده انتخاب کنید:</p>
-        <div id="vote-grid" class="player-grid"></div>
-        <button class="btn btn-outline" onclick="resumeTimer()">انصراف و ادامه گفتگو</button>
-    </div>
-
-    <!-- 6. Round Result Screen -->
-    <div id="screen-round-result" class="hidden">
-        <h2 id="result-title">نتیجه دور</h2>
-        <div class="secret-box">
-            <div id="result-desc" style="font-size: 1.1rem; line-height: 1.6;"></div>
+        <div id="oneword-banner" class="banner-mode hidden">
+            ⚡ مود تک‌کلمه‌ای فعال است: در هر نوبت فقط یک کلمه بگویید!
         </div>
-        <button id="btn-next-round" class="btn btn-green" onclick="prepareNextRound()">دور بعدی با همین بازیکنان</button>
-        <button class="btn btn-purple" onclick="showLeaderboard()">مشاهده جدول امتیازات نهایی</button>
+
+        <div id="director-box" class="assistant-box hidden">
+            <div style="font-size:0.75rem; color:var(--accent-purple); font-weight:bold; margin-bottom:4px;">🎯 نوبت سوال پیشنهادی:</div>
+            <div id="director-text" style="font-weight:700; font-size:0.95rem;">-</div>
+            <button class="btn btn-outline btn-sm" style="margin-top:6px; display:inline-block;" onclick="generateNextQuestionPair()">پیشنهاد نوبت بعدی 🔄</button>
+        </div>
+
+        <div class="timer-container">
+            <div id="timer-text" class="timer-display">00:00</div>
+            <div id="votes-remaining-badge" style="font-size: 0.78rem; color: var(--text-muted); margin-top: 6px;">فرصت زنگ اضطراری باقی‌مانده: ۲</div>
+        </div>
+
+        <button id="btn-emergency-vote" class="btn btn-red" onclick="openVotingScreen()">🚨 اعلام زنگ اضطراری (رای‌گیری)</button>
+        <button class="btn btn-outline" onclick="requestEndGameConfirm()">پایان کل مسابقه و مشاهده آمار نهایی 🏆</button>
     </div>
 
-    <!-- 7. Leaderboard Screen -->
+    <div id="screen-vote" class="hidden">
+        <h2>رای‌گیری اخراج متهم</h2>
+        <p>فردی که به نظر جمع مشکوک‌ترین است را انتخاب کنید:</p>
+        <div id="vote-grid" class="grid-2"></div>
+        <button id="btn-cancel-vote" class="btn btn-outline" onclick="resumeTimer()">انصراف و ادامه گفتگو</button>
+    </div>
+
+    <div id="screen-wager" class="hidden">
+        <h2>🎲 شرط‌بندی روی حذف</h2>
+        <p>کدام بازیکنان می‌خواهند روی جاسوس بودن <strong id="wager-target-name" style="color:var(--accent-red)"></strong> شرط ببندند؟</p>
+        <div id="wager-players-list" style="margin-bottom:14px;"></div>
+        <button class="btn btn-green" onclick="finalizeEliminationWithWagers()">ثبت نهایی و مشاهده نقش متهم ✅</button>
+    </div>
+
+    <div id="screen-spy-guess" class="hidden">
+        <h2>🎯 فرصت حدس کلمه جاسوس!</h2>
+        <p><strong id="guess-spy-name" style="color:var(--accent-red)"></strong> لو رفت! اما فرصت دارد با حدس کلمه اصلی برنده شود.</p>
+        <div class="input-group">
+            <input type="text" id="spy-guess-input" class="input-control" placeholder="کلمه حدس زده شده...">
+        </div>
+        <button class="btn btn-green" onclick="evaluateSpyGuess(true)">بررسی حدس کلمه ✅</button>
+        <button class="btn btn-outline" onclick="evaluateSpyGuess(false)">انصراف از حدس (پیروزی شهروندان)</button>
+    </div>
+
+    <div id="screen-round-result" class="hidden">
+        <h2 id="result-title">نتیجه این دور</h2>
+        <div class="secret-box">
+            <div id="result-desc" style="font-size: 0.95rem; line-height: 1.7;"></div>
+        </div>
+
+        <h3 style="font-size:1rem; margin-top:16px;">📊 جدول امتیازات تا این دست</h3>
+        <table class="score-table">
+            <thead>
+                <tr>
+                    <th>بازیکن</th>
+                    <th>امتیاز این دست</th>
+                    <th>مجموع امتیاز</th>
+                </tr>
+            </thead>
+            <tbody id="round-leaderboard-body"></tbody>
+        </table>
+
+        <button id="btn-next-round" class="btn btn-green" onclick="prepareNextRound()">دست بعدی با همین بازیکنان 🔁</button>
+        <button class="btn btn-purple" onclick="requestEndGameConfirm()">اتمام مسابقه و گزارش جامع نهایی 🏆</button>
+    </div>
+
     <div id="screen-leaderboard" class="hidden">
-        <h2>🏆 جدول رده‌بندی مدال‌ها</h2>
-        <p>رده‌بندی بر اساس بیشترین امتیاز کسب‌شده در طول مسابقه</p>
-        <ul id="leaderboard-list" class="leaderboard-list"></ul>
-        <button class="btn btn-green" onclick="showScreen('screen-setup')">شروع مسابقه جدید</button>
+        <h2>🏆 کارنامه و آمار نهایی مسابقه</h2>
+        <p>مدال‌ها و عملکردهای برتر در طول تمام دست‌ها</p>
+        
+        <div id="accolades-container" style="margin-bottom:16px;"></div>
+
+        <table class="score-table">
+            <thead>
+                <tr>
+                    <th>رتبه / نام</th>
+                    <th>دفعات برد</th>
+                    <th>مجموع امتیاز</th>
+                </tr>
+            </thead>
+            <tbody id="final-leaderboard-body"></tbody>
+        </table>
+
+        <button class="btn btn-green" onclick="showScreen('screen-setup')">شروع مسابقه جدید با تنظیمات دلخواه</button>
     </div>
 </div>
 
-<!-- Popups / Modals -->
 <div id="role-modal" class="modal-overlay hidden">
     <div class="modal-card">
-        <h3 id="modal-player-name">نام بازیکن</h3>
+        <h3 id="modal-player-name">نام</h3>
         <div id="modal-role-badge" class="role-badge">نقش</div>
         <div class="secret-box">
-            <span style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 6px;">اطلاعات شما:</span>
+            <span style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 6px;">اطلاعات مخفی شما:</span>
             <div id="modal-secret-content" class="secret-word">کلمه</div>
         </div>
-        <p style="font-size: 0.8rem;">پس از به‌خاطر سپردن، دکمه زیر را بزنید و گوشی را به نفر بعد بدهید.</p>
-        <button class="btn btn-blue" onclick="closeRoleModal()">متوجه شدم (مخفی کردن)</button>
+        <div id="modal-quest-box" class="quest-box hidden">
+            <strong>🎯 مأموریت مخفی شما:</strong>
+            <div id="modal-quest-text" style="margin-top:4px;">-</div>
+        </div>
+        <button class="btn btn-blue" style="margin-top:14px;" onclick="closeRoleModal()">متوجه شدم (مخفی‌سازی)</button>
+    </div>
+</div>
+
+<div id="info-modal" class="modal-overlay hidden">
+    <div class="modal-card">
+        <h3 id="info-modal-title">توضیحات قابلیت</h3>
+        <p id="info-modal-text" style="text-align:right; font-size:0.88rem; margin:14px 0; line-height:1.7;"></p>
+        <button class="btn btn-blue" onclick="closeInfoModal()">متوجه شدم</button>
     </div>
 </div>
 
 <div id="confirm-modal" class="modal-overlay hidden">
     <div class="modal-card">
-        <h3>آیا مطمئن هستید؟</h3>
-        <p>با تایید این گزینه، این دست تمام شده و جدول رده‌بندی نهایی نمایش داده می‌شود.</p>
-        <button class="btn btn-red" onclick="executeEndGame()">بله، اتمام مسابقه</button>
-        <button class="btn btn-outline" onclick="closeConfirmModal()">ادامه بازی</button>
+        <h3 id="confirm-modal-title">⚠️ تایید</h3>
+        <p id="confirm-modal-text">آیا مطمئن هستید؟</p>
+        <button id="btn-confirm-yes" class="btn btn-red">بله</button>
+        <button class="btn btn-outline" onclick="closeConfirmModal()">خیر، انصراف</button>
     </div>
 </div>
 
 <script>
-    // Audio synthesizer for sound cues without external files
+    // Audio Cues
     const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    function playBeep(freq = 600, duration = 0.15) {
-        if (audioCtx.state === 'suspended') audioCtx.resume();
-        const osc = audioCtx.createOscillator();
-        const gain = audioCtx.createGain();
-        osc.connect(gain);
-        gain.connect(audioCtx.destination);
-        osc.frequency.value = freq;
-        osc.type = 'sine';
-        gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + duration);
-        osc.start();
-        osc.stop(audioCtx.currentTime + duration);
+    function playTone(freq = 600, duration = 0.15) {
+        try {
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.frequency.value = freq;
+            gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + duration);
+            osc.start();
+            osc.stop(audioCtx.currentTime + duration);
+        } catch (e) {}
     }
 
-    // Mock Dataset (Placeholders)
-    const mockWords = [
-        { word: "تست کلمه اصلی ۱", hint: "تست راهنمای جاسوس ۱" },
-        { word: "تست کلمه اصلی ۲", hint: "تست راهنمای جاسوس ۲" },
-        { word: "تست کلمه اصلی ۳", hint: "تست راهنمای جاسوس ۳" },
-        { word: "تست کلمه اصلی ۴", hint: "تست راهنمای جاسوس ۴" }
+    // Mock Categories with Undercover / Fool support
+    const mockCategories = {
+        "مکان‌ها (تست)": [
+            { word: "بیمارستان (تست)", foolWord: "درمانگاه شبانه‌روزی (تست)", hint: "محل درمان (تست)" },
+            { word: "فرودگاه (تست)", foolWord: "ترمینال اتوبوسرانی (تست)", hint: "محل سفر (تست)" },
+            { word: "سینما (تست)", foolWord: "سالن تئاتر (تست)", hint: "تماشای نمایش (تست)" }
+        ],
+        "مشاغل (تست)": [
+            { word: "پزشک جراح (تست)", foolWord: "پرستار بخش (تست)", hint: "کادر درمان (تست)" },
+            { word: "معلم مدرسه (تست)", foolWord: "استاد دانشگاه (تست)", hint: "آموزش و تدریس (تست)" },
+            { word: "آتش‌نشان (تست)", foolWord: "امدادگر هلال‌احمر (تست)", hint: "عملیات امداد (تست)" }
+        ]
+    };
+
+    // Realistic Side Quests
+    const sideQuestsPool = [
+        "در حین صحبت حداقل دو بار از عبارت «دقیقاً» یا «صددرصد» استفاده کن.",
+        "سعی کن حداقل یک بار در میانه بازی به مچ دستت یا ساعت نگاه کنی.",
+        "در طول این دور، حداقل از یکی از بازیکنان یک تعریف کوتاه بکن.",
+        "به جای گفتن «نه»، حتماً از کلمه «به هیچ وجه» استفاده کن.",
+        "هنگام صحبت کردن، حداقل یک بار با دست چانه‌ات را لمس کن.",
+        "در طول این دست حداقل از دو نفر مختلف سوال بپرس."
     ];
 
-    // Game State
+    // Info Descriptions
+    const infoTexts = {
+        fool: {
+            title: "شهروند ساده‌لوح (Undercover)",
+            desc: "یک شهروند به صورت مخفیانه کلمه‌ای بسیار نزدیک به کلمه اصلی می‌گیرد اما خودش فکر می‌کند شهروند عادی است! چون کلمه‌اش کمی فرق دارد مشکوک صحبت می‌کند و ممکن است بقیه به اشتباه به او رای دهند و جاسوس نجات پیدا کند."
+        },
+        director: {
+            title: "دستیار هوشمند نوبت سوال‌پرسیدن",
+            desc: "سیستم به شکل عادلانه و نوبتی پیشنهاد می‌دهد چه کسی از چه کسی سوال بپرسد تا همه بازیکنان درگیر صحبت شوند و بازی روی چند نفر خاص متمرکز نماند."
+        },
+        oneword: {
+            title: "مود تک‌کلمه‌ای سرعتی",
+            desc: "هیچ‌کس حق ندارد جمله بگوید! هر بازیکن در نوبتش فقط مجاز است دقیقاً یک کلمه برای توصیف یا پاسخ بگوید؛ بسیار سرعتی و چالشی."
+        },
+        quests: {
+            title: "ماموریت‌های فرعی مخفی",
+            desc: "روی کارت هر بازیکن یک مأموریت فرعی ساده و خنده‌دار نوشته می‌شود تا رفتارهایش کمی عجیب به نظر برسد و تشخیص جاسوس سخت‌تر و بامزه‌تر شود."
+        },
+        wager: {
+            title: "سیستم شرط‌بندی روی رای",
+            desc: "بازیکنانی که در دست‌های قبل امتیاز کسب کرده‌اند، می‌توانند ۱ یا ۲ امتیاز از امتیازهای خود را روی درستی حدسشان شرط ببندند. اگر درست باشد ۲ برابر سود می‌کنند و اگر اشتباه باشد امتیاز شرط‌بندی کسر می‌شود."
+        },
+        sudden: {
+            title: "حالت حذف درجا (Sudden Death)",
+            desc: "اگر شهروندان به اشتباه به یک شهروند بی‌گناه رای دهند، بازی بلافاصله تمام شده و جاسوس‌ها پیروز کل این دست می‌شوند."
+        }
+    };
+
+    // State Variables
     let players = [];
+    let currentCategory = "";
     let currentWordObj = null;
     let timerInterval = null;
     let remainingSeconds = 0;
-    let isSuddenDeath = false;
-    let viewedCount = 0;
+    let maxEmergencyVotes = 2;
+    let remainingVotes = 2;
+    let activeModalIndex = null;
+    let selectedSuspect = null;
+    let eliminatedSpyForGuess = null;
+    let turnHistory = [];
+    let roundPointsMap = {};
 
     function showScreen(id) {
         document.querySelectorAll('.container > div').forEach(el => el.classList.add('hidden'));
         document.getElementById(id).classList.remove('hidden');
     }
 
+    function showInfo(key) {
+        const item = infoTexts[key];
+        document.getElementById('info-modal-title').textContent = item.title;
+        document.getElementById('info-modal-text').textContent = item.desc;
+        document.getElementById('info-modal').classList.remove('hidden');
+    }
+
+    function closeInfoModal() {
+        document.getElementById('info-modal').classList.add('hidden');
+    }
+
+    // Local Storage Name Handling
+    function loadSavedNames() {
+        try {
+            const saved = localStorage.getItem('spy_saved_player_names');
+            return saved ? JSON.parse(saved) : null;
+        } catch (e) { return null; }
+    }
+
+    function saveCurrentNames(names) {
+        try {
+            localStorage.setItem('spy_saved_player_names', JSON.stringify(names));
+        } catch (e) {}
+    }
+
     function renderNameInputs() {
         const count = parseInt(document.getElementById('setup-players-count').value) || 4;
         const container = document.getElementById('name-inputs-container');
+        const savedNames = loadSavedNames() || [];
         container.innerHTML = '';
         for (let i = 1; i <= count; i++) {
             const input = document.createElement('input');
@@ -412,56 +661,123 @@
             input.className = 'input-control';
             input.style.marginBottom = '6px';
             input.placeholder = `نام بازیکن ${i}`;
-            input.value = players[i - 1]?.name || `بازیکن ${i}`;
+            input.value = savedNames[i - 1] || players[i - 1]?.name || `بازیکن ${i}`;
             container.appendChild(input);
         }
     }
     renderNameInputs();
 
+    function confirmResetSavedNames() {
+        openConfirmModal("ریست اسامی ذخیره شده", "آیا مطمئنید می‌خواهید تمام اسامی ذخیره شده در مرورگر پاک شوند؟", () => {
+            localStorage.removeItem('spy_saved_player_names');
+            players = [];
+            renderNameInputs();
+        });
+    }
+
+    // Role assignment & Fisher-Yates
     function startRoleAssignment() {
         const count = parseInt(document.getElementById('setup-players-count').value);
         const spyCount = parseInt(document.getElementById('setup-spies-count').value);
-        isSuddenDeath = document.getElementById('setup-sudden-death').checked;
+        const isFoolActive = document.getElementById('toggle-fool').checked;
+        maxEmergencyVotes = parseInt(document.getElementById('setup-max-votes').value) || 2;
+        remainingVotes = maxEmergencyVotes;
 
         if (spyCount >= count) {
             alert("تعداد جاسوس‌ها باید کمتر از کل بازیکنان باشد!");
             return;
         }
 
+        if (isFoolActive && count < 4) {
+            alert("برای فعال بودن شهروند ساده‌لوح، حداقل به ۴ بازیکن نیاز است.");
+            return;
+        }
+
         const inputs = document.querySelectorAll('#name-inputs-container input');
         const names = Array.from(inputs).map((inp, idx) => inp.value.trim() || `بازیکن ${idx + 1}`);
+        saveCurrentNames(names);
 
-        // Sync or preserve existing tournament scores
+        // Keep or initialize tournament data
         players = names.map(name => {
             const existing = players.find(p => p.name === name);
             return {
                 name: name,
                 score: existing ? existing.score : 0,
                 isSpy: false,
+                isFool: false,
                 isAlive: true,
-                hasSeen: false
+                hasSeen: false,
+                sideQuest: null,
+                spyCustomHint: "",
+                stats: existing ? existing.stats : { spyWins: 0, citizenWins: 0, timesEliminated: 0, foolCount: 0, betsWon: 0, betsLost: 0 }
             };
         });
 
-        setupRoles(spyCount);
+        setupRoundRoles(spyCount, isFoolActive);
     }
 
-    function setupRoles(spyCount) {
-        // Pick a random word
-        currentWordObj = mockWords[Math.floor(Math.random() * mockWords.length)];
+    function setupRoundRoles(spyCount, isFoolActive) {
+        roundPointsMap = {};
+        players.forEach(p => roundPointsMap[p.name] = 0);
 
-        // Assign Spies
-        players.forEach(p => { p.isSpy = false; p.isAlive = true; p.hasSeen = false; });
-        let assignedSpies = 0;
-        while (assignedSpies < spyCount) {
-            let randIndex = Math.floor(Math.random() * players.length);
-            if (!players[randIndex].isSpy) {
-                players[randIndex].isSpy = true;
-                assignedSpies++;
-            }
+        // Pick Random Category & Word
+        const catKeys = Object.keys(mockCategories);
+        currentCategory = catKeys[Math.floor(Math.random() * catKeys.length)];
+        const wordList = mockCategories[currentCategory];
+        currentWordObj = wordList[Math.floor(Math.random() * wordList.length)];
+
+        // Reset state
+        players.forEach(p => {
+            p.isSpy = false;
+            p.isFool = false;
+            p.isAlive = true;
+            p.hasSeen = false;
+            p.sideQuest = null;
+            p.spyCustomHint = "";
+        });
+
+        // Fisher-Yates Shuffle
+        const indices = players.map((_, i) => i);
+        for (let i = indices.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [indices[i], indices[j]] = [indices[j], indices[i]];
         }
 
-        viewedCount = 0;
+        // Assign Spies
+        for (let i = 0; i < spyCount; i++) {
+            players[indices[i]].isSpy = true;
+        }
+
+        // Assign Fool (if enabled)
+        if (isFoolActive && indices.length > spyCount) {
+            players[indices[spyCount]].isFool = true;
+            players[indices[spyCount]].stats.foolCount++;
+        }
+
+        // Configure Hint for Spies
+        const hintType = document.getElementById('setup-hint-type').value;
+        players.filter(p => p.isSpy).forEach(spy => {
+            let actualHint = hintType;
+            if (hintType === 'random') {
+                const modes = ['category', 'first_letter', 'related_word', 'none'];
+                actualHint = modes[Math.floor(Math.random() * modes.length)];
+            }
+
+            if (actualHint === 'none') spy.spyCustomHint = "بدون راهنما! (فقط گوش دهید و وانمود کنید)";
+            else if (actualHint === 'category') spy.spyCustomHint = `دسته‌بندی موضوع: ${currentCategory}`;
+            else if (actualHint === 'first_letter') spy.spyCustomHint = `حرف اول کلمه اصلی: «${currentWordObj.word.charAt(0)}»`;
+            else if (actualHint === 'related_word') spy.spyCustomHint = `کلمه مرتبط: ${currentWordObj.hint}`;
+        });
+
+        // Assign Side Quests (if enabled)
+        const questsEnabled = document.getElementById('toggle-quests').checked;
+        if (questsEnabled) {
+            players.forEach(p => {
+                p.sideQuest = sideQuestsPool[Math.floor(Math.random() * sideQuestsPool.length)];
+            });
+        }
+
+        turnHistory = [];
         renderRevealScreen();
         showScreen('screen-reveal');
     }
@@ -469,7 +785,10 @@
     function renderRevealScreen() {
         const grid = document.getElementById('reveal-grid');
         grid.innerHTML = '';
+        let viewedCount = 0;
+
         players.forEach((p, idx) => {
+            if (p.hasSeen) viewedCount++;
             const card = document.createElement('div');
             card.className = `player-card ${p.hasSeen ? 'disabled' : ''}`;
             card.textContent = p.name;
@@ -478,14 +797,10 @@
         });
 
         const startBtn = document.getElementById('btn-start-discussion');
-        if (viewedCount === players.length) {
-            startBtn.classList.remove('hidden');
-        } else {
-            startBtn.classList.add('hidden');
-        }
+        if (viewedCount === players.length) startBtn.classList.remove('hidden');
+        else startBtn.classList.add('hidden');
     }
 
-    let activeModalIndex = null;
     function openRoleModal(idx) {
         activeModalIndex = idx;
         const player = players[idx];
@@ -493,34 +808,53 @@
         
         const badge = document.getElementById('modal-role-badge');
         const content = document.getElementById('modal-secret-content');
+        const questBox = document.getElementById('modal-quest-box');
 
         if (player.isSpy) {
             badge.className = 'role-badge role-spy';
-            badge.textContent = 'شما جاسوس هستید!';
-            content.textContent = currentWordObj.hint;
+            badge.textContent = '🕵️ شما جاسوس هستید!';
+            content.textContent = player.spyCustomHint;
+        } else if (player.isFool) {
+            // Undercover sees their word as normal citizen
+            badge.className = 'role-badge role-citizen';
+            badge.textContent = '👤 شما شهروند هستید';
+            content.textContent = currentWordObj.foolWord;
         } else {
             badge.className = 'role-badge role-citizen';
-            badge.textContent = 'شما شهروند هستید';
+            badge.textContent = '👤 شما شهروند هستید';
             content.textContent = currentWordObj.word;
+        }
+
+        if (player.sideQuest) {
+            questBox.classList.remove('hidden');
+            document.getElementById('modal-quest-text').textContent = player.sideQuest;
+        } else {
+            questBox.classList.add('hidden');
         }
 
         document.getElementById('role-modal').classList.remove('hidden');
     }
 
     function closeRoleModal() {
-        if (activeModalIndex !== null) {
-            if (!players[activeModalIndex].hasSeen) {
-                players[activeModalIndex].hasSeen = true;
-                viewedCount++;
-            }
-        }
+        if (activeModalIndex !== null) players[activeModalIndex].hasSeen = true;
         document.getElementById('role-modal').classList.add('hidden');
         renderRevealScreen();
     }
 
+    // Timer & Discussion
     function startTimerScreen() {
         const minutes = parseInt(document.getElementById('setup-timer').value) || 4;
         remainingSeconds = minutes * 60;
+        
+        const isOneWord = document.getElementById('toggle-oneword').checked;
+        const isDirector = document.getElementById('toggle-director').checked;
+
+        document.getElementById('oneword-banner').classList.toggle('hidden', !isOneWord);
+        document.getElementById('director-box').classList.toggle('hidden', !isDirector);
+
+        if (isDirector) generateNextQuestionPair();
+
+        updateVotesUI();
         updateTimerDisplay();
         showScreen('screen-timer');
 
@@ -529,16 +863,26 @@
             remainingSeconds--;
             updateTimerDisplay();
 
-            // Sound cues
-            if (remainingSeconds === 30) playBeep(520, 0.3);
-            if (remainingSeconds <= 10 && remainingSeconds > 0) playBeep(700, 0.1);
+            if (remainingSeconds === 30) playTone(500, 0.3);
+            if (remainingSeconds <= 10 && remainingSeconds > 0) playTone(750, 0.1);
 
             if (remainingSeconds <= 0) {
                 clearInterval(timerInterval);
-                playBeep(900, 0.6);
-                openVotingScreen();
+                playTone(900, 0.7);
+                openVotingScreen(true);
             }
         }, 1000);
+    }
+
+    function generateNextQuestionPair() {
+        const alive = players.filter(p => p.isAlive);
+        if (alive.length < 2) return;
+
+        let asker = alive[Math.floor(Math.random() * alive.length)];
+        let targetList = alive.filter(p => p.name !== asker.name);
+        let target = targetList[Math.floor(Math.random() * targetList.length)];
+
+        document.getElementById('director-text').textContent = `«${asker.name}» باید از «${target.name}» یک سوال بپرسد!`;
     }
 
     function updateTimerDisplay() {
@@ -548,15 +892,31 @@
         timerEl.textContent = `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
 
         timerEl.className = 'timer-display';
-        if (remainingSeconds <= 10) {
-            timerEl.classList.add('timer-danger');
-        } else if (remainingSeconds <= 30) {
-            timerEl.classList.add('timer-warning');
+        if (remainingSeconds <= 10) timerEl.classList.add('timer-danger');
+        else if (remainingSeconds <= 30) timerEl.classList.add('timer-warning');
+    }
+
+    function updateVotesUI() {
+        document.getElementById('votes-remaining-badge').textContent = `فرصت زنگ اضطراری باقی‌مانده: ${remainingVotes}`;
+        const voteBtn = document.getElementById('btn-emergency-vote');
+        if (remainingVotes <= 0) {
+            voteBtn.disabled = true;
+            voteBtn.style.opacity = '0.5';
+        } else {
+            voteBtn.disabled = false;
+            voteBtn.style.opacity = '1';
         }
     }
 
-    function openVotingScreen() {
+    function openVotingScreen(isTimeOut = false) {
         clearInterval(timerInterval);
+        if (!isTimeOut) {
+            if (remainingVotes <= 0) return;
+            remainingVotes--;
+            updateVotesUI();
+        }
+
+        document.getElementById('btn-cancel-vote').classList.toggle('hidden', isTimeOut);
         const grid = document.getElementById('vote-grid');
         grid.innerHTML = '';
 
@@ -564,7 +924,7 @@
             const card = document.createElement('div');
             card.className = 'player-card';
             card.textContent = p.name;
-            card.onclick = () => eliminatePlayer(p);
+            card.onclick = () => handleVoteSelection(p);
             grid.appendChild(card);
         });
 
@@ -579,104 +939,280 @@
             updateTimerDisplay();
             if (remainingSeconds <= 0) {
                 clearInterval(timerInterval);
-                openVotingScreen();
+                openVotingScreen(true);
             }
         }, 1000);
     }
 
-    function eliminatePlayer(player) {
+    function handleVoteSelection(suspect) {
+        selectedSuspect = suspect;
+        const wagerActive = document.getElementById('toggle-wager').checked;
+        const eligibleVoters = players.filter(p => p.isAlive && p.name !== suspect.name && p.score > 0);
+
+        if (wagerActive && eligibleVoters.length > 0) {
+            renderWagerScreen(eligibleVoters);
+            showScreen('screen-wager');
+        } else {
+            finalizeElimination([]);
+        }
+    }
+
+    function renderWagerScreen(eligible) {
+        document.getElementById('wager-target-name').textContent = selectedSuspect.name;
+        const list = document.getElementById('wager-players-list');
+        list.innerHTML = '';
+
+        eligible.forEach(p => {
+            const div = document.createElement('div');
+            div.className = 'toggle-box';
+            div.innerHTML = `
+                <div>
+                    <strong>${p.name}</strong> (موجودی: ${p.score} امتیاز)
+                </div>
+                <select class="input-control wager-select" data-player="${p.name}" style="width:auto; padding:6px 10px;">
+                    <option value="0">بدون شرط</option>
+                    <option value="1">شرط ۱ امتیاز</option>
+                    ${p.score >= 2 ? '<option value="2">شرط ۲ امتیاز</option>' : ''}
+                </select>
+            `;
+            list.appendChild(div);
+        });
+    }
+
+    function finalizeEliminationWithWagers() {
+        const bets = [];
+        document.querySelectorAll('.wager-select').forEach(sel => {
+            const amt = parseInt(sel.value);
+            if (amt > 0) bets.push({ name: sel.dataset.player, amount: amt });
+        });
+        finalizeElimination(bets);
+    }
+
+    function finalizeElimination(wagerBets) {
+        const player = selectedSuspect;
         player.isAlive = false;
+        player.stats.timesEliminated++;
+
+        // Process Wagers
+        wagerBets.forEach(bet => {
+            const voter = players.find(p => p.name === bet.name);
+            if (player.isSpy) {
+                const winAmt = bet.amount * 2;
+                voter.score += winAmt;
+                roundPointsMap[voter.name] += winAmt;
+                voter.stats.betsWon++;
+            } else {
+                voter.score -= bet.amount;
+                roundPointsMap[voter.name] -= bet.amount;
+                voter.stats.betsLost++;
+            }
+        });
+
+        if (player.isSpy) {
+            eliminatedSpyForGuess = player;
+            document.getElementById('guess-spy-name').textContent = player.name;
+            document.getElementById('spy-guess-input').value = '';
+            showScreen('screen-spy-guess');
+        } else {
+            resolveInnocentElimination(player);
+        }
+    }
+
+    function resolveInnocentElimination(player) {
+        const isSudden = document.getElementById('toggle-sudden').checked;
         const titleEl = document.getElementById('result-title');
         const descEl = document.getElementById('result-desc');
         const nextBtn = document.getElementById('btn-next-round');
 
-        if (player.isSpy) {
-            // Citizen Win
-            players.filter(p => !p.isSpy).forEach(p => p.score += 2);
-            titleEl.textContent = '🎉 پیروزی شهروندان!';
-            titleEl.style.color = 'var(--accent-green)';
-            descEl.innerHTML = `<strong>${player.name}</strong> یک جاسوس بود و با موفقیت حذف شد!<br>کلمه اصلی: <span style="color:var(--accent-amber)">${currentWordObj.word}</span><br>+۲ امتیاز به تمام شهروندان تعلق گرفت.`;
+        // Spies get +1 for wrong elimination
+        players.filter(p => p.isSpy).forEach(p => {
+            p.score += 1;
+            roundPointsMap[p.name] += 1;
+        });
+
+        let foolNote = player.isFool ? `<br><span style="color:var(--accent-purple);">🎭 او شهروند ساده‌لوح بود (کلمه‌اش «${currentWordObj.foolWord}» بود)!</span>` : '';
+
+        if (isSudden) {
+            titleEl.textContent = '😈 پیروزی جاسوس‌ها!';
+            titleEl.style.color = 'var(--accent-red)';
+            descEl.innerHTML = `<strong>${player.name}</strong> بی‌گناه بود!${foolNote}<br>به دلیل حذف درجا، جاسوس‌ها پیروز این دور شدند.<br>کلمه اصلی: <span style="color:var(--accent-amber)">${currentWordObj.word}</span>`;
+            players.filter(p => p.isSpy).forEach(p => {
+                p.score += 2;
+                roundPointsMap[p.name] += 2;
+                p.stats.spyWins++;
+            });
             nextBtn.classList.remove('hidden');
+            renderRoundLeaderboard();
             showScreen('screen-round-result');
         } else {
-            // Wrong elimination
-            players.filter(p => p.isSpy).forEach(p => p.score += 1);
+            const aliveSpies = players.filter(p => p.isAlive && p.isSpy).length;
+            const aliveCitizens = players.filter(p => p.isAlive && !p.isSpy).length;
 
-            if (isSuddenDeath) {
+            if (aliveSpies >= aliveCitizens) {
                 titleEl.textContent = '😈 پیروزی جاسوس‌ها!';
                 titleEl.style.color = 'var(--accent-red)';
-                descEl.innerHTML = `<strong>${player.name}</strong> یک شهروند بی‌گناه بود!<br>به دلیل فعال بودن حالت حذف آنی، جاسوس‌ها برنده این دست شدند.<br>+۲ امتیاز دیگر به جاسوس‌ها اضافه شد.`;
-                players.filter(p => p.isSpy).forEach(p => p.score += 2);
+                descEl.innerHTML = `تعداد شهروندان به پایان رسید! جاسوس‌ها برنده شدند.${foolNote}<br>کلمه اصلی: <span style="color:var(--accent-amber)">${currentWordObj.word}</span>`;
+                players.filter(p => p.isSpy).forEach(p => {
+                    p.score += 2;
+                    roundPointsMap[p.name] += 2;
+                    p.stats.spyWins++;
+                });
                 nextBtn.classList.remove('hidden');
+                renderRoundLeaderboard();
                 showScreen('screen-round-result');
             } else {
-                // Check if remaining alive players can still play
-                const aliveSpies = players.filter(p => p.isAlive && p.isSpy).length;
-                const aliveCitizens = players.filter(p => p.isAlive && !p.isSpy).length;
-
-                if (aliveSpies >= aliveCitizens || aliveSpies === 0) {
-                    titleEl.textContent = '😈 پیروزی جاسوس‌ها!';
-                    titleEl.style.color = 'var(--accent-red)';
-                    descEl.innerHTML = `شهروندان نتوانستند جاسوس را پیدا کنند و تعداد برابر شد.<br>جاسوس‌ها برنده شدند!`;
-                    players.filter(p => p.isSpy).forEach(p => p.score += 2);
-                    nextBtn.classList.remove('hidden');
-                    showScreen('screen-round-result');
-                } else {
-                    titleEl.textContent = '⚠️ اشتباه بود!';
-                    titleEl.style.color = 'var(--accent-amber)';
-                    descEl.innerHTML = `<strong>${player.name}</strong> جاسوس نبود و حذف شد!<br>به ازای این اشتباه، به جاسوس‌ها +۱ امتیاز داده شد.<br>بازی با نفرات باقیمانده ادامه دارد...`;
-                    nextBtn.classList.add('hidden');
-                    showScreen('screen-round-result');
-                    setTimeout(() => {
-                        resumeTimer();
-                    }, 3000);
-                }
+                titleEl.textContent = '⚠️ اشتباه بود!';
+                titleEl.style.color = 'var(--accent-amber)';
+                descEl.innerHTML = `<strong>${player.name}</strong> جاسوس نبود و اخراج شد!${foolNote}<br>+۱ امتیاز به جاسوس‌ها داده شد. بازی ادامه دارد...`;
+                nextBtn.classList.add('hidden');
+                renderRoundLeaderboard();
+                showScreen('screen-round-result');
+                setTimeout(() => { resumeTimer(); }, 3500);
             }
         }
     }
 
-    function prepareNextRound() {
-        const spyCount = parseInt(document.getElementById('setup-spies-count').value);
-        setupRoles(spyCount);
+    function evaluateSpyGuess(hasGuessed) {
+        const titleEl = document.getElementById('result-title');
+        const descEl = document.getElementById('result-desc');
+        const guessInput = document.getElementById('spy-guess-input').value.trim();
+
+        if (hasGuessed && guessInput.length > 0 && currentWordObj.word.includes(guessInput)) {
+            eliminatedSpyForGuess.score += 3;
+            roundPointsMap[eliminatedSpyForGuess.name] += 3;
+            eliminatedSpyForGuess.stats.spyWins++;
+            titleEl.textContent = '🎯 پیروزی شگفت‌انگیز جاسوس!';
+            titleEl.style.color = 'var(--accent-purple)';
+            descEl.innerHTML = `<strong>${eliminatedSpyForGuess.name}</strong> کلمه اصلی (<span style="color:var(--accent-amber)">${currentWordObj.word}</span>) را حدس زد و برنده شد!<br>+۳ امتیاز به جاسوس تعلق گرفت.`;
+        } else {
+            players.filter(p => !p.isSpy).forEach(p => {
+                p.score += 2;
+                roundPointsMap[p.name] += 2;
+                p.stats.citizenWins++;
+            });
+            titleEl.textContent = '🎉 پیروزی شهروندان!';
+            titleEl.style.color = 'var(--accent-green)';
+            descEl.innerHTML = `جاسوس نتوانست کلمه را حدس بزند!<br>کلمه اصلی: <span style="color:var(--accent-amber)">${currentWordObj.word}</span><br>+۲ امتیاز به تمام شهروندان رسید.`;
+        }
+
+        document.getElementById('btn-next-round').classList.remove('hidden');
+        renderRoundLeaderboard();
+        showScreen('screen-round-result');
     }
 
-    function confirmEndGame() {
+    function renderRoundLeaderboard() {
+        const tbody = document.getElementById('round-leaderboard-body');
+        tbody.innerHTML = '';
+        const sorted = [...players].sort((a, b) => b.score - a.score);
+
+        sorted.forEach(p => {
+            const tr = document.createElement('tr');
+            const roundPts = roundPointsMap[p.name] || 0;
+            const ptsSign = roundPts > 0 ? `+${roundPts}` : roundPts;
+            tr.innerHTML = `
+                <td>${p.name}</td>
+                <td style="color:${roundPts > 0 ? 'var(--accent-green)' : (roundPts < 0 ? 'var(--accent-red)' : 'var(--text-muted)')}; font-weight:bold;">${ptsSign}</td>
+                <td style="color:var(--accent-amber); font-weight:bold;">${p.score}</td>
+            `;
+            tbody.appendChild(tr);
+        });
+    }
+
+    function prepareNextRound() {
+        const spyCount = parseInt(document.getElementById('setup-spies-count').value);
+        const isFoolActive = document.getElementById('toggle-fool').checked;
+        setupRoundRoles(spyCount, isFoolActive);
+    }
+
+    function requestEndGameConfirm() {
+        openConfirmModal("پایان مسابقه", "آیا مطمئن هستید که می‌خواهید مسابقه تمام شود و کارنامه نهایی را ببینید؟", () => {
+            clearInterval(timerInterval);
+            showFinalStatsScreen();
+        });
+    }
+
+    function showFinalStatsScreen() {
+        const sorted = [...players].sort((a, b) => b.score - a.score);
+        const medals = ['🥇', '🥈', '🥉'];
+        const tbody = document.getElementById('final-leaderboard-body');
+        tbody.innerHTML = '';
+
+        sorted.forEach((p, idx) => {
+            const tr = document.createElement('tr');
+            const medal = medals[idx] ? `<span style="font-size:1.2rem; margin-left:6px;">${medals[idx]}</span>` : `#${idx+1} `;
+            tr.innerHTML = `
+                <td>${medal}${p.name}</td>
+                <td>${p.stats.citizenWins + p.stats.spyWins} برد</td>
+                <td style="color:var(--accent-amber); font-weight:bold; font-size:1rem;">${p.score}</td>
+            `;
+            tbody.appendChild(tr);
+        });
+
+        // Generate Accolades
+        const accolades = document.getElementById('accolades-container');
+        accolades.innerHTML = '';
+
+        const topSpy = [...players].sort((a, b) => b.stats.spyWins - a.stats.spyWins)[0];
+        const topCitizen = [...players].sort((a, b) => b.stats.citizenWins - a.stats.citizenWins)[0];
+        const martyr = [...players].sort((a, b) => b.stats.timesEliminated - a.stats.timesEliminated)[0];
+
+        if (topSpy && topSpy.stats.spyWins > 0) {
+            accolades.innerHTML += `
+                <div class="accolade-card">
+                    <div class="accolade-icon">🕵️</div>
+                    <div>
+                        <div style="font-weight:bold; color:var(--accent-red);">زیرک‌ترین جاسوس: ${topSpy.name}</div>
+                        <div style="font-size:0.75rem; color:var(--text-muted);">${topSpy.stats.spyWins} بار فریب کامل شهروندان</div>
+                    </div>
+                </div>
+            `;
+        }
+
+        if (topCitizen && topCitizen.stats.citizenWins > 0) {
+            accolades.innerHTML += `
+                <div class="accolade-card">
+                    <div class="accolade-icon">🔍</div>
+                    <div>
+                        <div style="font-weight:bold; color:var(--accent-green);">کارآگاه تیزبین: ${topCitizen.name}</div>
+                        <div style="font-size:0.75rem; color:var(--text-muted);">${topCitizen.stats.citizenWins} برد موفق در لباس شهروند</div>
+                    </div>
+                </div>
+            `;
+        }
+
+        if (martyr && martyr.stats.timesEliminated > 0) {
+            accolades.innerHTML += `
+                <div class="accolade-card">
+                    <div class="accolade-icon">🪓</div>
+                    <div>
+                        <div style="font-weight:bold; color:var(--accent-amber);">قربانی‌ترین بازیکن: ${martyr.name}</div>
+                        <div style="font-size:0.75rem; color:var(--text-muted);">${martyr.stats.timesEliminated} بار حذف و اخراج از بازی</div>
+                    </div>
+                </div>
+            `;
+        }
+
+        showScreen('screen-leaderboard');
+    }
+
+    // Confirmation Modal Helper
+    let confirmCallback = null;
+    function openConfirmModal(title, text, onConfirm) {
+        document.getElementById('confirm-modal-title').textContent = title;
+        document.getElementById('confirm-modal-text').textContent = text;
+        confirmCallback = onConfirm;
         document.getElementById('confirm-modal').classList.remove('hidden');
     }
 
     function closeConfirmModal() {
         document.getElementById('confirm-modal').classList.add('hidden');
+        confirmCallback = null;
     }
 
-    function executeEndGame() {
-        clearInterval(timerInterval);
+    document.getElementById('btn-confirm-yes').onclick = () => {
+        if (confirmCallback) confirmCallback();
         closeConfirmModal();
-        showLeaderboard();
-    }
-
-    function showLeaderboard() {
-        const sorted = [...players].sort((a, b) => b.score - a.score);
-        const list = document.getElementById('leaderboard-list');
-        list.innerHTML = '';
-
-        const medals = ['🥇', '🥈', '🥉'];
-        sorted.forEach((p, idx) => {
-            const li = document.createElement('li');
-            li.className = 'leaderboard-item';
-            
-            const medal = medals[idx] ? `<span class="rank-medal">${medals[idx]}</span>` : `<span style="margin-left:14px; color:var(--text-muted)">#${idx+1}</span>`;
-            li.innerHTML = `
-                <div style="display:flex; align-items:center;">
-                    ${medal}
-                    <span style="font-weight:600;">${p.name}</span>
-                </div>
-                <div style="font-weight:bold; color:var(--accent-amber);">${p.score} امتیاز</div>
-            `;
-            list.appendChild(li);
-        });
-
-        showScreen('screen-leaderboard');
-    }
+    };
 </script>
 </body>
 </html>
