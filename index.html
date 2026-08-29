@@ -88,7 +88,7 @@
 
         .app-container {
             width: 100%;
-            max-width: 490px;
+            max-width: 500px;
             background: var(--surface-card);
             backdrop-filter: blur(24px);
             -webkit-backdrop-filter: blur(24px);
@@ -103,11 +103,11 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 12px;
+            margin-bottom: 14px;
         }
 
         h1, h2, h3 { text-align: center; margin-bottom: 12px; font-weight: 800; }
-        h1 { background: linear-gradient(135deg, var(--brand-primary), var(--brand-secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-size: 1.85rem; }
+        h1 { background: linear-gradient(135deg, var(--brand-primary), var(--brand-secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-size: 1.95rem; }
         p { color: var(--text-secondary); text-align: center; font-size: 0.88rem; margin-bottom: 16px; line-height: 1.6; }
 
         .hidden { display: none !important; }
@@ -128,6 +128,24 @@
         .btn-ghost:hover { background: rgba(255, 255, 255, 0.1); color: var(--text-primary); }
         .btn-sm { padding: 6px 12px; font-size: 0.78rem; border-radius: 10px; width: auto; margin: 0; }
 
+        .card-menu {
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid var(--border-glow);
+            border-radius: 20px;
+            padding: 16px;
+            margin-bottom: 12px;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            text-align: right;
+        }
+        .card-menu:hover {
+            border-color: var(--brand-primary);
+            transform: translateY(-2px);
+            background: rgba(15, 23, 42, 0.85);
+        }
+        .card-menu h3 { text-align: right; margin-bottom: 4px; font-size: 1.05rem; }
+        .card-menu p { text-align: right; margin-bottom: 0; font-size: 0.8rem; }
+
         .input-group { margin-bottom: 12px; }
         .input-group label { display: flex; align-items: center; justify-content: space-between; font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 6px; font-weight: 500; }
         .input-control { width: 100%; padding: 11px 14px; background: var(--surface-input); border: 1px solid var(--border-glow); border-radius: 14px; color: white; font-size: 0.95rem; outline: none; transition: all 0.2s; }
@@ -137,6 +155,10 @@
 
         .toggle-item { background: rgba(15, 23, 42, 0.5); border: 1px solid var(--border-glow); padding: 10px 14px; border-radius: 16px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
         
+        .toggle-label-wrap { display: flex; align-items: center; gap: 6px; font-size: 0.82rem; }
+        .info-btn { background: none; border: none; color: var(--brand-primary); font-size: 0.85rem; cursor: pointer; padding: 2px 4px; line-height: 1; border-radius: 50%; }
+        .info-btn:hover { color: white; background: rgba(255,255,255,0.1); }
+
         .switch { position: relative; display: inline-block; width: 44px; height: 24px; flex-shrink: 0; }
         .switch input { opacity: 0; width: 0; height: 0; }
         .slider { position: absolute; cursor: pointer; inset: 0; background-color: #334155; transition: 0.3s; border-radius: 24px; }
@@ -207,7 +229,7 @@
 
 <div class="app-container">
     <div class="header-bar">
-        <div style="font-size:0.8rem; font-weight:bold; color:var(--text-secondary);" id="connection-status-badge">🟢 حالت: محلی (یک گوشی)</div>
+        <div style="font-size:0.8rem; font-weight:bold; color:var(--text-secondary);" id="connection-status-badge">🟢 وضعیت: آفلاین</div>
         <div style="display:flex; gap:6px; align-items:center;">
             <button id="btn-sound-toggle" class="btn btn-ghost btn-sm" style="font-size:1.1rem; padding:4px 10px;" aria-label="فعال یا غیرفعال کردن صدا">🔊</button>
             <select id="theme-selector" class="input-control btn-sm" style="width:auto; padding:4px 8px;" aria-label="انتخاب تم رنگی">
@@ -220,104 +242,152 @@
     </div>
 
     <div id="recovery-banner" class="quest-box hidden" style="margin-bottom:12px; border-color:var(--brand-amber); color:var(--brand-amber); text-align:center;">
-        <div>⚠️ یک بازی نیمه‌کاره از قبل یافت شد.</div>
+        <div>⚠️ یک مسابقه نیمه‌کاره یافت شد.</div>
         <div style="display:flex; gap:8px; margin-top:8px;">
-            <button id="btn-restore-game" class="btn btn-amber btn-sm" style="flex:1;">ادامه بازی قبلی</button>
-            <button id="btn-discard-game" class="btn btn-ghost btn-sm" style="flex:1;">شروع مجدد</button>
+            <button id="btn-restore-game" class="btn btn-amber btn-sm" style="flex:1;">ادامه مسابقه</button>
+            <button id="btn-discard-game" class="btn btn-ghost btn-sm" style="flex:1;">شروع تازه</button>
         </div>
     </div>
 
+    <!-- Screen 1: Welcome -->
     <div id="screen-welcome" class="screen-view">
         <h1>🕵️ بازی جاسوس</h1>
-        <p>یک بازی معمایی و دورهمی مهیج. جاسوس‌ها را پیدا کنید قبل از اینکه هویت رمز را حدس بزنند!</p>
-        <button id="btn-nav-setup" class="btn btn-emerald">🎮 بازی با یک گوشی (محلی)</button>
-        <button id="btn-nav-multi" class="btn btn-primary">📱 اتاق اتصال چند گوشی آنلاین</button>
-        <button id="btn-open-words" class="btn btn-ghost">✏️ مدیریت کلمات سفارشی</button>
+        <p>یک بازی معمایی، هیجانی و دورهمی. قبل از اینکه جاسوس کلمه رمز را کشف کند، او را شناسایی کنید!</p>
+        
+        <div class="card-menu" id="btn-nav-setup">
+            <h3>📱 بازی روی یک گوشی</h3>
+            <p>دست‌به‌دست کردن یک گوشی در جمع دورهمی</p>
+        </div>
+
+        <div class="card-menu" id="btn-nav-multi">
+            <h3>🌐 بازی آنلاین با چند گوشی</h3>
+            <p>اتصال همه بازیکنان به یک اتاق مشترک از طریق اینترنت</p>
+        </div>
+
+        <button id="btn-open-words" class="btn btn-ghost">✏️ بانک کلمات سفارشی</button>
     </div>
 
+    <!-- Screen 2: Multiplayer Lobby -->
     <div id="screen-multi" class="screen-view hidden">
-        <h2>اتصال چند گوشی به یک اتاق</h2>
+        <h2>اتاق چندنفره آنلاین</h2>
         <div class="toggle-item" style="flex-direction:column; align-items:stretch; gap:10px;">
-            <strong>👑 ایجاد اتاق جدید (میزبان):</strong>
-            <button id="btn-host-init" class="btn btn-primary">ساخت اتاق و دریافت کد</button>
+            <strong>👑 ساخت اتاق مسابقه (میزبان):</strong>
+            <input type="text" id="host-player-name" class="input-control" placeholder="نام شما (میزبان)..." maxlength="20">
+            <button id="btn-host-init" class="btn btn-primary">ایجاد اتاق و دریافت کد</button>
+            
             <div id="host-room-info" class="hidden secret-box" style="margin:0;">
                 <div>کد اتاق: <strong id="room-code-display" style="font-size:1.6rem; color:var(--brand-primary); letter-spacing:3px;">-</strong></div>
-                <div style="margin-top:8px; font-weight:bold;">متصل شده (<span id="connected-players-count">0</span>):</div>
+                <button id="btn-copy-room-code" class="btn btn-ghost btn-sm" style="margin:6px auto 0; width:auto;">📋 کپی کد اتاق</button>
+                <div style="margin-top:10px; font-weight:bold;">بازیکنان حاضر (<span id="connected-players-count">0</span>):</div>
                 <div id="connected-players-list" style="font-size:0.85rem; color:var(--brand-amber); margin-top:4px;"></div>
-                <button id="btn-host-start" class="btn btn-emerald" style="margin-top:10px;">شروع مسابقه با افراد حاضر 🚀</button>
+                <button id="btn-host-open-setup" class="btn btn-emerald" style="margin-top:12px;">تنظیمات مسابقه و شروع 🚀</button>
             </div>
         </div>
+
         <div class="toggle-item" style="flex-direction:column; align-items:stretch; gap:10px; margin-top:10px;">
-            <strong>🙋‍♂️ ورود به اتاق (بازیکن):</strong>
+            <strong>🙋‍♂️ ورود به اتاق ساخته‌شده:</strong>
             <input type="text" id="join-room-code" class="input-control" placeholder="کد ۵ رقمی اتاق..." maxlength="5">
             <input type="text" id="join-player-name" class="input-control" placeholder="نام شما..." maxlength="20">
-            <button id="btn-client-join" class="btn btn-emerald">اتصال به اتاق</button>
-            <div id="client-wait-box" class="hidden quest-box" style="text-align:center;">🟢 متصل شدید! منتظر شروع مسابقه توسط میزبان بمانید...</div>
+            <button id="btn-client-join" class="btn btn-emerald">ورود به اتاق</button>
+            <div id="client-wait-box" class="hidden quest-box" style="text-align:center;">🟢 شما به اتاق متصل شدید! منتظر شروع مسابقه توسط میزبان بمانید...</div>
         </div>
         <button id="btn-back-welcome-1" class="btn btn-ghost">بازگشت</button>
     </div>
 
+    <!-- Screen 3: Match Setup -->
     <div id="screen-setup" class="screen-view hidden">
         <h2>تنظیمات مسابقه</h2>
         <div class="grid-2">
-            <div class="input-group"><label for="setup-players-count">تعداد کل:</label><input type="number" id="setup-players-count" class="input-control" value="4" min="3" max="20"></div>
-            <div class="input-group"><label for="setup-spies-count">تعداد جاسوس:</label><input type="number" id="setup-spies-count" class="input-control" value="1" min="1" max="5"></div>
+            <div class="input-group"><label for="setup-players-count">تعداد کل بازیکنان:</label><input type="number" id="setup-players-count" class="input-control" value="4" min="3" max="20"></div>
+            <div class="input-group"><label for="setup-spies-count">تعداد جاسوس‌ها:</label><input type="number" id="setup-spies-count" class="input-control" value="1" min="1" max="5"></div>
         </div>
         <div class="grid-2">
-            <div class="input-group"><label for="setup-category">دسته موضوع:</label><select id="setup-category" class="input-control"><option value="all">همه دسته‌ها</option><option value="places">مکان‌ها</option><option value="foods">غذاها</option><option value="jobs">مشاغل</option><option value="objects">اشیاء</option><option value="nostalgia">نوستالژی</option><option value="custom">سفارشی</option></select></div>
-            <div class="input-group"><label for="setup-difficulty">درجه سختی:</label><select id="setup-difficulty" class="input-control"><option value="all">همه</option><option value="easy">آسان</option><option value="medium">متوسط</option><option value="hard">سخت</option></select></div>
+            <div class="input-group"><label for="setup-category">دسته‌بندی کلمات:</label><select id="setup-category" class="input-control"><option value="all">همه دسته‌ها</option><option value="places">اماکن و فضاها</option><option value="foods">خوراکی و غذاها</option><option value="jobs">مشاغل و حرفه‌ها</option><option value="objects">اشیاء و ابزارها</option><option value="nostalgia">نوستالژی و خاطره‌بازی</option><option value="custom">کلمات سفارشی شما</option></select></div>
+            <div class="input-group"><label for="setup-difficulty">سطح دشواری:</label><select id="setup-difficulty" class="input-control"><option value="all">همه سطوح</option><option value="easy">آسان</option><option value="medium">متوسط</option><option value="hard">سخت و چالش‌برانگیز</option></select></div>
         </div>
         <div class="grid-2">
-            <div class="input-group"><label for="setup-timer">زمان (دقیقه):</label><input type="number" id="setup-timer" class="input-control" value="4" min="1" max="15"></div>
-            <div class="input-group"><label for="setup-reveal-mode">مشاهده کارت:</label><select id="setup-reveal-mode" class="input-control"><option value="click">کلیک ساده</option><option value="hold">نگه‌داشتن (Hold)</option></select></div>
+            <div class="input-group"><label for="setup-timer">زمان گفتگو (دقیقه):</label><input type="number" id="setup-timer" class="input-control" value="4" min="1" max="15"></div>
+            <div class="input-group"><label for="setup-reveal-mode">نحوه مشاهده کارت:</label><select id="setup-reveal-mode" class="input-control"><option value="click">کلیک ساده</option><option value="hold">نگه‌داشتن انگشت (Hold)</option></select></div>
         </div>
         <div class="input-group">
-            <label for="setup-hint-type">نوع راهنمای جاسوس:</label>
-            <select id="setup-hint-type" class="input-control"><option value="category">دسته‌بندی کلی</option><option value="first_letter">حرف اول</option><option value="related_word">کلمه مرتبط</option><option value="random">تصادفی</option><option value="none">بدون راهنما</option></select>
+            <label for="setup-hint-type">نوع راهنمای هویت جاسوس:</label>
+            <select id="setup-hint-type" class="input-control"><option value="category">دسته‌بندی موضوع</option><option value="first_letter">حرف اول کلمه رمز</option><option value="related_word">کلمه مرتبط راهنما</option><option value="random">تصادفی برای هر دور</option><option value="none">بدون هیچ راهنمایی (سخت)</option></select>
         </div>
+
         <div class="grid-2">
-            <div class="toggle-item"><label style="font-size:0.8rem;">کارآگاه</label><label class="switch"><input type="checkbox" id="toggle-detective"><span class="slider"></span></label></div>
-            <div class="toggle-item"><label style="font-size:0.8rem;">همکاران</label><label class="switch"><input type="checkbox" id="toggle-known"><span class="slider"></span></label></div>
-            <div class="toggle-item"><label style="font-size:0.8rem;">ساده‌لوح</label><label class="switch"><input type="checkbox" id="toggle-fool"><span class="slider"></span></label></div>
-            <div class="toggle-item"><label style="font-size:0.8rem;">دستیار</label><label class="switch"><input type="checkbox" id="toggle-director"><span class="slider"></span></label></div>
-            <div class="toggle-item"><label style="font-size:0.8rem;">تک‌کلمه</label><label class="switch"><input type="checkbox" id="toggle-oneword"><span class="slider"></span></label></div>
-            <div class="toggle-item"><label style="font-size:0.8rem;">ماموریت</label><label class="switch"><input type="checkbox" id="toggle-quests"><span class="slider"></span></label></div>
-            <div class="toggle-item"><label style="font-size:0.8rem;">شرط‌بندی</label><label class="switch"><input type="checkbox" id="toggle-wager"><span class="slider"></span></label></div>
-            <div class="toggle-item"><label style="font-size:0.8rem;">حذف درجا</label><label class="switch"><input type="checkbox" id="toggle-sudden"><span class="slider"></span></label></div>
-            <div class="toggle-item"><label style="font-size:0.8rem;">سقف زنگ</label><label class="switch"><input type="checkbox" id="toggle-limit"><span class="slider"></span></label></div>
+            <div class="toggle-item">
+                <div class="toggle-label-wrap"><span>کارآگاه</span><button class="info-btn" data-info="detective" type="button">ℹ️</button></div>
+                <label class="switch"><input type="checkbox" id="toggle-detective"><span class="slider"></span></label>
+            </div>
+            <div class="toggle-item">
+                <div class="toggle-label-wrap"><span>همکاران</span><button class="info-btn" data-info="knownSpies" type="button">ℹ️</button></div>
+                <label class="switch"><input type="checkbox" id="toggle-known"><span class="slider"></span></label>
+            </div>
+            <div class="toggle-item">
+                <div class="toggle-label-wrap"><span>ساده‌لوح</span><button class="info-btn" data-info="fool" type="button">ℹ️</button></div>
+                <label class="switch"><input type="checkbox" id="toggle-fool"><span class="slider"></span></label>
+            </div>
+            <div class="toggle-item">
+                <div class="toggle-label-wrap"><span>دستیار نوبت</span><button class="info-btn" data-info="director" type="button">ℹ️</button></div>
+                <label class="switch"><input type="checkbox" id="toggle-director"><span class="slider"></span></label>
+            </div>
+            <div class="toggle-item">
+                <div class="toggle-label-wrap"><span>تک‌کلمه‌ای</span><button class="info-btn" data-info="oneword" type="button">ℹ️</button></div>
+                <label class="switch"><input type="checkbox" id="toggle-oneword"><span class="slider"></span></label>
+            </div>
+            <div class="toggle-item">
+                <div class="toggle-label-wrap"><span>ماموریت</span><button class="info-btn" data-info="quests" type="button">ℹ️</button></div>
+                <label class="switch"><input type="checkbox" id="toggle-quests"><span class="slider"></span></label>
+            </div>
+            <div class="toggle-item">
+                <div class="toggle-label-wrap"><span>شرط‌بندی</span><button class="info-btn" data-info="wager" type="button">ℹ️</button></div>
+                <label class="switch"><input type="checkbox" id="toggle-wager"><span class="slider"></span></label>
+            </div>
+            <div class="toggle-item">
+                <div class="toggle-label-wrap"><span>حذف درجا</span><button class="info-btn" data-info="sudden" type="button">ℹ️</button></div>
+                <label class="switch"><input type="checkbox" id="toggle-sudden"><span class="slider"></span></label>
+            </div>
+            <div class="toggle-item">
+                <div class="toggle-label-wrap"><span>سقف زنگ</span><button class="info-btn" data-info="voteLimit" type="button">ℹ️</button></div>
+                <label class="switch"><input type="checkbox" id="toggle-limit"><span class="slider"></span></label>
+            </div>
         </div>
-        <div id="vote-limit-box" class="input-group hidden"><input type="number" id="setup-max-votes" class="input-control" value="2" min="1" max="10" placeholder="حداکثر سهمیه زنگ"></div>
         
-        <div class="input-group" style="margin-top: 14px;">
-            <div style="display:flex; justify-content:space-between; margin-bottom:6px;"><label>اسامی بازیکنان:</label><button id="btn-reset-names" class="btn btn-ghost btn-sm">🗑️ ریست</button></div>
+        <div id="vote-limit-box" class="input-group hidden"><input type="number" id="setup-max-votes" class="input-control" value="2" min="1" max="10" placeholder="حداکثر سهمیه زنگ اضطراری"></div>
+        
+        <div class="input-group" style="margin-top: 14px;" id="names-section-container">
+            <div style="display:flex; justify-content:space-between; margin-bottom:6px;"><label>اسامی بازیکنان حاضر:</label><button id="btn-reset-names" class="btn btn-ghost btn-sm">🗑️ پیش‌فرض</button></div>
             <div id="name-inputs-container"></div>
         </div>
-        <button id="btn-start-match" class="btn btn-primary">شروع و پخش نقش‌ها 🚀</button>
+        <button id="btn-start-match" class="btn btn-primary">شروع مسابقه و توزیع کارت‌ها 🚀</button>
         <button id="btn-back-welcome-2" class="btn btn-ghost">بازگشت</button>
     </div>
 
+    <!-- Screen 4: Reveal Roles -->
     <div id="screen-reveal" class="screen-view hidden">
-        <h2>کارت‌های مخفی</h2>
+        <h2>کارت‌های محرمانه</h2>
         <p id="reveal-instruction-text">گوشی را بچرخانید و کارت خود را ببینید.</p>
         <div id="reveal-grid" class="grid-2"></div>
-        <button id="btn-start-discussion" class="btn btn-emerald hidden">همه دیدند؛ شروع تایمر ⏳</button>
+        <button id="btn-start-discussion" class="btn btn-emerald hidden">همه دیدند؛ شروع تایمر گفتگو ⏳</button>
     </div>
 
+    <!-- Screen 5: Discussion Timer -->
     <div id="screen-timer" class="screen-view hidden">
-        <div id="oneword-banner" class="quest-box hidden" style="text-align:center; color:var(--brand-amber); border-color:var(--brand-amber); margin-bottom:12px;">⚡ مود تک‌کلمه‌ای فعال است!</div>
+        <div id="oneword-banner" class="quest-box hidden" style="text-align:center; color:var(--brand-amber); border-color:var(--brand-amber); margin-bottom:12px;">⚡ قانون تک‌کلمه‌ای فعال است! فقط ۱ کلمه پاسخ دهید.</div>
         <div id="director-box" class="quest-box hidden" style="text-align:center; margin-bottom:12px;">
-            <div style="font-size:0.75rem; color:var(--brand-primary); font-weight:bold;">🎯 نوبت سوال:</div>
+            <div style="font-size:0.75rem; color:var(--brand-primary); font-weight:bold;">🎯 نوبت سوال و جواب هوشمند:</div>
             <div id="director-text" style="font-weight:700; margin-top:3px;">-</div>
-            <button id="btn-next-director" class="btn btn-ghost btn-sm" style="margin-top:6px; display:inline-block;">پیشنهاد بعدی 🔄</button>
+            <button id="btn-next-director" class="btn btn-ghost btn-sm" style="margin-top:6px; display:inline-block;">نوبت بعدی 🔄</button>
         </div>
         <div class="timer-card">
             <div id="timer-text" class="timer-display">00:00</div>
             <div id="votes-remaining-badge" style="font-size: 0.78rem; color: var(--text-secondary); margin-top: 6px;">زنگ اضطراری: نامحدود</div>
         </div>
-        <button id="btn-emergency-vote" class="btn btn-rose">🚨 اعلام زنگ اضطراری</button>
+        <button id="btn-emergency-vote" class="btn btn-rose">🚨 اعلام زنگ اضطراری و رای‌گیری</button>
         <button id="btn-confirm-end-1" class="btn btn-ghost">پایان مسابقه و کارنامه 🏆</button>
     </div>
 
+    <!-- Screen 6: Voting -->
     <div id="screen-vote" class="screen-view hidden">
         <h2>رای‌گیری اخراج</h2>
         <p id="vote-instruction-text">متهم اصلی را انتخاب کنید:</p>
@@ -325,21 +395,24 @@
         <button id="btn-cancel-vote" class="btn btn-ghost">انصراف و بازگشت به گفتگو</button>
     </div>
 
+    <!-- Screen 7: Wager -->
     <div id="screen-wager" class="screen-view hidden">
-        <h2>🎲 شرط‌بندی روی اخراج</h2>
-        <p>مظنون: <strong id="wager-target-name" style="color:var(--brand-rose)"></strong></p>
+        <h2>🎲 شرط‌بندی روی هویت مظنون</h2>
+        <p>مظنون اخراج: <strong id="wager-target-name" style="color:var(--brand-rose)"></strong></p>
         <div id="wager-players-list" style="margin-bottom:14px;"></div>
-        <button id="btn-submit-wagers" class="btn btn-emerald">ثبت شرط‌ها و بررسی نقش ✅</button>
+        <button id="btn-submit-wagers" class="btn btn-emerald">ثبت شرط و رونمایی هویت ✅</button>
     </div>
 
+    <!-- Screen 8: Spy Guess -->
     <div id="screen-guess" class="screen-view hidden">
-        <h2>🎯 فرصت حدس کلمه!</h2>
-        <p><strong id="guess-spy-name" style="color:var(--brand-rose)"></strong> لو رفت! فرصت حدس کلمه اصلی:</p>
+        <h2>🎯 فرصت حدس کلمه رمز!</h2>
+        <p><strong id="guess-spy-name" style="color:var(--brand-rose)"></strong> لو رفت! فرصت دارد کلمه اصلی را حدس بزند:</p>
         <div class="input-group"><input type="text" id="spy-guess-input" class="input-control" placeholder="کلمه حدس زده شده..."></div>
         <button id="btn-submit-guess-yes" class="btn btn-emerald">بررسی حدس ✅</button>
         <button id="btn-submit-guess-no" class="btn btn-ghost">انصراف از حدس</button>
     </div>
 
+    <!-- Screen 9: Round Result -->
     <div id="screen-result" class="screen-view hidden">
         <h2 id="result-title">نتیجه این دست</h2>
         <div class="secret-box"><div id="result-desc" style="font-size: 0.95rem; line-height: 1.7;"></div></div>
@@ -348,14 +421,15 @@
             <tbody id="round-leaderboard-body"></tbody>
         </table>
         <button id="btn-next-round" class="btn btn-emerald">دست بعدی 🔁</button>
-        <button id="btn-confirm-end-2" class="btn btn-primary">اتمام مسابقه 🏆</button>
+        <button id="btn-confirm-end-2" class="btn btn-primary">اتمام مسابقه و کارنامه نهایی 🏆</button>
     </div>
 
+    <!-- Screen 10: Final Leaderboard -->
     <div id="screen-leaderboard" class="screen-view hidden">
-        <h2>🏆 تابلوی افتخارات</h2>
+        <h2>🏆 تابلوی افتخارات و کارنامه</h2>
         <div id="accolades-container" style="margin-bottom:16px;"></div>
         <table class="score-table">
-            <thead><tr><th>نام</th><th>برد</th><th>امتیاز</th></tr></thead>
+            <thead><tr><th>رتبه و نام</th><th>پیروزی‌ها</th><th>امتیاز نهایی</th></tr></thead>
             <tbody id="final-leaderboard-body"></tbody>
         </table>
         <button id="btn-export-image" class="btn btn-amber">📸 ذخیره عکس کارنامه</button>
@@ -363,48 +437,61 @@
     </div>
 </div>
 
+<!-- Info Modal for Explaining Rules -->
+<div id="info-modal" class="modal-overlay hidden" role="dialog" aria-modal="true">
+    <div class="modal-card" style="text-align:right;">
+        <h3 id="info-modal-title" style="text-align:center; color:var(--brand-primary); margin-bottom:8px;">راهنما</h3>
+        <p id="info-modal-desc" style="font-size:0.9rem; line-height:1.7; text-align:right; color:var(--text-primary);"></p>
+        <button id="btn-info-modal-close" class="btn btn-primary" style="margin-top:14px;">متوجه شدم</button>
+    </div>
+</div>
+
+<!-- Custom Words Modal -->
 <div id="custom-words-modal" class="modal-overlay hidden" role="dialog" aria-modal="true">
     <div class="modal-card" style="max-height:85vh; overflow-y:auto; text-align:right;">
         <h3 style="text-align:center;">✏️ مدیریت کلمات سفارشی</h3>
-        <div class="input-group"><input type="text" id="cust-word" class="input-control" placeholder="کلمه اصلی" maxlength="50"></div>
-        <div class="input-group"><input type="text" id="cust-fool" class="input-control" placeholder="کلمه مشابه (ساده‌لوح)" maxlength="50"></div>
-        <div class="input-group"><input type="text" id="cust-hint" class="input-control" placeholder="راهنمای جاسوس" maxlength="120"></div>
-        <button id="btn-add-custom-word" class="btn btn-emerald">➕ افزودن</button>
+        <div class="input-group"><input type="text" id="cust-word" class="input-control" placeholder="کلمه اصلی (مثلاً: بیمارستان)" maxlength="50"></div>
+        <div class="input-group"><input type="text" id="cust-fool" class="input-control" placeholder="کلمه مشابه ساده‌لوح (مثلاً: درمانگاه)" maxlength="50"></div>
+        <div class="input-group"><input type="text" id="cust-hint" class="input-control" placeholder="راهنمای جاسوس (مثلاً: پزشکی و اورژانس)" maxlength="120"></div>
+        <button id="btn-add-custom-word" class="btn btn-emerald">➕ افزودن کلمه</button>
         <div style="display:flex; gap:8px; margin-top:8px;">
-            <button id="btn-export-words" class="btn btn-primary btn-sm" style="flex:1;">📤 خروجی JSON</button>
+            <button id="btn-export-words" class="btn btn-primary btn-sm" style="flex:1;">📤 پشتیبان JSON</button>
             <label class="btn btn-ghost btn-sm" style="flex:1; margin-top:10px; cursor:pointer;">📥 بارگذاری JSON<input type="file" id="import-words-file" accept=".json" style="display:none;"></label>
         </div>
-        <div style="margin-top:14px; font-weight:bold;">ثبت‌شده (<span id="cust-count">0</span>):</div>
+        <div style="margin-top:14px; font-weight:bold;">کلمات ثبت‌شده (<span id="cust-count">0</span>):</div>
         <div id="custom-words-list" style="margin-top:6px; max-height:160px; overflow-y:auto;"></div>
         <button id="btn-close-words-modal" class="btn btn-ghost" style="margin-top:14px;">بستن</button>
     </div>
 </div>
 
+<!-- Vote Confirm Modal -->
 <div id="vote-confirm-modal" class="modal-overlay hidden" role="dialog" aria-modal="true">
     <div class="modal-card">
         <h3 style="color:var(--brand-amber);">تایید رای</h3>
-        <p>رای به <strong id="vote-confirm-name" style="color:var(--brand-rose)"></strong> ثبت شود؟</p>
-        <button id="btn-confirm-vote-yes" class="btn btn-rose" style="margin-top:16px;">بله</button>
+        <p>آیا مطمئنید می‌خواهید به <strong id="vote-confirm-name" style="color:var(--brand-rose)"></strong> رای دهید؟</p>
+        <button id="btn-confirm-vote-yes" class="btn btn-rose" style="margin-top:16px;">بله، اخراج شود</button>
         <button id="btn-confirm-vote-no" class="btn btn-ghost">انصراف</button>
     </div>
 </div>
 
+<!-- Secret Role Modal -->
 <div id="role-modal" class="modal-overlay hidden" role="dialog" aria-modal="true">
     <div class="modal-card">
-        <h3 id="modal-player-name">نام</h3>
+        <h3 id="modal-player-name">نام بازیکن</h3>
         <div id="modal-role-badge" class="role-badge">نقش</div>
-        <div class="secret-box"><span style="font-size:0.8rem;color:var(--text-secondary);">اطلاعات شما:</span><div id="modal-secret-content" class="secret-word">-</div></div>
-        <div id="modal-fellow-spies" class="quest-box hidden" style="border-color:var(--brand-rose); color:var(--brand-rose);"><strong>🕵️ همکاران:</strong> <span id="modal-fellow-spies-text"></span></div>
+        <div class="secret-box"><span style="font-size:0.8rem;color:var(--text-secondary);">کلمه / راهنمای شما:</span><div id="modal-secret-content" class="secret-word">-</div></div>
+        <div id="modal-fellow-spies" class="quest-box hidden" style="border-color:var(--brand-rose); color:var(--brand-rose);"><strong>🕵️ همکاران جاسوس:</strong> <span id="modal-fellow-spies-text"></span></div>
         <div id="modal-detective-action" class="quest-box hidden" style="border-color:var(--brand-primary); color:var(--brand-primary);">
-            <strong>🔍 استعلام:</strong><select id="detective-target-select" class="input-control" style="margin:8px 0;"></select>
-            <button id="btn-detective-inquiry" class="btn btn-primary btn-sm">استعلام</button>
+            <strong>🔍 استعلام هویت:</strong><select id="detective-target-select" class="input-control" style="margin:8px 0;"></select>
+            <button id="btn-detective-inquiry" class="btn btn-primary btn-sm">استعلام هویت</button>
             <div id="detective-result-box" style="margin-top:6px; font-weight:bold;"></div>
         </div>
-        <div id="modal-quest-box" class="quest-box hidden"><strong>🎯 ماموریت:</strong> <span id="modal-quest-text"></span></div>
-        <button id="btn-role-close" class="btn btn-primary" style="margin-top:14px;">مخفی‌سازی</button>
+        <div id="modal-quest-box" class="quest-box hidden"><strong>🎯 ماموریت جانبی:</strong> <span id="modal-quest-text"></span></div>
+        <button id="btn-role-close" class="btn btn-primary" style="margin-top:14px;">دیدم و مخفی کن</button>
     </div>
 </div>
 
+<!-- Multi Spy Notice Modal -->
 <div id="multi-spy-notice-modal" class="modal-overlay hidden" role="dialog" aria-modal="true">
     <div class="modal-card">
         <h3 style="color:var(--brand-amber);">⚠️ بازی ادامه دارد!</h3>
@@ -413,17 +500,19 @@
     </div>
 </div>
 
+<!-- Innocent Notice Modal -->
 <div id="innocent-notice-modal" class="modal-overlay hidden" role="dialog" aria-modal="true">
     <div class="modal-card">
-        <h3 style="color:var(--brand-amber);">⚠️ اشتباه بود!</h3>
+        <h3 style="color:var(--brand-rose);">⚠️ اشتباه بود!</h3>
         <p id="innocent-notice-text" style="font-size:0.95rem; margin:14px 0;"></p>
-        <p style="font-size:0.8rem; color:var(--text-secondary);">در حال بازگشت...</p>
+        <p style="font-size:0.8rem; color:var(--text-secondary);">در حال بازگشت خودکار به گفتگو...</p>
     </div>
 </div>
 
+<!-- Confirm End Modal -->
 <div id="confirm-modal" class="modal-overlay hidden" role="dialog" aria-modal="true">
     <div class="modal-card">
-        <h3 id="confirm-modal-title">⚠️ تایید</h3><p id="confirm-modal-text"></p>
+        <h3 id="confirm-modal-title">⚠️ تایید اتمام</h3><p id="confirm-modal-text"></p>
         <button id="btn-confirm-yes" class="btn btn-rose">بله</button>
         <button id="btn-confirm-no" class="btn btn-ghost">انصراف</button>
     </div>
@@ -470,38 +559,102 @@
         WAGER_PROFIT_MULTIPLIER: 1
     };
 
+    const INFO_TEXTS = {
+        detective: { title: "🔍 نقش کارآگاه", text: "کارآگاه یک شهروند آگاه است که در هر دور می‌تواند فقط یک‌بار هویت یکی از بازیکنان را مخفیانه استعلام بگیرد تا مطمئن شود او جاسوس است یا شهروند." },
+        knownSpies: { title: "🕵️ همکاران جاسوس", text: "اگر بازی بیش از ۱ جاسوس داشته باشد، با فعال بودن این گزینه، تمام جاسوس‌ها اسامی یکدیگر را در کارت خود می‌بینند و می‌توانند هماهنگ عمل کنند." },
+        fool: { title: "👤 نقش ساده‌لوح", text: "ساده‌لوح فکر می‌کند شهروند عادی است، اما کلمه‌ای که می‌بیند کمی با کلمه بقیه فرق دارد (مثلاً بیمارستان به جای درمانگاه)! این باعث سوءظن بقیه به او می‌شود." },
+        director: { title: "🎯 دستیار نوبت (کارگردان)", text: "بازی به صورت هوشمند و نوبتی مشخص می‌کند چه کسی از چه کسی سوال بپرسد تا گفتگو روان و بدون سکوت پیش برود." },
+        oneword: { title: "⚡ قانون تک‌کلمه‌ای", text: "در این حالت هر بازیکن در نوبت پرسش و پاسخ فقط حق دارد جواب‌های تک‌کلمه‌ای بدهد!" },
+        quests: { title: "🎯 ماموریت‌های جانبی", text: "هر بازیکن علاوه بر نقش خود، یک ماموریت بامزه مخفی (مثل دست زدن به چانه یا نگاه به ساعت) دریافت می‌کند تا رفتارش مشکوک‌تر شود!" },
+        wager: { title: "🎲 سیستم شرط‌بندی", text: "هنگام اخراج یک مظنون، بازیکنان می‌توانند روی جاسوس بودن او امتیاز شرط ببندند و در صورت درست بودن، امتیاز بیشتری کسب کنند." },
+        sudden: { title: "🔥 حذف درجا (مرگ ناگهانی)", text: "اگر شهروندان اشتباهاً به یک شهروند بی‌گناه رای بدهند و او را اخراج کنند، بازی بلافاصله با پیروزی جاسوس‌ها پایان می‌یابد!" },
+        voteLimit: { title: "🚨 سقف زنگ اضطراری", text: "تعداد دفعاتی که بازیکنان مجاز هستند تایمر را متوقف کرده و اعلام رای‌گیری زودرس کنند را محدود می‌سازد." }
+    };
+
     const WORD_PACKS = {
         places: [
-            { word: "بیمارستان", foolWord: "درمانگاه", hint: "پزشکی و اورژانس", diff: "easy" },
-            { word: "فرودگاه بین‌المللی", foolWord: "ترمینال اتوبوس", hint: "سفر با وسیله نقلیه", diff: "easy" },
-            { word: "سینما", foolWord: "سالن تئاتر", hint: "تماشای تصویر روی پرده", diff: "easy" },
-            { word: "هتل ۵ ستاره", foolWord: "مسافرخانه", hint: "اقامت موقت شبانه", diff: "medium" },
-            { word: "شهربازی", foolWord: "پارک آبی", hint: "تفریح و ترن هوایی", diff: "medium" },
-            { word: "ایستگاه فضایی", foolWord: "رصدخانه", hint: "پژوهش در مدار زمین", diff: "hard" },
-            { word: "معدن زغال‌سنگ", foolWord: "کارگاه زیرزمینی", hint: "کار سخت در عمق زمین", diff: "hard" }
+            { word: "بیمارستان", foolWord: "درمانگاه", hint: "پزشکی، تخت بستری و اورژانس", diff: "easy" },
+            { word: "فرودگاه بین‌المللی", foolWord: "ترمینال اتوبوسرانی", hint: "سفر، بار مسافر و پرواز", diff: "easy" },
+            { word: "سینما", foolWord: "سالن تئاتر", hint: "تماشای تصویر روی پرده بزرگ و تاریکی", diff: "easy" },
+            { word: "هتل ۵ ستاره", foolWord: "مسافرخانه", hint: "اقامت موقت شبانه، لابی و پذیرایی", diff: "medium" },
+            { word: "شهربازی", foolWord: "پارک آبی", hint: "ترن هوایی، هیجان، بازی و سرگرمی", diff: "medium" },
+            { word: "ایستگاه فضایی", foolWord: "رصدخانه", hint: "مدار زمین، بی‌وزنی و تحقیقات نجومی", diff: "hard" },
+            { word: "معدن زغال‌سنگ", foolWord: "کارگاه زیرزمینی", hint: "کار سخت با کلنگ و کلاه در تاریکی عمق زمین", diff: "hard" },
+            { word: "برج میلاد", foolWord: "برج آزادی", hint: "سازه بسیار بلند مخابراتی در پایتخت", diff: "easy" },
+            { word: "تخت جمشید", foolWord: "پاسارگاد", hint: "آثار باستانی ستون‌دار هخامنشی در شیراز", diff: "medium" },
+            { word: "کویر مرنجاب", foolWord: "دشت لوت", hint: "رمل‌های شنی، آفتاب داغ و ستاره‌های شب", diff: "medium" },
+            { word: "قطب جنوب", foolWord: "قطب شمال", hint: "سرمای شدید، یخچال‌های طبیعی و پنگوئن‌ها", diff: "medium" },
+            { word: "سفارت‌خانه", foolWord: "وزارت امور خارجه", hint: "دیپلمات‌ها، پرچم کشورها و ویزا", diff: "hard" },
+            { word: "پیست اسکی دیزین", foolWord: "پیست توچال", hint: "برف سنگین، تله‌کابین و اسنوبورد", diff: "medium" },
+            { word: "استادیوم آزادی", foolWord: "سالن ۱۲ هزار نفری", hint: "زمین چمن، بازی فوتبال و هیاهوی تماشاگران", diff: "easy" },
+            { word: "حمام سنتی عمومی", foolWord: "استخر و سونا", hint: "حوضچه آب گرم، لنگ و کیسه‌کشی سنتی", diff: "medium" },
+            { word: "زندان قزل‌حصار", foolWord: "بازداشتگاه موقت", hint: "میله‌های فولادی، برجک نگهبانی و حیاط هواخوری", diff: "hard" },
+            { word: "موزه لوور", foolWord: "گالری نقاشی", hint: "هرم شیشه‌ای، آثار باستانی و نقاشی مونالیزا", diff: "medium" },
+            { word: "بازار بزرگ تهران", foolWord: "پاساژ علاءالدین", hint: "راسته‌های قدیمی، دکان‌ها و خرید سنتی", diff: "easy" },
+            { word: "دانشگاه صنعتی شریف", foolWord: "دانشکده فنی تهران", hint: "کلاس درس، اساتید، جزوه و امتحانات پایان‌ترم", diff: "easy" },
+            { word: "کشتی تفریحی کروز", foolWord: "لنج باری جنوب", hint: "اقامت لوکس چندطبقه وسط اقیانوس", diff: "hard" }
         ],
         foods: [
-            { word: "پیتزا مخصوص", foolWord: "لازانیا", hint: "فست‌فود با پنیر فراوان", diff: "easy" },
-            { word: "بستنی سنتی", foolWord: "فالوده شیرازی", hint: "دسر سرد تابستانی", diff: "easy" },
-            { word: "کباب کوبیده", foolWord: "کباب برگ", hint: "غذای مجلسی سنتی", diff: "easy" },
-            { word: "قرمه‌سبزی", foolWord: "خورش کرفس", hint: "خورش سبز با لیمو", diff: "medium" },
-            { word: "کله‌پاچه", foolWord: "حلیم بوقلمون", hint: "صبحانه سنگین سنتی", diff: "hard" }
+            { word: "پیتزا مخصوص", foolWord: "لازانیا", hint: "فست‌فود با خمیر گرد، قارچ و پنیر فراوان", diff: "easy" },
+            { word: "بستنی سنتی زعفرانی", foolWord: "فالوده شیرازی", hint: "دسر سرد زرد با گلاب و خلال پسته", diff: "easy" },
+            { word: "کباب کوبیده", foolWord: "کباب برگ", hint: "غذای مجلسی چلوکبابی با گوجه کبابی و سماق", diff: "easy" },
+            { word: "قرمه‌سبزی", foolWord: "خورش کرفس", hint: "خورش اصیل سبز با لوبیا قرمز و لیمو عمانی", diff: "easy" },
+            { word: "دیزی سنگی", foolWord: "آبگوشت سنتی", hint: "گوشت و نخود در ظرف سفالی، نان سنگک و ترشی", diff: "easy" },
+            { word: "کله‌پاچه", foolWord: "حلیم بوقلمون", hint: "صبحانه سنگین، زبان و چشم و آب‌مغز با دارچین", diff: "hard" },
+            { word: "خورش فسنجان", foolWord: "خورش آلو اسفناج", hint: "ترکیب گردوی آسیاب‌شده و رب انار ترش و شیرین", diff: "medium" },
+            { word: "میرزاقاسمی", foolWord: "کشک بادمجان", hint: "بادمجان کبابی شمال با سیر فراوان و گوجه و تخم‌مرغ", diff: "medium" },
+            { word: "سمبوسه تند", foolWord: "فلافل اهوازی", hint: "نان مثلثی سرخ‌شده در روغن پر از سیب‌زمینی و فلفل", diff: "easy" },
+            { word: "باقلوای پسته", foolWord: "قطاب یزدی", hint: "شیرینی شهددار لایه‌لایه با هل و زعفران", diff: "medium" },
+            { word: "زرشک‌پلو با مرغ", foolWord: "باقالی‌پلو با ماهیچه", hint: "برنج مجلسی با خلال پسته و دانه‌های قرمز ترش", diff: "easy" },
+            { word: "آش رشته داغ", foolWord: "آش شله‌قلمکار", hint: "کاسه داغ با کشک، پیازداغ و نعناداغ فراوان", diff: "easy" },
+            { word: "پاستا پنه آلفردو", foolWord: "لازانیا گوشت", hint: "غذای ایتالیایی با سس سفید، خامه، قارچ و سینه مرغ", diff: "medium" },
+            { word: "دلمه برگ مو", foolWord: "کوفته تبریزی", hint: "پیچیدن برنج و سبزی معطر داخل برگ‌های انگور", diff: "hard" },
+            { word: "سوهان عسلی", foolWord: "گز پسته‌ای", hint: "شیرینی کره‌ای طلایی با جوانه گندم و خلال بادام", diff: "medium" }
         ],
         jobs: [
-            { word: "آتش‌نشان", foolWord: "امدادگر", hint: "مهار خطر با آب و کپسول", diff: "easy" },
-            { word: "خلبان", foolWord: "ناخدا", hint: "هدایت وسیله نقلیه سنگین", diff: "easy" },
-            { word: "پزشک جراح", foolWord: "دندان‌پزشک", hint: "ابزار دقیق در اتاق عمل", diff: "medium" },
-            { word: "کارآگاه جنایی", foolWord: "مامور مخفی", hint: "کشف رازها و سرنخ‌ها", diff: "hard" }
+            { word: "آتش‌نشان", foolWord: "امدادگر هلال احمر", hint: "مهار شعله‌های سوزان و نجات افراد از آوار", diff: "easy" },
+            { word: "خلبان هواپیما", foolWord: "ناخدا کشتی", hint: "هدایت کابین پرواز در آسمان با لباس فرم", diff: "easy" },
+            { word: "پزشک جراح", foolWord: "دندان‌پزشک", hint: "اتاق عمل، تیغ جراحی، پنس و بخیه", diff: "medium" },
+            { word: "کارآگاه جنایی", foolWord: "مامور مخفی", hint: "ذره‌بین، بررسی صحنه جرم و سرنخ‌های مخفی", diff: "hard" },
+            { word: "نانوای سنگکی", foolWord: "شیرینی‌پز", hint: "پاروی چوبی، خمیر نان و تنور پر از سنگ داغ", diff: "easy" },
+            { word: "فضانورد", foolWord: "ستاره‌شناس", hint: "لباس سفید مخصوص کپسول‌دار و پیاده‌روی در خلاء", diff: "hard" },
+            { word: "جوشکار اسکلت", foolWord: "تراشکار صنعتی", hint: "ماسک تیره، الکترود و جرقه‌های درخشان آهن", diff: "medium" },
+            { word: "غواص اعماق دریا", foolWord: "نجات‌غریق استخر", hint: "لباس لاستیکی، فین پا و کپسول اکسیژن زیر آب", diff: "medium" },
+            { word: "برنامه‌نویس وب", foolWord: "هکر امنیتی", hint: "تایپ کدهای بی‌پایان پشت مانیتور با فنجان قهوه", diff: "easy" },
+            { word: "وکیل دادگستری", foolWord: "قاضی دادگاه", hint: "کیف چرمی، کتاب قانون و دفاع از موکل در دادگاه", diff: "medium" },
+            { word: "عکاس حیات وحش", foolWord: "تصویربردار مستند", hint: "استتار در جنگل با لنزهای تله بزرگ دوربین", diff: "medium" },
+            { word: "راننده کامیون ترانزیت", foolWord: "شوفر اتوبوس", hint: "سفرهای طولانی شبانه در جاده‌ها با تریلی ۱۸ چرخ", diff: "easy" },
+            { word: "باستان‌شناس", foolWord: "زمین‌شناس", hint: "قلم‌مو، فرچه و کندوکاو در خرابه‌های هزارساله", diff: "hard" },
+            { word: "داور فوتبال", foolWord: "مربی بدنساز", hint: "سوت به لب، کارت زرد و قرمز و دویدن در زمین چمن", diff: "easy" },
+            { word: "معلم دبستان", foolWord: "استاد دانشگاه", hint: "گچ، تخته‌سیاه، دفتر نمره و دیکته به بچه‌ها", diff: "easy" }
         ],
         objects: [
-            { word: "تلفن همراه", foolWord: "تبلت لمسی", hint: "دستگاه شارژی ارتباطی", diff: "easy" },
-            { word: "ساعت مچی", foolWord: "قطب‌نما", hint: "وسیله فلزی روی مچ دست", diff: "easy" },
-            { word: "چتر نجات", foolWord: "بادبان قایق", hint: "پارچه مهار سقوط هوایی", diff: "hard" }
+            { word: "تلفن همراه هوشمند", foolWord: "تبلت لمسی", hint: "دستگاه جیبی شارژی با صفحه لمسی و اینترنت", diff: "easy" },
+            { word: "ساعت مچی عقربه‌ای", foolWord: "قطب‌نما", hint: "بند چرمی یا فلزی دور مچ دست با تیک‌تاک عقربه", diff: "easy" },
+            { word: "چتر نجات", foolWord: "بادبان قایق", hint: "پارچه گنبدی بزرگ مهارکننده سقوط آزاد هوایی", diff: "hard" },
+            { word: "گاوصندوق رمزدار", foolWord: "قلک فلزی", hint: "جعبه فولادی ضدسرقت سنگین با قفل چرخشی", diff: "medium" },
+            { word: "ذره‌بین دستی", foolWord: "میکروسکوپ", hint: "شیشه محدب دسته‌دار برای بزرگ‌نمایی خطوط و ریزه‌کاری", diff: "easy" },
+            { word: "چراغ‌قوه پلیسی", foolWord: "فانوس قدیمی", hint: "استوانه فلزی با باتری برای تاباندن نور متمرکز در تاریکی", diff: "easy" },
+            { word: "اتو بخار دستی", foolWord: "سشوار برقی", hint: "صاف کردن چروک‌های لباس با کفی فلزی داغ و بخار", diff: "easy" },
+            { word: "دوربین دوچشمی شکاری", foolWord: "تلسکوپ", hint: "وسیله آویزان از گردن برای دیدن فواصل دوردست با دو چشم", diff: "medium" },
+            { word: "چاقوی ضامن‌دار سوئیسی", foolWord: "انبردست چندکاره", hint: "ابزار جیبی تاشو با تیغه‌های مختلف، قیچی و دربازکن", diff: "medium" },
+            { word: "هدفون بلوتوثی", foolWord: "اسپیکر همراه", hint: "گوشی‌های بی‌سیم روی گوش برای گوش دادن به موزیک", diff: "easy" },
+            { word: "گیتار کلاسیک", foolWord: "سنتور", hint: "ساز چوبی با ۶ سیم نایلونی و کاسه صدادار", diff: "easy" },
+            { word: "تخته‌سیاه گچی", foolWord: "وایت‌برد ماژیکی", hint: "سطح چوبی کلاس درس برای نوشتن با گچ سفید و تخته‌پاک‌کن", diff: "easy" },
+            { word: "کپسول آتش‌نشانی", foolWord: "جلیقه نجات", hint: "سیلندر قرمز رنگ فلزی پر از پودر دی‌اکسید کربن", diff: "medium" },
+            { word: "عینک واقعیت مجازی", foolWord: "عینک آفتابی", hint: "هدست دارای دو نمایشگر متصل روی چشم برای ورود به بازی ۳بعدی", diff: "hard" }
         ],
         nostalgia: [
-            { word: "کلاه قرمزی", foolWord: "پت و مت", hint: "شخصیت عروسکی خاطره‌انگیز", diff: "easy" },
-            { word: "کنسرت زنده", foolWord: "سالن اپرا", hint: "ساز و هم‌خوانی تماشاگران", diff: "medium" },
-            { word: "آتاری دستی", foolWord: "پلی‌استیشن", hint: "وسیله بازی دیجیتالی قدیمی", diff: "hard" }
+            { word: "کلاه قرمزی و پسرخاله", foolWord: "پت و مت", hint: "عروسک محبوب دهه شصت با شلوار آبی و ژاکت سبز", diff: "easy" },
+            { word: "کنسول بازی آتاری دستی", foolWord: "میکرو و سگا", hint: "دسته‌های خلبانی با دکمه قرمز و بازی هواپیمای قدیمی", diff: "easy" },
+            { word: "تیله‌بازی کوچه", foolWord: "هفت‌سنگ", hint: "گوی‌های شیشه‌ای رنگارنگ و مسابقه نشانه روی خاک", diff: "medium" },
+            { word: "نوار کاست موسیقی", foolWord: "صفحه گرامافون", hint: "چرخاندن نوار مغناطیسی قهوه‌ای با خودکار بیک لوله‌ای", diff: "medium" },
+            { word: "کارتون فوتبالیست‌ها", foolWord: "پلنگ صورتی", hint: "سوباسا، کاکرو و شوت‌های چرخشی در زمین بی‌پایان", diff: "easy" },
+            { word: "بازی اسم و فامیل", foolWord: "دوزبازی", hint: "کاغذ و خودکار، شهر، غذا، گل، اشیاء با شمارش استپ", diff: "easy" },
+            { word: "تلفن عمومی سکه‌ای", foolWord: "باجه تلفن کارتی", hint: "دستگاه زرد روی دیوار با انداختن سکه دوریالی در شیار", diff: "medium" },
+            { word: "پیک نوروزی مدرسه", foolWord: "دفتر مشق خط‌دار", hint: "تکالیف نوروزی با نقاشی و حل جدول در عید دیدنی", diff: "easy" },
+            { word: "یخمک لوله‌ای نوشابه‌ای", foolWord: "آدامس خرسی", hint: "بسته‌بندی پلاستیکی یخ‌زده سیاه و قرمز دوتومنی", diff: "easy" },
+            { word: "پاک‌کن دورنگ آبی و قرمز", foolWord: "تراش رومیزی فلزی", hint: "پاک‌کن زبر که قسمت آبی‌اش کاغذ را سوراخ می‌کرد!", diff: "easy" }
         ]
     };
 
@@ -510,7 +663,9 @@
         "یک بار در میانه بازی به ساعت یا مچ دستت نگاه کن.",
         "در طول این دور، از یکی از بازیکنان یک تعریف کوتاه بکن.",
         "هنگام صحبت کردن، حداقل یک بار با دست چانه‌ات را لمس کن.",
-        "در طول این دست، حداقل از دو نفر مختلف سوال بپرس."
+        "در طول این دست، حداقل از دو نفر مختلف سوال بپرس.",
+        "سعی کن دستت را روی میز مشت کنی و در حین صحبت چند ثانیه نگه داری.",
+        "حداقل یک بار در میانه حرف زدن یک نفر دیگر، سرت را به نشانه تایید شدید تکان بده."
     ];
 
     function showToast(msg) {
@@ -681,7 +836,10 @@
                 vc: p.stats?.vc || 0,
                 vs: p.stats?.vs || 0,
                 bw: p.stats?.bw || 0,
-                bl: p.stats?.bl || 0
+                bl: p.stats?.bl || 0,
+                spyGuesses: p.stats?.spyGuesses || 0,
+                innocentVotesReceived: p.stats?.innocentVotesReceived || 0,
+                foolEscaped: p.stats?.foolEscaped || 0
             }
         };
     }
@@ -737,7 +895,7 @@
 
     function safeClientSend(packet) {
         if (!netClientConn || !netClientConn.open) {
-            showToast("ارتباط با میزبان برقرار نیست.");
+            showToast("ارتباط با اتاق میزبان برقرار نیست.");
             return false;
         }
         try {
@@ -762,6 +920,14 @@
 
     function isActivePlayerConnection(conn) {
         return netHostConns.some(c => c === conn && c.connected && c.joined && c.playerId === conn.playerId);
+    }
+
+    function showInfoModal(key) {
+        const item = INFO_TEXTS[key];
+        if (!item) return;
+        document.getElementById('info-modal-title').textContent = item.title;
+        document.getElementById('info-modal-desc').textContent = item.text;
+        dispatch({type: 'OPEN_MODAL', payload: 'info-modal'});
     }
 
     function dispatch(action) {
@@ -795,7 +961,7 @@
                 gameState.match.usedWordKeys = [];
                 gameState.round.num = 0;
                 initMatchPlayers();
-                startNextRound();
+                if (!startNextRound()) return;
                 break;
             case 'NEXT_ROUND':
                 startNextRound();
@@ -822,6 +988,7 @@
                 break;
             case 'CANCEL_VOTE':
                 if (gameState.timer.reason === 'timeout') return;
+                dispatch({type: 'CLOSE_MODAL', payload: 'innocent-notice-modal'});
                 resumeTimer();
                 if (gameState.network.isHost) syncNetwork(PROTOCOL.TIMER_SYNC, { running: true, endAt: gameState.timer.endAt, pausedSec: gameState.timer.pausedSec });
                 break;
@@ -982,7 +1149,7 @@
             case 'CONFIRM_END_MATCH':
                 if (gameState.network.isClient) return;
                 document.getElementById('confirm-modal-title').textContent = "پایان مسابقه";
-                document.getElementById('confirm-modal-text').textContent = "آیا مسابقه خاتمه یافته و تابلوی مدال‌ها نمایش یابد؟";
+                document.getElementById('confirm-modal-text').textContent = "آیا مسابقه خاتمه یابد و کارنامه کلی نمایش داده شود؟";
                 dispatch({type: 'OPEN_MODAL', payload: 'confirm-modal'});
                 break;
             case 'END_MATCH':
@@ -1008,7 +1175,7 @@
                 sessionStorage.removeItem('spy_secrets_master');
                 gameState.players = [];
                 renderNameInputs();
-                setPhase('setup');
+                setPhase('welcome');
                 break;
             case 'RESET_NAMES':
                 localStorage.removeItem('spy_saved_player_names');
@@ -1029,18 +1196,6 @@
 
             case 'HOST_INIT': initNetworkHost(); break;
             case 'CLIENT_JOIN': joinNetworkClient(); break;
-            case 'HOST_START_GAME':
-                let activePeers = netHostConns.filter(c => c.joined && c.connected);
-                if (activePeers.length < 2) { showToast("حداقل ۲ بازیکن دیگر باید آنلاین وصل باشند (جمعاً ۳ نفر)!"); return; }
-                if (activePeers.length + 1 > RULES.players.max) { showToast(`تعداد مجاز اتاق حداکثر ${RULES.players.max} نفر است!`); return; }
-                
-                gameState.settings.playersCount = activePeers.length + 1;
-                renderNameInputs();
-                let inps = document.querySelectorAll('#name-inputs-container input');
-                if (inps[0]) inps[0].value = "میزبان (شما)";
-                activePeers.forEach((c, i) => { if (inps[i+1]) inps[i+1].value = c.playerName; });
-                dispatch({type: 'START_MATCH'});
-                break;
         }
     }
 
@@ -1087,7 +1242,7 @@
         for (let i = 0; i < inputs.length; i++) {
             let n = normalizeWord(inputs[i].value);
             if (!n) { showToast(`نام بازیکن ${i+1} خالی است!`); return false; }
-            if (names.includes(n)) { showToast(`نام تکراری است!`); return false; }
+            if (names.includes(n)) { showToast(`اسامی بازیکنان نباید تکراری باشند!`); return false; }
             names.push(n);
         }
         saveCurrentNames(Array.from(inputs).map(x => x.value));
@@ -1115,7 +1270,7 @@
                 role: 'citizen',
                 team: 'citizen',
                 quest: null,
-                stats: old ? old.stats : { sw: 0, cw: 0, vc: 0, vs: 0, bw: 0, bl: 0 }
+                stats: old ? old.stats : { sw: 0, cw: 0, vc: 0, vs: 0, bw: 0, bl: 0, spyGuesses: 0, innocentVotesReceived: 0, foolEscaped: 0 }
             };
         });
     }
@@ -1145,7 +1300,7 @@
     function startNextRound() {
         let pool = gameState.settings.cat === 'custom' ? getCustomWords() : (gameState.settings.cat === 'all' ? Object.values(WORD_PACKS).flat() : WORD_PACKS[gameState.settings.cat]);
         if (gameState.settings.cat === 'custom' && (!pool || pool.length === 0)) {
-            showToast("برای دسته‌بندی سفارشی حداقل یک کلمه اضافه کنید!");
+            showToast("برای دسته‌بندی سفارشی حداقل یک کلمه اضافه فرمایید!");
             return false;
         }
         if (!pool || pool.length === 0) pool = WORD_PACKS.places;
@@ -1192,6 +1347,7 @@
             if (f.length > 0) pool = f;
         }
         
+        // Exhaustion Draw Deck: Prevents repeating words until all are played
         let availablePool = pool.filter(w => !gameState.match.usedWordKeys.includes(normalizeWord(w.word)));
         if (availablePool.length === 0) {
             gameState.match.usedWordKeys = [];
@@ -1416,8 +1572,10 @@
                 if (sus.role === 'spy') {
                     let g = b.amt + (b.amt * SCORING.WAGER_PROFIT_MULTIPLIER);
                     v.score += g; gameState.round.pointsMap[v.id] += g; v.stats.bw++;
+                    v.stats.wagerProfit = (v.stats.wagerProfit || 0) + (b.amt * SCORING.WAGER_PROFIT_MULTIPLIER);
                 } else {
                     v.stats.bl++;
+                    v.stats.wagerProfit = (v.stats.wagerProfit || 0) - b.amt;
                 }
             }
         });
@@ -1432,6 +1590,7 @@
                 syncNetwork(PROTOCOL.GUESS_OPEN, { spyId: sus.id, spyName: sus.name });
             }
         } else {
+            sus.stats.innocentVotesReceived = (sus.stats.innocentVotesReceived || 0) + 1;
             gameState.players.filter(p => p.role === 'spy').forEach(s => {
                 s.score += SCORING.SPY_SURVIVE_WRONG_VOTE;
                 gameState.round.pointsMap[s.id] += SCORING.SPY_SURVIVE_WRONG_VOTE;
@@ -1445,6 +1604,7 @@
         let sus = gameState.players.find(p => p.id === gameState.vote.targetId);
         if (hasG && isCorrectSpyGuess(input, hostSecretState.secretWord)) {
             sus.score += SCORING.SPY_CORRECT_GUESS;
+            sus.stats.spyGuesses = (sus.stats.spyGuesses || 0) + 1;
             gameState.round.pointsMap[sus.id] += SCORING.SPY_CORRECT_GUESS;
             finalizeRound(true, true, false);
         } else {
@@ -1461,6 +1621,7 @@
                 c.score += SCORING.CITIZEN_WIN_ROUND;
                 gameState.round.pointsMap[c.id] += SCORING.CITIZEN_WIN_ROUND;
                 c.stats.cw++;
+                if (c.role === 'fool') c.stats.foolEscaped = (c.stats.foolEscaped || 0) + 1;
             });
             buildHostRoundResult('citizen', false, false);
         } else if (forceSpyWin || aS >= aC) {
@@ -1476,9 +1637,12 @@
                 document.getElementById('multi-spy-notice-text').textContent = `${sus.name} جاسوس بود و حدسش اشتباه بود! اما هنوز جاسوس‌های دیگری در بازی پنهان هستند.`;
                 dispatch({type: 'OPEN_MODAL', payload: 'multi-spy-notice-modal'});
             } else {
-                document.getElementById('innocent-notice-text').textContent = `${sus ? sus.name : 'متهم'} جاسوس نبود و اخراج شد!`;
+                // Innocent citizen eliminated: Show notice and auto-resume
+                document.getElementById('innocent-notice-text').textContent = `«${sus ? sus.name : 'متهم'}» شهروند بی‌گناه بود و اخراج شد!`;
                 dispatch({type: 'OPEN_MODAL', payload: 'innocent-notice-modal'});
-                setTimeout(() => dispatch({type: 'CANCEL_VOTE'}), 3000);
+                setTimeout(() => {
+                    dispatch({type: 'CANCEL_VOTE'});
+                }, 2500);
             }
             commitState();
         }
@@ -1493,7 +1657,7 @@
             if (data.reason === 'spy_guess') {
                 htm = `🎯 <strong>${escapeHtml(suspectName)}</strong> کلمه اصلی (<span style="color:var(--brand-amber)">${escapeHtml(secretWord)}</span>) را درست حدس زد!`;
             } else if (data.reason === 'sudden_death') {
-                htm = `شهروند بی‌گناه بود!<br>به دلیل حذف درجا، جاسوس‌ها برنده شدند.<br>کلمه اصلی: <span style="color:var(--brand-amber)">${escapeHtml(secretWord)}</span>`;
+                htm = `شهروند بی‌گناه اخراج شد!<br>به دلیل قانون حذف درجا، جاسوس‌ها برنده شدند.<br>کلمه اصلی: <span style="color:var(--brand-amber)">${escapeHtml(secretWord)}</span>`;
             } else {
                 htm = `تعداد شهروندان به پایان رسید و جاسوس‌ها پیروز شدند!<br>کلمه اصلی: <span style="color:var(--brand-amber)">${escapeHtml(secretWord)}</span>`;
             }
@@ -1579,6 +1743,10 @@
         document.querySelectorAll('.screen-view').forEach(e => e.classList.add('hidden'));
         const screenEl = document.getElementById(`screen-${gameState.phase}`);
         if (screenEl) screenEl.classList.remove('hidden');
+
+        if (gameState.phase === 'setup') {
+            document.getElementById('names-section-container').classList.toggle('hidden', gameState.network.isHost);
+        }
 
         if (gameState.phase === 'reveal') {
             document.getElementById('reveal-instruction-text').textContent = gameState.settings.revealHold
@@ -1828,18 +1996,36 @@
     function renderAccolades() {
         const acc = document.getElementById('accolades-container');
         acc.innerHTML = '';
-        const topSpy = [...gameState.players].sort((a, b) => b.stats.sw - a.stats.sw)[0];
-        const topCitizen = [...gameState.players].sort((a, b) => b.stats.cw - a.stats.cw)[0];
+        
+        const topSpy = [...gameState.players].sort((a, b) => (b.stats.sw || 0) - (a.stats.sw || 0))[0];
+        const topDetective = [...gameState.players].sort((a, b) => (b.stats.vc || 0) - (a.stats.vc || 0))[0];
+        const topGuesser = [...gameState.players].sort((a, b) => (b.stats.spyGuesses || 0) - (a.stats.spyGuesses || 0))[0];
+        const topWagerer = [...gameState.players].sort((a, b) => (b.stats.wagerProfit || 0) - (a.stats.wagerProfit || 0))[0];
+        const topVictim = [...gameState.players].sort((a, b) => (b.stats.innocentVotesReceived || 0) - (a.stats.innocentVotesReceived || 0))[0];
+        const topFool = [...gameState.players].sort((a, b) => (b.stats.foolEscaped || 0) - (a.stats.foolEscaped || 0))[0];
+
         if (topSpy && topSpy.stats.sw > 0) {
-            acc.innerHTML += `<div class="accolade-card"><div class="accolade-icon">🕵️</div><div><div style="font-weight:bold; color:var(--brand-rose);">زیرک‌ترین جاسوس: ${escapeHtml(topSpy.name)}</div></div></div>`;
+            acc.innerHTML += `<div class="accolade-card"><div class="accolade-icon">🕵️</div><div><div style="font-weight:bold; color:var(--brand-rose);">شبح سیاه: ${escapeHtml(topSpy.name)}</div><div style="font-size:0.75rem; color:var(--text-secondary);">زیرک‌ترین جاسوس با بیشترین فرار از شناسایی</div></div></div>`;
         }
-        if (topCitizen && topCitizen.stats.cw > 0) {
-            acc.innerHTML += `<div class="accolade-card"><div class="accolade-icon">🔍</div><div><div style="font-weight:bold; color:var(--brand-emerald);">کارآگاه تیزبین: ${escapeHtml(topCitizen.name)}</div></div></div>`;
+        if (topGuesser && topGuesser.stats.spyGuesses > 0) {
+            acc.innerHTML += `<div class="accolade-card"><div class="accolade-icon">🧠</div><div><div style="font-weight:bold; color:var(--brand-amber);">ذهن‌خوان برجسته: ${escapeHtml(topGuesser.name)}</div><div style="font-size:0.75rem; color:var(--text-secondary);">حدس صحیح کلمه رمز اصلی در نقش جاسوس</div></div></div>`;
+        }
+        if (topDetective && topDetective.stats.vc > 0) {
+            acc.innerHTML += `<div class="accolade-card"><div class="accolade-icon">🔍</div><div><div style="font-weight:bold; color:var(--brand-emerald);">شرلوک هلمز: ${escapeHtml(topDetective.name)}</div><div style="font-size:0.75rem; color:var(--text-secondary);">بیشترین شکار جاسوس‌ها در جلسات رای‌گیری</div></div></div>`;
+        }
+        if (topWagerer && (topWagerer.stats.wagerProfit || 0) > 0) {
+            acc.innerHTML += `<div class="accolade-card"><div class="accolade-icon">🐺</div><div><div style="font-weight:bold; color:var(--brand-primary);">گرگ وال‌استریت: ${escapeHtml(topWagerer.name)}</div><div style="font-size:0.75rem; color:var(--text-secondary);">کسب بیشترین سود از شرط‌بندی روی مظنونین</div></div></div>`;
+        }
+        if (topVictim && (topVictim.stats.innocentVotesReceived || 0) > 0) {
+            acc.innerHTML += `<div class="accolade-card"><div class="accolade-icon">🕊️</div><div><div style="font-weight:bold; color:#a855f7;">قربانی بی‌گناه: ${escapeHtml(topVictim.name)}</div><div style="font-size:0.75rem; color:var(--text-secondary);">مظلوم‌ترین شهروند که بیشترین اتهام اشتباه را خورد</div></div></div>`;
+        }
+        if (topFool && (topFool.stats.foolEscaped || 0) > 0) {
+            acc.innerHTML += `<div class="accolade-card"><div class="accolade-icon">🎭</div><div><div style="font-weight:bold; color:#f59e0b;">بازیگر نقاب‌دار: ${escapeHtml(topFool.name)}</div><div style="font-size:0.75rem; color:var(--text-secondary);">ساده‌لوحی که بدون سوءظن موفق به فرار شد</div></div></div>`;
         }
     }
 
     function getCategoryLabel(key) {
-        const labels = { places: "مکان‌ها و شهرها", foods: "خوراکی و غذاها", jobs: "مشاغل و حرفه‌ها", objects: "اشیاء و ابزارها", nostalgia: "سرگرمی و نوستالژی", custom: "کلمات سفارشی" };
+        const labels = { places: "اماکن و فضاها", foods: "خوراکی و غذاها", jobs: "مشاغل و حرفه‌ها", objects: "اشیاء و ابزارها", nostalgia: "نوستالژی و خاطره‌بازی", custom: "کلمات سفارشی" };
         return labels[key] || "موضوع عمومی";
     }
 
@@ -1912,6 +2098,12 @@
     }
 
     function initNetworkHost() {
+        let hostName = document.getElementById('host-player-name').value.trim();
+        if (!hostName) {
+            showToast("لطفاً نام خود (میزبان) را وارد کنید!");
+            return;
+        }
+
         let code = generateRoomCode();
         document.getElementById('room-code-display').textContent = code;
         document.getElementById('host-room-info').classList.remove('hidden');
@@ -1921,13 +2113,14 @@
             
             netPeer.on('error', (err) => {
                 console.error("PeerJS Host Error:", err);
-                showToast(`خطا در ارتباط شبکه: ${err.type || 'قطع سرویس'}`);
+                showToast(`خطا در سرویس اتاق: ${err.type || 'قطع سرویس'}`);
             });
 
             netPeer.on('open', () => {
                 gameState.network.isHost = true;
                 gameState.network.code = code;
                 document.getElementById('connection-status-badge').textContent = `👑 میزبان اتاق: ${code}`;
+                updateHostConnectedPlayers();
                 
                 clearInterval(netHeartbeat);
                 netHeartbeat = setInterval(() => {
@@ -1936,7 +2129,7 @@
                         if (c.joined && now - (c.lastSeenAt || now) > 15000) {
                             if (c.connected) {
                                 c.connected = false;
-                                showToast(`⚠️ اتصال یک بازیکن قطع شد.`);
+                                showToast(`⚠️ اتصال یکی از بازیکنان قطع شد.`);
                                 if (gameState.phase === 'vote') checkVoteCompletion();
                                 if (gameState.phase === 'wager') checkWagerCompletion();
                             }
@@ -1965,7 +2158,7 @@
                         }
 
                         if (isMidGame && !matchedPlayer) {
-                            safeHostSend(conn, { type: PROTOCOL.JOIN_REJECTED, reason: "بازی در جریان است." });
+                            safeHostSend(conn, { type: PROTOCOL.JOIN_REJECTED, reason: "مسابقه هم‌اکنون در جریان است." });
                             conn.close();
                             return;
                         }
@@ -1979,9 +2172,10 @@
 
                         if (!matchedPlayer) {
                             let isDuplicate = gameState.players.some(p => normalizeWord(p.name) === normalizeWord(cleanName)) ||
+                                              normalizeWord(hostName) === normalizeWord(cleanName) ||
                                               netHostConns.some(c => c !== conn && c.joined && c.connected && normalizeWord(c.playerName) === normalizeWord(cleanName));
                             if (isDuplicate) {
-                                safeHostSend(conn, { type: PROTOCOL.JOIN_REJECTED, reason: "این نام قبلاً در اتاق استفاده شده است." });
+                                safeHostSend(conn, { type: PROTOCOL.JOIN_REJECTED, reason: "این نام قبلاً در اتاق انتخاب شده است." });
                                 conn.close();
                                 return;
                             }
@@ -2061,13 +2255,15 @@
     }
 
     function updateHostConnectedPlayers() {
+        let hostName = document.getElementById('host-player-name').value.trim() || 'میزبان';
         let active = netHostConns.filter(x => x.joined && x.connected);
-        document.getElementById('connected-players-count').textContent = active.length;
-        document.getElementById('connected-players-list').textContent = active.map(x => x.playerName).join(' ، ');
+        document.getElementById('connected-players-count').textContent = active.length + 1;
+        document.getElementById('connected-players-list').textContent = [hostName, ...active.map(x => x.playerName)].join(' ، ');
     }
 
     function broadcastLobbyState() {
-        let playerNames = ['میزبان (شما)', ...netHostConns.filter(c => c.joined && c.connected).map(c => c.playerName)];
+        let hostName = document.getElementById('host-player-name').value.trim() || 'میزبان';
+        let playerNames = [hostName, ...netHostConns.filter(c => c.joined && c.connected).map(c => c.playerName)];
         syncNetwork(PROTOCOL.LOBBY_STATE, { players: playerNames });
     }
 
@@ -2190,7 +2386,7 @@
 
         conn.on('close', () => {
             if (intentionalDisconnect) return;
-            showToast("اتصال شما قطع شد. در حال تلاش برای اتصال مجدد...");
+            showToast("اتصال قطع شد. در حال تلاش برای وصل مجدد...");
             document.getElementById('connection-status-badge').textContent = '🟡 در حال اتصال مجدد...';
             
             if (isReconnecting) return;
@@ -2242,7 +2438,7 @@
             netPeer.on('error', (err) => {
                 console.error("PeerJS Client Error:", err);
                 if (err.type === 'peer-unavailable') {
-                    showToast("کد اتاق نامعتبر است یا اتاق بسته شده است!");
+                    showToast("کد اتاق یافت نشد یا اتاق بسته شده است!");
                 } else {
                     showToast(`خطای اتصال به سرور: ${err.type || 'نامشخص'}`);
                 }
@@ -2275,7 +2471,7 @@
         }
         gameState.network.isHost = false;
         gameState.network.isClient = false;
-        document.getElementById('connection-status-badge').textContent = '🟢 حالت: محلی (یک گوشی)';
+        document.getElementById('connection-status-badge').textContent = '🟢 وضعیت: آفلاین';
         setTimeout(() => { intentionalDisconnect = false; }, 500);
     }
 
@@ -2298,7 +2494,7 @@
         let w = document.getElementById('cust-word').value.trim();
         let f = document.getElementById('cust-fool').value.trim() || w;
         let h = document.getElementById('cust-hint').value.trim() || "بدون راهنما";
-        if (!w) { showToast("کلمه اصلی را وارد کنید!"); return; }
+        if (!w) { showToast("کلمه اصلی را وارد فرمایید!"); return; }
         let list = getCustomWords();
         list.push({ word: w, foolWord: f, hint: h, diff: "medium" });
         saveCustomWords(list);
@@ -2306,6 +2502,7 @@
         document.getElementById('cust-fool').value = '';
         document.getElementById('cust-hint').value = '';
         renderCustomWordsList();
+        showToast("کلمه سفارشی با موفقیت اضافه شد!");
     }
     function deleteCustomWord(idx) {
         let list = getCustomWords();
@@ -2369,7 +2566,7 @@
                         if (uniqueNew.length > 0) {
                             saveCustomWords([...current, ...uniqueNew]);
                             renderCustomWordsList();
-                            showToast(`${uniqueNew.length} کلمه جدید با موفقیت بارگذاری و افزوده شد!`);
+                            showToast(`${uniqueNew.length} کلمه جدید با موفقیت افزوده شد!`);
                         } else {
                             showToast("تمام کلمات فایل قبلاً ثبت شده بودند.");
                         }
@@ -2379,7 +2576,7 @@
                 } else {
                     showToast("ساختار فایل JSON نامعتبر است!");
                 }
-            } catch(err) { showToast("خطا در خواندن یا پردازش فایل JSON!"); }
+            } catch(err) { showToast("خطا در پردازش فایل JSON!"); }
             inputFile.value = '';
         };
         reader.readAsText(file);
@@ -2477,6 +2674,23 @@
     }
 
     // Event Bindings
+    document.querySelectorAll('.info-btn').forEach(btn => {
+        btn.onclick = (e) => {
+            e.stopPropagation();
+            showInfoModal(btn.dataset.info);
+        };
+    });
+    document.getElementById('btn-info-modal-close').onclick = () => dispatch({type: 'CLOSE_MODAL', payload: 'info-modal'});
+
+    document.getElementById('btn-copy-room-code').onclick = () => {
+        const code = document.getElementById('room-code-display').textContent;
+        if (navigator.clipboard && code && code !== '-') {
+            navigator.clipboard.writeText(code).then(() => showToast("کد اتاق در حافظه کپی شد! 📋"));
+        } else {
+            showToast(`کد اتاق: ${code}`);
+        }
+    };
+
     document.getElementById('setup-players-count').addEventListener('change', renderNameInputs);
     document.getElementById('btn-sound-toggle').onclick = () => dispatch({type: 'TOGGLE_AUDIO'});
     document.getElementById('theme-selector').onchange = (e) => dispatch({type: 'CHANGE_THEME', payload: e.target.value});
@@ -2486,14 +2700,30 @@
     document.getElementById('btn-restore-game').onclick = () => dispatch({type: 'RESTORE_GAME'});
     document.getElementById('btn-discard-game').onclick = () => dispatch({type: 'DISCARD_GAME'});
 
-    document.getElementById('btn-nav-setup').onclick = () => dispatch({type: 'NAVIGATE', payload: 'setup'});
+    document.getElementById('btn-nav-setup').onclick = () => {
+        resetNetwork();
+        dispatch({type: 'NAVIGATE', payload: 'setup'});
+    };
     document.getElementById('btn-nav-multi').onclick = () => dispatch({type: 'NAVIGATE', payload: 'multi'});
     document.getElementById('btn-open-words').onclick = () => dispatch({type: 'OPEN_MODAL', payload: 'custom-words-modal'});
     document.getElementById('btn-back-welcome-1').onclick = () => dispatch({type: 'NAVIGATE', payload: 'welcome'});
     document.getElementById('btn-back-welcome-2').onclick = () => dispatch({type: 'NAVIGATE', payload: 'welcome'});
 
     document.getElementById('btn-host-init').onclick = () => dispatch({type: 'HOST_INIT'});
-    document.getElementById('btn-host-start').onclick = () => dispatch({type: 'HOST_START_GAME'});
+    document.getElementById('btn-host-open-setup').onclick = () => {
+        let activePeers = netHostConns.filter(c => c.joined && c.connected);
+        if (activePeers.length < 2) { showToast("حداقل ۲ بازیکن دیگر باید آنلاین وصل باشند (جمعاً ۳ نفر)!"); return; }
+        
+        let hostName = document.getElementById('host-player-name').value.trim() || 'میزبان';
+        document.getElementById('setup-players-count').value = activePeers.length + 1;
+        renderNameInputs();
+        
+        let inps = document.querySelectorAll('#name-inputs-container input');
+        if (inps[0]) inps[0].value = hostName;
+        activePeers.forEach((c, i) => { if (inps[i+1]) inps[i+1].value = c.playerName; });
+        dispatch({type: 'NAVIGATE', payload: 'setup'});
+    };
+
     document.getElementById('btn-client-join').onclick = () => dispatch({type: 'CLIENT_JOIN'});
 
     document.getElementById('toggle-limit').onchange = (e) => document.getElementById('vote-limit-box').classList.toggle('hidden', !e.target.checked);
