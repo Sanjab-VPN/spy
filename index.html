@@ -229,8 +229,8 @@
 
 <div class="app-container">
     <div class="header-bar">
-        <div style="font-size:0.8rem; font-weight:bold; color:var(--text-secondary);" id="connection-status-badge">🟢 وضعیت: آفلاین</div>
-        <div style="display:flex; gap:6px; align-items:center;">
+        <div style="font-size:0.8rem; font-weight:bold; color:var(--text-secondary);" id="connection-status-badge" class="hidden">🟢 متصل به اتاق</div>
+        <div style="display:flex; gap:6px; align-items:center; margin-inline-start:auto;">
             <button id="btn-sound-toggle" class="btn btn-ghost btn-sm" style="font-size:1.1rem; padding:4px 10px;" aria-label="فعال یا غیرفعال کردن صدا">🔊</button>
             <select id="theme-selector" class="input-control btn-sm" style="width:auto; padding:4px 8px;" aria-label="انتخاب تم رنگی">
                 <option value="default">🎨 نئون</option>
@@ -348,6 +348,10 @@
                 <label class="switch"><input type="checkbox" id="toggle-sudden"><span class="slider"></span></label>
             </div>
             <div class="toggle-item">
+                <div class="toggle-label-wrap"><span>رای مخفی نوبتی</span><button class="info-btn" data-info="secretVote" type="button">ℹ️</button></div>
+                <label class="switch"><input type="checkbox" id="toggle-secret-vote" checked><span class="slider"></span></label>
+            </div>
+            <div class="toggle-item">
                 <div class="toggle-label-wrap"><span>سقف زنگ</span><button class="info-btn" data-info="voteLimit" type="button">ℹ️</button></div>
                 <label class="switch"><input type="checkbox" id="toggle-limit"><span class="slider"></span></label>
             </div>
@@ -389,7 +393,7 @@
 
     <!-- Screen 6: Voting -->
     <div id="screen-vote" class="screen-view hidden">
-        <h2>رای‌گیری اخراج</h2>
+        <h2 id="vote-screen-title">رای‌گیری اخراج</h2>
         <p id="vote-instruction-text">متهم اصلی را انتخاب کنید:</p>
         <div id="vote-grid" class="grid-2"></div>
         <button id="btn-cancel-vote" class="btn btn-ghost">انصراف و بازگشت به گفتگو</button>
@@ -406,10 +410,12 @@
     <!-- Screen 8: Spy Guess -->
     <div id="screen-guess" class="screen-view hidden">
         <h2>🎯 فرصت حدس کلمه رمز!</h2>
-        <p><strong id="guess-spy-name" style="color:var(--brand-rose)"></strong> لو رفت! فرصت دارد کلمه اصلی را حدس بزند:</p>
-        <div class="input-group"><input type="text" id="spy-guess-input" class="input-control" placeholder="کلمه حدس زده شده..."></div>
-        <button id="btn-submit-guess-yes" class="btn btn-emerald">بررسی حدس ✅</button>
-        <button id="btn-submit-guess-no" class="btn btn-ghost">انصراف از حدس</button>
+        <p><strong id="guess-spy-name" style="color:var(--brand-rose)"></strong> به عنوان جاسوس شناسایی شد!</p>
+        <div class="secret-box" style="margin: 16px 0;">
+            <div style="font-size: 0.95rem; line-height: 1.7;">جاسوس فرصت دارد کلمه رمز را شفاهاً حدس بزند.<br>آیا کلمه اصلی را درست حدس زد؟</div>
+        </div>
+        <button id="btn-submit-guess-yes" class="btn btn-emerald">🎯 بله، درست حدس زد (+۳ امتیاز)</button>
+        <button id="btn-submit-guess-no" class="btn btn-rose">❌ خیر، نتوانست درست حدس بزند</button>
     </div>
 
     <!-- Screen 9: Round Result -->
@@ -450,6 +456,7 @@
 <div id="custom-words-modal" class="modal-overlay hidden" role="dialog" aria-modal="true">
     <div class="modal-card" style="max-height:85vh; overflow-y:auto; text-align:right;">
         <h3 style="text-align:center;">✏️ مدیریت کلمات سفارشی</h3>
+        <div class="input-group"><input type="text" id="cust-cat" class="input-control" placeholder="دسته‌بندی (مثلاً: فیلم، دانشگاه، اصطلاحات...)" maxlength="40"></div>
         <div class="input-group"><input type="text" id="cust-word" class="input-control" placeholder="کلمه اصلی (مثلاً: بیمارستان)" maxlength="50"></div>
         <div class="input-group"><input type="text" id="cust-fool" class="input-control" placeholder="کلمه مشابه ساده‌لوح (مثلاً: درمانگاه)" maxlength="50"></div>
         <div class="input-group"><input type="text" id="cust-hint" class="input-control" placeholder="راهنمای جاسوس (مثلاً: پزشکی و اورژانس)" maxlength="120"></div>
@@ -464,12 +471,22 @@
     </div>
 </div>
 
+<!-- Secret Turn Vote Ballot Modal (For Turn-based Single Device Voting) -->
+<div id="secret-ballot-modal" class="modal-overlay hidden" role="dialog" aria-modal="true">
+    <div class="modal-card">
+        <h3 id="ballot-voter-name" style="color:var(--brand-primary);">نوبت رای‌گیری</h3>
+        <p id="ballot-prompt-text">گوشی را به بازیکن تحویل دهید و رای را ثبت کنید:</p>
+        <div id="ballot-candidates-grid" class="grid-2" style="margin-top:12px;"></div>
+        <button id="btn-close-ballot" class="btn btn-ghost" style="margin-top:14px;">انصراف از این نوبت</button>
+    </div>
+</div>
+
 <!-- Vote Confirm Modal -->
 <div id="vote-confirm-modal" class="modal-overlay hidden" role="dialog" aria-modal="true">
     <div class="modal-card">
         <h3 style="color:var(--brand-amber);">تایید رای</h3>
         <p>آیا مطمئنید می‌خواهید به <strong id="vote-confirm-name" style="color:var(--brand-rose)"></strong> رای دهید؟</p>
-        <button id="btn-confirm-vote-yes" class="btn btn-rose" style="margin-top:16px;">بله، اخراج شود</button>
+        <button id="btn-confirm-vote-yes" class="btn btn-rose" style="margin-top:16px;">بله، ثبت شود</button>
         <button id="btn-confirm-vote-no" class="btn btn-ghost">انصراف</button>
     </div>
 </div>
@@ -568,6 +585,7 @@
         quests: { title: "🎯 ماموریت‌های جانبی", text: "هر بازیکن علاوه بر نقش خود، یک ماموریت بامزه مخفی (مثل دست زدن به چانه یا نگاه به ساعت) دریافت می‌کند تا رفتارش مشکوک‌تر شود!" },
         wager: { title: "🎲 سیستم شرط‌بندی", text: "هنگام اخراج یک مظنون، بازیکنان می‌توانند روی جاسوس بودن او امتیاز شرط ببندند و در صورت درست بودن، امتیاز بیشتری کسب کنند." },
         sudden: { title: "🔥 حذف درجا (مرگ ناگهانی)", text: "اگر شهروندان اشتباهاً به یک شهروند بی‌گناه رای بدهند و او را اخراج کنند، بازی بلافاصله با پیروزی جاسوس‌ها پایان می‌یابد!" },
+        secretVote: { title: "🗳️ رای‌گیری مخفی نوبتی", text: "در بازی تک‌گوشی، گوشی بین همه می‌چرخد تا هرکس رای خود را کاملاً مخفی ثبت کند. این کار مشخص می‌کند چه کسی دقیقاً به جاسوس رای داده (برای دستاورد شرلوک هلمز)!" },
         voteLimit: { title: "🚨 سقف زنگ اضطراری", text: "تعداد دفعاتی که بازیکنان مجاز هستند تایمر را متوقف کرده و اعلام رای‌گیری زودرس کنند را محدود می‌سازد." }
     };
 
@@ -689,7 +707,6 @@
     function escapeHtml(str) { return String(str || '').replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;','\'':'&#39;'}[m])); }
     function generateId() { return (typeof crypto !== 'undefined' && crypto.randomUUID) ? crypto.randomUUID() : 'p_' + Math.random().toString(36).substring(2, 11); }
     function normalizeWord(t) { return String(t||'').trim().toLowerCase().replace(/‌/g,'').replace(/[ً-ٰٟ]/g,'').replace(/ي/g,'ی').replace(/ك/g,'ک').replace(/ة/g,'ه').replace(/ؤ/g,'و').replace(/إ|أ|آ/g,'ا').replace(/[.,\/#!$%\^&\*;:{}=\-_`~()؟?!،؛]/g,'').replace(/\s+/g,' '); }
-    function isCorrectSpyGuess(guess, answer) { return normalizeWord(guess) === normalizeWord(answer); }
 
     const AudioCtxClass = window.AudioContext || window.webkitAudioContext;
     let audioCtx = null;
@@ -743,7 +760,7 @@
         }
     });
 
-    const SAVE_VERSION = 4;
+    const SAVE_VERSION = 5;
     let gameState = {
         version: SAVE_VERSION,
         phase: 'welcome',
@@ -752,13 +769,13 @@
             playersCount: 4, spiesCount: 1, timerMin: 4, cat: 'all', diff: 'all',
             revealHold: false, hint: 'category', fool: false, detective: false,
             knownSpies: false, director: false, oneword: false, quests: false,
-            wager: false, sudden: false, voteLimitEnabled: false, maxVotes: 2,
+            wager: false, sudden: false, secretVote: true, voteLimitEnabled: false, maxVotes: 2,
             detectiveUsed: false
         },
         players: [],
         round: { num: 0, category: null, pointsMap: {}, history: [], roundId: null },
         timer: { running: false, endAt: null, pausedSec: 0, reason: 'emergency' },
-        vote: { limit: Infinity, targetId: null, pendingId: null, tieNote: '' },
+        vote: { limit: Infinity, targetId: null, pendingId: null, tieNote: '', activeVoterId: null },
         network: { isHost: false, isClient: false, peerId: null, code: null }
     };
 
@@ -830,6 +847,7 @@
             name: p.name,
             isAlive: !!p.isAlive,
             score: p.score,
+            hasSeen: !!p.hasSeen,
             stats: {
                 cw: p.stats?.cw || 0,
                 sw: p.stats?.sw || 0,
@@ -981,6 +999,7 @@
                 gameState.timer.reason = 'emergency';
                 hostSecretState.votesCast = {};
                 clientPrivateState.hasVoted = false;
+                gameState.vote.activeVoterId = null;
                 setPhase('vote');
                 if (gameState.network.isHost) {
                     syncNetwork(PROTOCOL.VOTE_OPEN, { isTimeout: false, candidates: gameState.players.filter(p=>p.isAlive).map(p=>({id:p.id, name:p.name})) });
@@ -1009,8 +1028,25 @@
                         document.getElementById('vote-instruction-text').textContent = "رای شما ارسال شد. منتظر سایر بازیکنان بمانید...";
                     }
                 } else {
-                    handleLocalVote(action.payload);
+                    if (gameState.settings.secretVote && !gameState.network.isHost) {
+                        // Single Phone Secret Ballot Mode: Open voter ballot
+                        openSecretBallotFor(action.payload);
+                    } else {
+                        handleLocalDirectVote(action.payload);
+                    }
                 }
+                break;
+            }
+            case 'SUBMIT_SECRET_BALLOT_VOTE': {
+                const voterId = gameState.vote.activeVoterId;
+                const suspectId = action.payload;
+                if (!voterId || !suspectId) return;
+                hostSecretState.votesCast[voterId] = suspectId;
+                dispatch({type: 'CLOSE_MODAL', payload: 'secret-ballot-modal'});
+                gameState.vote.activeVoterId = null;
+                showToast("رای شما ثبت شد! گوشی را به نفر بعدی بدهید.");
+                checkVoteCompletion();
+                commitState();
                 break;
             }
             case 'CONFIRM_VOTE': {
@@ -1076,14 +1112,13 @@
                         roundId: gameState.round.roundId,
                         playerId: clientPrivateState.playerId,
                         sessionToken: clientPrivateState.sessionToken,
-                        hasGuess: action.payload,
-                        guessText: document.getElementById('spy-guess-input').value
+                        hasGuess: action.payload
                     });
                     if (guessSent) clientPrivateState.hasGuessed = true;
                 } else {
                     if (hostSecretState.guessState.submitted) return;
                     hostSecretState.guessState = { playerId: gameState.vote.targetId, submitted: true };
-                    evaluateGuess(action.payload, document.getElementById('spy-guess-input').value);
+                    evaluateGuess(action.payload);
                 }
                 break;
             }
@@ -1233,6 +1268,7 @@
             quests: document.getElementById('toggle-quests').checked,
             wager: document.getElementById('toggle-wager').checked,
             sudden: document.getElementById('toggle-sudden').checked,
+            secretVote: document.getElementById('toggle-secret-vote').checked,
             voteLimitEnabled: document.getElementById('toggle-limit').checked,
             maxVotes: maxV,
             detectiveUsed: gameState.settings.detectiveUsed || false
@@ -1326,7 +1362,8 @@
             limit: gameState.settings.voteLimitEnabled ? gameState.settings.maxVotes : Infinity,
             targetId: null,
             pendingId: null,
-            tieNote: ''
+            tieNote: '',
+            activeVoterId: null
         };
 
         gameState.timer = {
@@ -1347,7 +1384,7 @@
             if (f.length > 0) pool = f;
         }
         
-        // Exhaustion Draw Deck: Prevents repeating words until all are played
+        // Anti-repetition Draw Deck mechanism
         let availablePool = pool.filter(w => !gameState.match.usedWordKeys.includes(normalizeWord(w.word)));
         if (availablePool.length === 0) {
             gameState.match.usedWordKeys = [];
@@ -1381,6 +1418,7 @@
 
         gameState.players.forEach(p => {
             let hint = "";
+            let wordToShow = chosen.word;
             if (p.role === 'spy') {
                 const hintType = gameState.settings.hint;
                 let actualHint = hintType === 'random' ? ['category', 'first_letter', 'related_word', 'none'][Math.floor(Math.random() * 4)] : hintType;
@@ -1388,8 +1426,12 @@
                 else if (actualHint === 'category') hint = `دسته‌بندی موضوع: ${gameState.round.category}`;
                 else if (actualHint === 'first_letter') hint = `حرف اول کلمه اصلی: «${chosen.word.charAt(0)}»`;
                 else hint = `راهنمای موضوعی: ${chosen.hint}`;
+                wordToShow = hint;
+            } else if (p.role === 'fool') {
+                wordToShow = chosen.foolWord;
             }
-            hostSecretState.roles[p.id] = { role: p.role, team: p.team, hint };
+
+            hostSecretState.roles[p.id] = { role: p.role, team: p.team, hint, secretWord: wordToShow };
         });
 
         if (gameState.settings.quests) {
@@ -1496,18 +1538,33 @@
         return netHostConns.some(c => c.playerId === playerId && c.joined && c.connected);
     }
 
-    function handleLocalVote(suspectId) {
-        if (!gameState.network.isHost) {
-            gameState.vote.pendingId = suspectId;
-            let targetP = gameState.players.find(p => p.id === suspectId);
-            document.getElementById('vote-confirm-name').textContent = targetP ? targetP.name : '';
-            dispatch({type: 'OPEN_MODAL', payload: 'vote-confirm-modal'});
-            return;
-        }
-        let hostPlayer = gameState.players.find(p => p.isHost) || gameState.players[0];
-        if (hostSecretState.votesCast[hostPlayer.id]) return;
-        hostSecretState.votesCast[hostPlayer.id] = suspectId;
-        checkVoteCompletion();
+    function openSecretBallotFor(voterId) {
+        gameState.vote.activeVoterId = voterId;
+        const voter = gameState.players.find(p => p.id === voterId);
+        if (!voter) return;
+
+        document.getElementById('ballot-voter-name').textContent = `رای‌گیری: ${voter.name}`;
+        const grid = document.getElementById('ballot-candidates-grid');
+        grid.innerHTML = '';
+
+        gameState.players.filter(p => p.isAlive && p.id !== voterId).forEach(cand => {
+            const card = document.createElement('div');
+            card.className = 'player-card';
+            card.textContent = cand.name;
+            card.onclick = () => {
+                dispatch({type: 'SUBMIT_SECRET_BALLOT_VOTE', payload: cand.id});
+            };
+            grid.appendChild(card);
+        });
+
+        dispatch({type: 'OPEN_MODAL', payload: 'secret-ballot-modal'});
+    }
+
+    function handleLocalDirectVote(suspectId) {
+        gameState.vote.pendingId = suspectId;
+        let targetP = gameState.players.find(p => p.id === suspectId);
+        document.getElementById('vote-confirm-name').textContent = targetP ? targetP.name : '';
+        dispatch({type: 'OPEN_MODAL', payload: 'vote-confirm-modal'});
     }
 
     function checkVoteCompletion() {
@@ -1519,6 +1576,16 @@
         }
 
         if (votesReceived >= eligibleVoters.length && eligibleVoters.length > 0) {
+            // Calculate accurate accolades tracking
+            Object.keys(hostSecretState.votesCast).forEach(voterId => {
+                const votedForId = hostSecretState.votesCast[voterId];
+                const voter = gameState.players.find(p => p.id === voterId);
+                const target = gameState.players.find(p => p.id === votedForId);
+                if (voter && target && voter.team === 'citizen' && target.role === 'spy') {
+                    voter.stats.vc = (voter.stats.vc || 0) + 1; // Correct Sherlock vote!
+                }
+            });
+
             let tally = {};
             Object.values(hostSecretState.votesCast).forEach(sId => { tally[sId] = (tally[sId] || 0) + 1; });
             let maxVotes = Math.max(...Object.values(tally));
@@ -1531,7 +1598,7 @@
                 let tiedNames = topCandidates
                     .map(id => gameState.players.find(p => p.id === id)?.name || '')
                     .join(' و ');
-                tieNote = `🎲 تساوی آرا بین [${tiedNames}] رخ داد و با قرعه انتخاب شد.`;
+                tieNote = `🎲 تساوی آرا بین [${tiedNames}] رخ داد و با قرعه متهم انتخاب شد.`;
             }
 
             gameState.vote.pendingId = chosenSuspectId;
@@ -1600,9 +1667,9 @@
         }
     }
 
-    function evaluateGuess(hasG, input) {
+    function evaluateGuess(hasCorrectGuess) {
         let sus = gameState.players.find(p => p.id === gameState.vote.targetId);
-        if (hasG && isCorrectSpyGuess(input, hostSecretState.secretWord)) {
+        if (hasCorrectGuess) {
             sus.score += SCORING.SPY_CORRECT_GUESS;
             sus.stats.spyGuesses = (sus.stats.spyGuesses || 0) + 1;
             gameState.round.pointsMap[sus.id] += SCORING.SPY_CORRECT_GUESS;
@@ -1637,7 +1704,6 @@
                 document.getElementById('multi-spy-notice-text').textContent = `${sus.name} جاسوس بود و حدسش اشتباه بود! اما هنوز جاسوس‌های دیگری در بازی پنهان هستند.`;
                 dispatch({type: 'OPEN_MODAL', payload: 'multi-spy-notice-modal'});
             } else {
-                // Innocent citizen eliminated: Show notice and auto-resume
                 document.getElementById('innocent-notice-text').textContent = `«${sus ? sus.name : 'متهم'}» شهروند بی‌گناه بود و اخراج شد!`;
                 dispatch({type: 'OPEN_MODAL', payload: 'innocent-notice-modal'});
                 setTimeout(() => {
@@ -1744,33 +1810,55 @@
         const screenEl = document.getElementById(`screen-${gameState.phase}`);
         if (screenEl) screenEl.classList.remove('hidden');
 
+        const statusBadge = document.getElementById('connection-status-badge');
+        statusBadge.classList.toggle('hidden', !(gameState.network.isHost || gameState.network.isClient));
+
         if (gameState.phase === 'setup') {
             document.getElementById('names-section-container').classList.toggle('hidden', gameState.network.isHost);
         }
 
         if (gameState.phase === 'reveal') {
-            document.getElementById('reveal-instruction-text').textContent = gameState.settings.revealHold
-                ? "انگشت خود را روی نام خود نگه دارید تا کارت باز شود و با برداشتن دست مخفی شود."
-                : "روی نام خود ضربه بزنید تا کارتتان را ببینید.";
-            let g = document.getElementById('reveal-grid'); g.innerHTML = ''; let c = 0;
-            gameState.players.forEach(p => {
-                if (p.hasSeen) c++;
+            let g = document.getElementById('reveal-grid');
+            g.innerHTML = '';
+            
+            if (gameState.network.isClient) {
+                // Online Client: Big dedicated private card
+                document.getElementById('reveal-instruction-text').textContent = "روی کارت خود بزنید تا هویت مخفی را مشاهده کنید:";
                 let d = document.createElement('div');
-                d.className = `player-card ${p.hasSeen ? 'disabled' : ''}`;
-                d.textContent = p.name;
-                d.setAttribute('role', 'button');
-                d.setAttribute('tabindex', '0');
-                if (!gameState.network.isClient) {
+                d.className = 'player-card';
+                d.style.gridColumn = "span 2";
+                d.style.padding = "22px 14px";
+                d.style.borderColor = "var(--brand-primary)";
+                d.innerHTML = `🃏 <strong style="font-size:1.15rem; color:var(--brand-primary);">${escapeHtml(clientPrivateState.name || 'کارت شما')}</strong> (مشاهده هویت)`;
+                d.onclick = () => {
+                    renderRoleModalContent(clientPrivateState.playerId);
+                    dispatch({type: 'OPEN_MODAL', payload: 'role-modal'});
+                };
+                g.appendChild(d);
+                document.getElementById('btn-start-discussion').classList.add('hidden');
+            } else {
+                // Single Device Mode: Grid of pass-around cards
+                document.getElementById('reveal-instruction-text').textContent = gameState.settings.revealHold
+                    ? "انگشت خود را روی نام خود نگه دارید تا کارت باز شود و با برداشتن دست مخفی شود."
+                    : "روی نام خود ضربه بزنید تا کارتتان را ببینید.";
+                let c = 0;
+                gameState.players.forEach(p => {
+                    if (p.hasSeen) c++;
+                    let d = document.createElement('div');
+                    d.className = `player-card ${p.hasSeen ? 'disabled' : ''}`;
+                    d.textContent = p.name;
+                    d.setAttribute('role', 'button');
+                    d.setAttribute('tabindex', '0');
                     if (gameState.settings.revealHold) {
                         bindHoldCard(d, p.id);
                     } else {
                         d.onclick = () => dispatch({type: 'OPEN_ROLE_CARD', payload: p.id});
                         d.onkeydown = (e) => { if(e.key === 'Enter' || e.key === ' ') { e.preventDefault(); dispatch({type: 'OPEN_ROLE_CARD', payload: p.id}); } };
                     }
-                }
-                g.appendChild(d);
-            });
-            document.getElementById('btn-start-discussion').classList.toggle('hidden', c !== gameState.players.length || gameState.network.isClient);
+                    g.appendChild(d);
+                });
+                document.getElementById('btn-start-discussion').classList.toggle('hidden', c !== gameState.players.length);
+            }
         }
 
         if (gameState.phase === 'timer') {
@@ -1795,17 +1883,40 @@
 
         if (gameState.phase === 'vote') {
             document.getElementById('btn-cancel-vote').classList.toggle('hidden', gameState.network.isClient || gameState.timer.reason === 'timeout');
-            let g = document.getElementById('vote-grid'); g.innerHTML = '';
-            gameState.players.filter(p => p.isAlive).forEach(p => {
-                let d = document.createElement('div'); d.className = 'player-card'; d.textContent = p.name;
-                d.setAttribute('role', 'button');
-                d.setAttribute('tabindex', '0');
-                d.onclick = () => dispatch({type: 'SELECT_SUSPECT', payload: p.id});
-                d.onkeydown = (e) => { if(e.key === 'Enter' || e.key === ' ') { e.preventDefault(); dispatch({type: 'SELECT_SUSPECT', payload: p.id}); } };
-                g.appendChild(d);
-            });
-            if (gameState.network.isClient && clientPrivateState.hasVoted) {
-                document.getElementById('vote-instruction-text').textContent = "رای شما ارسال شد. منتظر سایر بازیکنان بمانید...";
+            let g = document.getElementById('vote-grid');
+            g.innerHTML = '';
+
+            if (gameState.settings.secretVote && !gameState.network.isHost && !gameState.network.isClient) {
+                // Secret Turn-based pass-around voting
+                document.getElementById('vote-screen-title').textContent = "صندوق رای مخفی (دست‌به‌دست)";
+                document.getElementById('vote-instruction-text').textContent = "گوشی را دست‌به‌دست بچرخانید؛ هر بازیکن با زدن روی نام خود رای می‌دهد:";
+                gameState.players.filter(p => p.isAlive).forEach(p => {
+                    const hasVoted = !!hostSecretState.votesCast[p.id];
+                    let d = document.createElement('div');
+                    d.className = `player-card ${hasVoted ? 'disabled' : ''}`;
+                    d.innerHTML = `<div>${escapeHtml(p.name)}</div><span style="font-size:0.75rem; color:${hasVoted ? 'var(--brand-emerald)' : 'var(--brand-amber)'}">${hasVoted ? '✅ رای ثبت شد' : '⏳ منتظر رای'}</span>`;
+                    if (!hasVoted) {
+                        d.onclick = () => dispatch({type: 'SELECT_SUSPECT', payload: p.id});
+                    }
+                    g.appendChild(d);
+                });
+            } else {
+                // Quick Direct Voting or Online Screen Voting
+                document.getElementById('vote-screen-title').textContent = "رای‌گیری اخراج";
+                document.getElementById('vote-instruction-text').textContent = "متهم اصلی را انتخاب کنید:";
+                gameState.players.filter(p => p.isAlive).forEach(p => {
+                    let d = document.createElement('div');
+                    d.className = 'player-card';
+                    d.textContent = p.name;
+                    d.setAttribute('role', 'button');
+                    d.setAttribute('tabindex', '0');
+                    d.onclick = () => dispatch({type: 'SELECT_SUSPECT', payload: p.id});
+                    d.onkeydown = (e) => { if(e.key === 'Enter' || e.key === ' ') { e.preventDefault(); dispatch({type: 'SELECT_SUSPECT', payload: p.id}); } };
+                    g.appendChild(d);
+                });
+                if (gameState.network.isClient && clientPrivateState.hasVoted) {
+                    document.getElementById('vote-instruction-text').textContent = "رای شما ارسال شد. منتظر سایر بازیکنان بمانید...";
+                }
             }
         }
 
@@ -1845,33 +1956,16 @@
         if (gameState.phase === 'guess') {
             let spyP = gameState.players.find(p => p.id === gameState.vote.targetId);
             document.getElementById('guess-spy-name').textContent = spyP ? spyP.name : 'جاسوس';
+            const yesBtn = document.getElementById('btn-submit-guess-yes');
+            const noBtn = document.getElementById('btn-submit-guess-no');
 
-            const isMeSpy = gameState.network.isClient ? (clientPrivateState.playerId === gameState.vote.targetId) : true;
-            const spyInputGroup = document.querySelector('#screen-guess .input-group');
-            const guessYesBtn = document.getElementById('btn-submit-guess-yes');
-            const guessNoBtn = document.getElementById('btn-submit-guess-no');
-
-            let waitMsg = document.getElementById('client-guess-wait-msg');
-            if (!waitMsg) {
-                waitMsg = document.createElement('div');
-                waitMsg.id = 'client-guess-wait-msg';
-                waitMsg.className = 'quest-box';
-                waitMsg.style.textAlign = 'center';
-                waitMsg.style.color = 'var(--brand-amber)';
-                document.getElementById('screen-guess').insertBefore(waitMsg, spyInputGroup);
-            }
-
-            if (gameState.network.isClient && !isMeSpy) {
-                spyInputGroup.classList.add('hidden');
-                guessYesBtn.classList.add('hidden');
-                guessNoBtn.classList.add('hidden');
-                waitMsg.classList.remove('hidden');
-                waitMsg.textContent = `⏳ ${spyP ? spyP.name : 'جاسوس'} در حال تصمیم‌گیری برای حدس کلمه است...`;
+            if (gameState.network.isClient) {
+                const isMeSpy = clientPrivateState.playerId === gameState.vote.targetId;
+                yesBtn.classList.toggle('hidden', !isMeSpy);
+                noBtn.classList.toggle('hidden', !isMeSpy);
             } else {
-                spyInputGroup.classList.remove('hidden');
-                guessYesBtn.classList.remove('hidden');
-                guessNoBtn.classList.remove('hidden');
-                waitMsg.classList.add('hidden');
+                yesBtn.classList.remove('hidden');
+                noBtn.classList.remove('hidden');
             }
         }
 
@@ -1890,10 +1984,19 @@
 
         if (gameState.phase === 'leaderboard') {
             let tb = document.getElementById('final-leaderboard-body'); tb.innerHTML = '';
-            [...gameState.players].sort((a, b) => b.score - a.score).forEach((p, i) => {
-                let m = ['🥇','🥈','🥉'][i] || `#${i+1}`;
+            const sorted = [...gameState.players].sort((a, b) => b.score - a.score);
+            
+            let currentRank = 1;
+            sorted.forEach((p, i) => {
+                if (i > 0 && sorted[i].score < sorted[i-1].score) {
+                    currentRank = i + 1;
+                }
+                const isShared = (i > 0 && sorted[i].score === sorted[i-1].score) || (i < sorted.length - 1 && sorted[i].score === sorted[i+1].score);
+                let rankLabel = currentRank === 1 ? '🥇 اول' : (currentRank === 2 ? '🥈 دوم' : (currentRank === 3 ? '🥉 سوم' : `#${currentRank}`));
+                if (isShared) rankLabel += ' (مشترک)';
+
                 let tr = document.createElement('tr');
-                tr.innerHTML = `<td>${m} ${escapeHtml(p.name)}</td><td>${p.stats.cw+p.stats.sw}</td><td style="color:var(--brand-amber)">${p.score}</td>`;
+                tr.innerHTML = `<td><strong>${rankLabel}</strong> - ${escapeHtml(p.name)}</td><td>${p.stats.cw+p.stats.sw}</td><td style="color:var(--brand-amber); font-weight:bold;">${p.score}</td>`;
                 tb.appendChild(tr);
             });
             renderAccolades();
@@ -1910,27 +2013,23 @@
 
     function renderRoleModalContent(id) {
         let p = gameState.players.find(x => x.id === id);
-        if (!p) return;
-
-        let role = p.role;
-        let hint = "";
-        let secretWord = hostSecretState.secretWord || "";
-        let foolWord = hostSecretState.foolWord || "";
-        let quest = p.quest;
+        let role = 'citizen';
+        let secretWord = hostSecretState.secretWord || "کلمه مشخص نیست";
+        let quest = p ? p.quest : null;
         let fellowSpies = [];
+        let playerName = p ? p.name : 'بازیکن';
 
-        if (gameState.network.isClient && id === clientPrivateState.playerId) {
-            role = clientPrivateState.role || p.role;
-            secretWord = clientPrivateState.secretWord;
-            foolWord = clientPrivateState.secretWord;
-            hint = clientPrivateState.secretWord;
+        if (gameState.network.isClient) {
+            role = clientPrivateState.role || 'citizen';
+            secretWord = clientPrivateState.secretWord || "کلمه مشخص نیست";
             quest = clientPrivateState.quest;
             fellowSpies = clientPrivateState.fellowSpies || [];
+            playerName = clientPrivateState.name || playerName;
         } else if (hostSecretState.roles[id]) {
             let sec = hostSecretState.roles[id];
             role = sec.role;
-            hint = sec.hint;
-            quest = p.quest;
+            secretWord = sec.secretWord || hostSecretState.secretWord || "کلمه مشخص نیست";
+            quest = p ? p.quest : null;
             if (gameState.settings.knownSpies && role === 'spy') {
                 fellowSpies = gameState.players.filter(x => x.role === 'spy' && x.id !== id).map(x => x.name);
             }
@@ -1942,7 +2041,7 @@
         let d = document.getElementById('modal-detective-action');
         let q = document.getElementById('modal-quest-box');
 
-        document.getElementById('modal-player-name').textContent = p.name;
+        document.getElementById('modal-player-name').textContent = playerName;
         f.classList.add('hidden');
         d.classList.add('hidden');
         q.classList.add('hidden');
@@ -1950,7 +2049,7 @@
         if (role === 'spy') {
             b.className = 'role-badge role-spy';
             b.textContent = '🕵️ شما جاسوس هستید!';
-            c.textContent = hint;
+            c.textContent = secretWord;
             if (gameState.settings.knownSpies && fellowSpies.length > 0) {
                 f.classList.remove('hidden');
                 document.getElementById('modal-fellow-spies-text').textContent = fellowSpies.join(' ، ');
@@ -1958,7 +2057,7 @@
         } else if (role === 'fool') {
             b.className = 'role-badge role-citizen';
             b.textContent = '👤 شما شهروند هستید';
-            c.textContent = gameState.network.isClient ? secretWord : foolWord;
+            c.textContent = secretWord;
         } else if (role === 'detective') {
             b.className = 'role-badge role-detective';
             b.textContent = '🔍 شما کارآگاه هستید';
@@ -1969,7 +2068,7 @@
                 d.classList.remove('hidden');
                 let s = document.getElementById('detective-target-select');
                 s.innerHTML = '';
-                gameState.players.filter(x => x.id !== p.id && x.isAlive).forEach(t => {
+                gameState.players.filter(x => x.id !== id && x.isAlive).forEach(t => {
                     let o = document.createElement('option');
                     o.value = t.id;
                     o.textContent = t.name;
@@ -2011,7 +2110,7 @@
             acc.innerHTML += `<div class="accolade-card"><div class="accolade-icon">🧠</div><div><div style="font-weight:bold; color:var(--brand-amber);">ذهن‌خوان برجسته: ${escapeHtml(topGuesser.name)}</div><div style="font-size:0.75rem; color:var(--text-secondary);">حدس صحیح کلمه رمز اصلی در نقش جاسوس</div></div></div>`;
         }
         if (topDetective && topDetective.stats.vc > 0) {
-            acc.innerHTML += `<div class="accolade-card"><div class="accolade-icon">🔍</div><div><div style="font-weight:bold; color:var(--brand-emerald);">شرلوک هلمز: ${escapeHtml(topDetective.name)}</div><div style="font-size:0.75rem; color:var(--text-secondary);">بیشترین شکار جاسوس‌ها در جلسات رای‌گیری</div></div></div>`;
+            acc.innerHTML += `<div class="accolade-card"><div class="accolade-icon">🔍</div><div><div style="font-weight:bold; color:var(--brand-emerald);">شرلوک هلمز: ${escapeHtml(topDetective.name)}</div><div style="font-size:0.75rem; color:var(--text-secondary);">بیشترین شکار مستقیم جاسوس‌ها در جلسات رای‌گیری</div></div></div>`;
         }
         if (topWagerer && (topWagerer.stats.wagerProfit || 0) > 0) {
             acc.innerHTML += `<div class="accolade-card"><div class="accolade-icon">🐺</div><div><div style="font-weight:bold; color:var(--brand-primary);">گرگ وال‌استریت: ${escapeHtml(topWagerer.name)}</div><div style="font-size:0.75rem; color:var(--text-secondary);">کسب بیشترین سود از شرط‌بندی روی مظنونین</div></div></div>`;
@@ -2225,7 +2324,7 @@
                     } else if (data.type === PROTOCOL.GUESS_SUBMIT) {
                         if (!validateGuessPacket(conn, data)) return;
                         hostSecretState.guessState = { playerId: conn.playerId, submitted: true };
-                        evaluateGuess(data.hasGuess, data.guessText);
+                        evaluateGuess(data.hasGuess);
                     } else if (data.type === PROTOCOL.DETECTIVE_QUERY) {
                         if (!validateDetectivePacket(conn, data)) return;
                         let tar = gameState.players.find(p => p.id === data.targetId);
@@ -2271,6 +2370,7 @@
         conn.on('open', () => {
             isReconnecting = false;
             gameState.network.isClient = true;
+            clientPrivateState.name = name;
             safeClientSend({ type: 'JOIN', name: name, reconnectToken: savedReconnectToken });
             document.getElementById('client-wait-box').classList.remove('hidden');
             document.getElementById('connection-status-badge').textContent = `🟢 متصل به اتاق: ${rawCode}`;
@@ -2471,7 +2571,7 @@
         }
         gameState.network.isHost = false;
         gameState.network.isClient = false;
-        document.getElementById('connection-status-badge').textContent = '🟢 وضعیت: آفلاین';
+        document.getElementById('connection-status-badge').classList.add('hidden');
         setTimeout(() => { intentionalDisconnect = false; }, 500);
     }
 
@@ -2491,13 +2591,16 @@
         localStorage.setItem('spy_custom_words', JSON.stringify(list));
     }
     function addCustomWordDOM() {
+        let cat = document.getElementById('cust-cat').value.trim() || 'عمومی';
         let w = document.getElementById('cust-word').value.trim();
         let f = document.getElementById('cust-fool').value.trim() || w;
         let h = document.getElementById('cust-hint').value.trim() || "بدون راهنما";
         if (!w) { showToast("کلمه اصلی را وارد فرمایید!"); return; }
         let list = getCustomWords();
-        list.push({ word: w, foolWord: f, hint: h, diff: "medium" });
+        list.push({ word: w, foolWord: f, hint: h, category: cat, diff: "medium" });
         saveCustomWords(list);
+        
+        document.getElementById('cust-cat').value = '';
         document.getElementById('cust-word').value = '';
         document.getElementById('cust-fool').value = '';
         document.getElementById('cust-hint').value = '';
@@ -2520,7 +2623,11 @@
             div.className = 'toggle-item';
             div.style.padding = '6px 10px';
             div.innerHTML = `
-                <div style="flex:1;"><strong>${escapeHtml(item.word)}</strong> <span style="font-size:0.75rem; color:var(--text-secondary);">(${escapeHtml(item.hint||'')})</span></div>
+                <div style="flex:1;">
+                    <strong>${escapeHtml(item.word)}</strong> 
+                    <span style="font-size:0.75rem; color:var(--brand-primary); margin-right:4px;">[${escapeHtml(item.category || 'عمومی')}]</span>
+                    <span style="font-size:0.75rem; color:var(--text-secondary);">(${escapeHtml(item.hint||'')})</span>
+                </div>
                 <button class="btn btn-ghost btn-sm" onclick="deleteCustomWord(${idx})" style="color:var(--brand-rose); width:auto; margin:0; padding:2px 8px;">🗑️</button>
             `;
             c.appendChild(div);
@@ -2540,6 +2647,7 @@
         const word = String(w.word || '').trim();
         const foolWord = String(w.foolWord || word).trim();
         const hint = String(w.hint || 'بدون راهنما').trim();
+        const category = String(w.category || 'عمومی').trim();
         if (!word || word.length > 50) return null;
         if (foolWord.length > 50) return null;
         if (hint.length > 120) return null;
@@ -2547,6 +2655,7 @@
             word,
             foolWord,
             hint,
+            category,
             diff: ['easy', 'medium', 'hard'].includes(w.diff) ? w.diff : 'medium'
         };
     }
@@ -2609,22 +2718,29 @@
             ctx.fillText(`تعداد دست‌ها: ${gameState.round.num} | بازیکنان: ${sorted.length} نفر`, canvas.width / 2, 95);
 
             let startY = 130;
+            let currentRank = 1;
             sorted.forEach((p, idx) => {
-                ctx.fillStyle = idx === 0 ? 'rgba(245, 158, 11, 0.15)' : 'rgba(30, 41, 59, 0.8)';
-                ctx.strokeStyle = idx === 0 ? '#f59e0b' : 'rgba(255, 255, 255, 0.1)';
+                if (idx > 0 && sorted[idx].score < sorted[idx - 1].score) {
+                    currentRank = idx + 1;
+                }
+                const isShared = (idx > 0 && sorted[idx].score === sorted[idx - 1].score) || (idx < sorted.length - 1 && sorted[idx].score === sorted[idx + 1].score);
+                let rankLabel = currentRank === 1 ? '🥇 اول' : (currentRank === 2 ? '🥈 دوم' : (currentRank === 3 ? '🥉 سوم' : `#${currentRank}`));
+                if (isShared) rankLabel += ' (مشترک)';
+
+                ctx.fillStyle = currentRank === 1 ? 'rgba(245, 158, 11, 0.15)' : 'rgba(30, 41, 59, 0.8)';
+                ctx.strokeStyle = currentRank === 1 ? '#f59e0b' : 'rgba(255, 255, 255, 0.1)';
                 ctx.lineWidth = 1;
 
                 ctx.fillRect(35, startY, canvas.width - 70, 50);
                 ctx.strokeRect(35, startY, canvas.width - 70, 50);
 
-                const medal = ['🥇', '🥈', '🥉'][idx] || `#${idx + 1}`;
                 ctx.textAlign = 'right';
                 ctx.fillStyle = '#f8fafc';
                 ctx.font = 'bold 16px Vazirmatn, Tahoma, sans-serif';
-                ctx.fillText(`${medal}  ${p.name}`, canvas.width - 55, startY + 31);
+                ctx.fillText(`${rankLabel}  ${p.name}`, canvas.width - 55, startY + 31);
 
                 ctx.textAlign = 'left';
-                ctx.fillStyle = idx === 0 ? '#f59e0b' : '#38bdf8';
+                ctx.fillStyle = currentRank === 1 ? '#f59e0b' : '#38bdf8';
                 ctx.font = 'bold 16px Vazirmatn, Tahoma, sans-serif';
                 ctx.fillText(`${p.score} امتیاز`, 55, startY + 31);
 
@@ -2737,6 +2853,7 @@
     document.getElementById('btn-confirm-end-2').onclick = () => dispatch({type: 'CONFIRM_END_MATCH'});
 
     document.getElementById('btn-cancel-vote').onclick = () => dispatch({type: 'CANCEL_VOTE'});
+    document.getElementById('btn-close-ballot').onclick = () => dispatch({type: 'CLOSE_MODAL', payload: 'secret-ballot-modal'});
     document.getElementById('btn-submit-wagers').onclick = () => dispatch({type: 'SUBMIT_WAGERS'});
     document.getElementById('btn-submit-guess-yes').onclick = () => dispatch({type: 'SUBMIT_GUESS', payload: true});
     document.getElementById('btn-submit-guess-no').onclick = () => dispatch({type: 'SUBMIT_GUESS', payload: false});
@@ -2786,3 +2903,5 @@
 </script>
 </body>
 </html>
+
+    
