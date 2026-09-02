@@ -25,8 +25,8 @@
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="preconnect" href="https://unpkg.com" crossorigin>
-    <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+    <link rel="preconnect" href="https://unpkg.com">
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com">
     <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@500;700;800;900&display=swap">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@500;700;800;900&display=swap" media="print" onload="this.media='all'">
     <noscript>
@@ -892,6 +892,7 @@
     پایگاه داده بهینه‌سازی‌شده بازی دورهمی جاسوس
     شامل ۶ دسته × ۵۸ آیتم کاملاً متعادل، سرگرم‌کننده و مناسب جمع‌های دوستانه و خانوادگی
     */
+
     const WORD_PACKS = {
         places: [
             { word: "بیمارستان", foolWord: "درمانگاه", hint: "بوی الکل، روپوش سفید، برانکارد، پذیرش شبانه‌روزی", diff: "easy" },
@@ -3217,4 +3218,1149 @@
             acc.innerHTML += `<div class="accolade-card"><div class="accolade-icon">🐺</div><div><div class="color-primary" style="font-weight:bold;">گرگ وال‌استریت: ${escapeHtml(topWagerer.name)}</div><div class="color-secondary" style="font-size:0.75rem;">کسب بیشترین سود از شرط‌بندی روی مظنونین</div></div></div>`;
         }
         if (topVictim && (topVictim.stats.innocentVotesReceived || 0) > 0) {
-            من فقط «هوش مصنوعی نوشتارپایه» هستم و نمی‌توانم در این مورد کمک کنم.
+            acc.innerHTML += `<div class="accolade-card"><div class="accolade-icon">🕊️</div><div><div style="font-weight:bold; color:#a855f7;">قربانی بی‌گناه: ${escapeHtml(topVictim.name)}</div><div class="color-secondary" style="font-size:0.75rem;">مظلوم‌ترین شهروند که بیشترین اتهام اشتباه را خورد</div></div></div>`;
+        }
+        if (topFool && (topFool.stats.foolEscaped || 0) > 0) {
+            acc.innerHTML += `<div class="accolade-card"><div class="accolade-icon">🎭</div><div><div class="color-amber" style="font-weight:bold;">بازیگر نقاب‌دار: ${escapeHtml(topFool.name)}</div><div class="color-secondary" style="font-size:0.75rem;">ساده‌لوحی که بدون سوءظن موفق به فرار شد</div></div></div>`;
+        }
+    }
+
+    function getCategoryLabel(key) {
+        const labels = {
+            places: "اماکن و فضاها",
+            foods: "خوراکی و غذاها",
+            jobs: "مشاغل و حرفه‌ها",
+            objects: "اشیاء و ابزارها",
+            events: "رویدادها و مناسبت‌ها",
+            nostalgia: "نوستالژی و خاطره‌بازی",
+            custom: "کلمات سفارشی"
+        };
+        return labels[key] || "موضوع عمومی";
+    }
+
+    function bindHoldCard(cardEl, playerId) {
+        cardEl.addEventListener('contextmenu', (e) => e.preventDefault());
+
+        const endHold = (e) => {
+            if (e && e.pointerId !== undefined) {
+                try { cardEl.releasePointerCapture(e.pointerId); } catch(err){}
+            }
+            const activePlayer = gameState.players.find(x => x.id === activeModalPlayerId);
+            const isDetectivePending = activePlayer && activePlayer.role === 'detective' && !(gameState.settings.detectiveUsed || hostSecretState.detectiveUsed || clientPrivateState.hasUsedDetective);
+            if (!isDetectivePending) {
+                dispatch({type: 'CLOSE_ROLE_CARD'});
+            }
+        };
+
+        cardEl.addEventListener('pointerdown', (e) => {
+            if (e.pointerType === 'mouse' && e.button !== 0) return;
+            try { cardEl.setPointerCapture(e.pointerId); } catch(err){}
+            dispatch({type: 'OPEN_ROLE_CARD', payload: playerId});
+        });
+        cardEl.addEventListener('pointerup', endHold);
+        cardEl.addEventListener('pointercancel', endHold);
+        cardEl.addEventListener('pointerleave', endHold);
+
+        cardEl.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                if (document.getElementById('role-modal').classList.contains('hidden')) {
+                    dispatch({type: 'OPEN_ROLE_CARD', payload: playerId});
+                }
+            }
+        });
+        cardEl.addEventListener('keyup', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                const activePlayer = gameState.players.find(x => x.id === activeModalPlayerId);
+                const isDetectivePending = activePlayer && activePlayer.role === 'detective' && !(gameState.settings.detectiveUsed || hostSecretState.detectiveUsed || clientPrivateState.hasUsedDetective);
+                if (!isDetectivePending) {
+                    dispatch({type: 'CLOSE_ROLE_CARD'});
+                }
+            }
+        });
+    }
+
+        function restorePhaseBindings() {
+        if (gameState.phase === 'timer' && gameState.timer.running) {
+            const diff = Math.ceil((gameState.timer.endAt - Date.now()) / 1000);
+            if (diff <= 0) {
+                gameState.timer.pausedSec = 0;
+                gameState.timer.running = false;
+                gameState.timer.reason = 'timeout';
+                setPhase('vote');
+            } else {
+                resumeTimer();
+            }
+        }
+    }
+
+    function generateRoomCode() {
+        const chars = '23456789ABCDEFGHJKLMNPQRSTUVWXYZ';
+        const limit = 256 - (256 % chars.length);
+        let result = '';
+        while (result.length < 5) {
+            const bytes = new Uint8Array(8);
+            if (window.crypto && crypto.getRandomValues) {
+                crypto.getRandomValues(bytes);
+                for (const b of bytes) {
+                    if (b < limit) {
+                        result += chars[b % chars.length];
+                        if (result.length === 5) break;
+                    }
+                }
+            } else {
+                result += chars[Math.floor(Math.random() * chars.length)];
+            }
+        }
+        return result;
+    }
+
+    function validateVotePacket(conn, data) {
+        let voter = gameState.players.find(p => p.id === conn.playerId);
+        let suspect = gameState.players.find(p => p.id === data.suspectId);
+        return (isActivePlayerConnection(conn) && voter && voter.isAlive && suspect && suspect.isAlive && voter.id !== suspect.id && gameState.phase === 'vote' && data.roundId === gameState.round.roundId && data.sessionToken === conn.sessionToken && !hostSecretState.votesCast[voter.id]);
+    }
+
+    function validateWagerPacket(conn, data) {
+        let voter = gameState.players.find(p => p.id === conn.playerId);
+        return (isActivePlayerConnection(conn) && voter && voter.isAlive && voter.score > 0 && gameState.phase === 'wager' && data.roundId === gameState.round.roundId && data.sessionToken === conn.sessionToken && Number.isInteger(data.amount) && data.amount >= 0 && data.amount <= voter.score && !hostSecretState.wagersCast[voter.id]);
+    }
+
+    function validateGuessPacket(conn, data) {
+        return (
+            isActivePlayerConnection(conn) &&
+            gameState.phase === 'guess' &&
+            conn.playerId === gameState.vote.targetId &&
+            data.roundId === gameState.round.roundId &&
+            data.sessionToken === conn.sessionToken &&
+            typeof data.hasGuess === 'boolean' &&
+            typeof data.guessText === 'string' &&
+            data.guessText.length <= 100 &&
+            !hostSecretState.guessState.submitted
+        );
+    }
+
+    function validateDetectivePacket(conn, data) {
+        let det = gameState.players.find(p => p.id === conn.playerId);
+        let tar = gameState.players.find(p => p.id === data.targetId);
+        return (
+            isActivePlayerConnection(conn) &&
+            gameState.phase === 'reveal' &&
+            det &&
+            det.isAlive &&
+            det.role === 'detective' &&
+            !hostSecretState.detectiveUsed &&
+            tar &&
+            tar.isAlive &&
+            tar.id !== det.id &&
+            data.roundId === gameState.round.roundId &&
+            data.sessionToken === conn.sessionToken
+        );
+    }
+
+    function broadcastSnapshot() {
+        syncNetwork(PROTOCOL.STATE_SNAPSHOT, buildPublicSnapshot());
+    }
+
+    function initNetworkHost() {
+        let hostName = document.getElementById('host-player-name').value.trim();
+        if (!hostName) {
+            showToast("لطفاً نام خود (میزبان) را وارد کنید!");
+            return;
+        }
+
+        let code = generateRoomCode();
+        document.getElementById('room-code-display').textContent = code;
+        document.getElementById('host-room-info').classList.remove('hidden');
+
+        const qrBox = document.getElementById('qrcode-container');
+        qrBox.innerHTML = '';
+        if (typeof QRCode !== 'undefined') {
+            new QRCode(qrBox, { text: code, width: 120, height: 120, colorDark: "#090d16", colorLight: "#ffffff" });
+        }
+
+        try {
+            if (netPeer) { try { netPeer.destroy(); } catch(e){} }
+            netPeer = new Peer(`SPY_ROOM_V_${code}`);
+            
+            netPeer.on('error', (err) => {
+                console.error("PeerJS Host Error:", err);
+                if (err.type === 'unavailable-id') {
+                    if (hostInitAttempts < 5) {
+                        hostInitAttempts++;
+                        showToast("کد اتاق اشغال بود؛ در حال تلاش با کد جدید...");
+                        initNetworkHost();
+                    } else {
+                        showToast("تلاش‌های ساخت اتاق آنلاین ناموفق بود. مجدداً امتحان فرمایید.");
+                        hostInitAttempts = 0;
+                    }
+                } else {
+                    showToast(`خطا در سرویس اتاق: ${err.type || 'قطع سرویس'}`);
+                }
+            });
+
+            netPeer.on('open', () => {
+                hostInitAttempts = 0;
+                gameState.network.isHost = true;
+                gameState.network.code = code;
+                document.getElementById('connection-status-badge').textContent = `👑 میزبان اتاق: ${code}`;
+                updateHostConnectedPlayers();
+                
+                clearInterval(netHeartbeat);
+                netHeartbeat = setInterval(() => {
+                    const now = Date.now();
+                    netHostConns.forEach(c => {
+                        if (c.joined && now - (c.lastSeenAt || now) > 15000) {
+                            if (c.connected) {
+                                c.connected = false;
+                                showToast(`⚠️ اتصال یکی از بازیکنان قطع شد.`);
+                                if (gameState.phase === 'vote') checkVoteCompletion();
+                                if (gameState.phase === 'wager') checkWagerCompletion();
+                            }
+                        }
+                        safeHostSend(c, { type: PROTOCOL.PING });
+                    });
+                }, 4000);
+            });
+
+            netPeer.on('connection', conn => {
+                netHostConns.push(conn);
+                conn.sessionToken = generateId();
+                conn.connected = true;
+                conn.lastSeenAt = Date.now();
+                conn.rateWindow = Date.now();
+                conn.packetCount = 0;
+
+                conn.on('data', data => {
+                    if (!data || typeof data !== 'object') return;
+                    
+                    const now = Date.now();
+                    if (now - conn.rateWindow > 1000) {
+                        conn.rateWindow = now;
+                        conn.packetCount = 0;
+                    }
+                    if (++conn.packetCount > 40) {
+                        conn.close();
+                        return;
+                    }
+
+                    conn.lastSeenAt = now;
+                    conn.connected = true;
+                    if (data.type === PROTOCOL.PONG) return;
+
+                    if (data.type === 'JOIN') {
+                        if (conn.joined) {
+                            safeHostSend(conn, { type: PROTOCOL.JOIN_REJECTED, reason: "این اتصال قبلاً وارد اتاق شده است." });
+                            return;
+                        }
+
+                        let isMidGame = gameState.phase !== 'welcome' && gameState.phase !== 'setup' && gameState.phase !== 'multi';
+                        let matchedPlayer = null;
+                        if (data.reconnectToken) {
+                            matchedPlayer = gameState.players.find(p => p.reconnectToken === data.reconnectToken);
+                        }
+
+                        if (isMidGame && !matchedPlayer) {
+                            safeHostSend(conn, { type: PROTOCOL.JOIN_REJECTED, reason: "مسابقه هم‌اکنون در جریان است." });
+                            conn.close();
+                            return;
+                        }
+
+                        let cleanName = String(data.name || '').trim().replace(/\s+/g, ' ');
+                        if (cleanName.length < 1 || cleanName.length > 20) {
+                            safeHostSend(conn, { type: PROTOCOL.JOIN_REJECTED, reason: "نام باید بین ۱ تا ۲۰ کاراکتر باشد." });
+                            conn.close();
+                            return;
+                        }
+
+                        if (!matchedPlayer) {
+                            let isDuplicate = gameState.players.some(p => normalizeWord(p.name) === normalizeWord(cleanName)) ||
+                                              normalizeWord(hostName) === normalizeWord(cleanName) ||
+                                              netHostConns.some(c => c !== conn && c.joined && c.connected && normalizeWord(c.playerName) === normalizeWord(cleanName));
+                            if (isDuplicate) {
+                                safeHostSend(conn, { type: PROTOCOL.JOIN_REJECTED, reason: "این نام قبلاً در اتاق انتخاب شده است." });
+                                conn.close();
+                                return;
+                            }
+                        }
+
+                        if (matchedPlayer) {
+                            const oldConn = netHostConns.find(c => c !== conn && c.joined && c.playerId === matchedPlayer.id);
+                            if (oldConn) {
+                                oldConn.connected = false;
+                                try { oldConn.close(); } catch(e){}
+                                netHostConns = netHostConns.filter(c => c !== oldConn);
+                            }
+
+                            conn.playerId = matchedPlayer.id;
+                            conn.reconnectToken = matchedPlayer.reconnectToken;
+                            conn.playerName = matchedPlayer.name;
+                            conn.joined = true;
+                            safeHostSend(conn, { type: PROTOCOL.JOIN_ACK, playerId: conn.playerId, sessionToken: conn.sessionToken, reconnectToken: conn.reconnectToken });
+                            syncPlayerAfterReconnect(conn, matchedPlayer);
+                            updateHostConnectedPlayers();
+                            broadcastLobbyState();
+                            return;
+                        } else {
+                            conn.playerId = generateId();
+                            conn.reconnectToken = generateId();
+                            conn.playerName = cleanName;
+                            conn.joined = true;
+                            safeHostSend(conn, { type: PROTOCOL.JOIN_ACK, playerId: conn.playerId, sessionToken: conn.sessionToken, reconnectToken: conn.reconnectToken });
+                            updateHostConnectedPlayers();
+                            broadcastLobbyState();
+                            return;
+                        }
+                    }
+
+                    if (data.requestId && hostSecretState.processedRequestIds.has(data.requestId)) {
+                        return;
+                    }
+
+                    if (data.type === PROTOCOL.ROLE_SEEN) {
+                        const player = gameState.players.find(p => p.id === conn.playerId);
+                        if (!isActivePlayerConnection(conn) || !player || data.playerId !== conn.playerId || data.sessionToken !== conn.sessionToken || data.roundId !== gameState.round.roundId) {
+                            return;
+                        }
+                        player.hasSeen = true;
+                        broadcastSnapshot();
+                        commitState();
+                    } else if (data.type === PROTOCOL.EMERGENCY_VOTE_REQUEST) {
+                        if (!isActivePlayerConnection(conn) || data.playerId !== conn.playerId || data.sessionToken !== conn.sessionToken) {
+                            return;
+                        }
+                        let sender = gameState.players.find(p => p.id === conn.playerId);
+                        if (sender && sender.isAlive && gameState.phase === 'timer') {
+                            dispatch({type: 'REQUEST_VOTE'});
+                        }
+                    } else if (data.type === PROTOCOL.VOTE_CAST) {
+                        if (!validateVotePacket(conn, data)) {
+                            safeHostSend(conn, { type: PROTOCOL.ACTION_REJECTED, actionType: PROTOCOL.VOTE_CAST, requestId: data.requestId, reason: "رای نامعتبر است." });
+                            return;
+                        }
+                        if (data.requestId) {
+                            if (hostSecretState.processedRequestIds.size >= 5000) hostSecretState.processedRequestIds.clear();
+                            hostSecretState.processedRequestIds.add(data.requestId);
+                        }
+                        hostSecretState.votesCast[conn.playerId] = data.suspectId;
+                        safeHostSend(conn, { type: PROTOCOL.ACTION_ACK, actionType: PROTOCOL.VOTE_CAST, requestId: data.requestId });
+                        checkVoteCompletion();
+                    } else if (data.type === PROTOCOL.WAGER_SUBMIT) {
+                        if (!validateWagerPacket(conn, data)) {
+                            safeHostSend(conn, { type: PROTOCOL.ACTION_REJECTED, actionType: PROTOCOL.WAGER_SUBMIT, requestId: data.requestId, reason: "مقدار شرط نامعتبر است." });
+                            return;
+                        }
+                        if (data.requestId) {
+                            if (hostSecretState.processedRequestIds.size >= 5000) hostSecretState.processedRequestIds.clear();
+                            hostSecretState.processedRequestIds.add(data.requestId);
+                        }
+                        submitWagerUnified(conn.playerId, data.amount);
+                        safeHostSend(conn, { type: PROTOCOL.ACTION_ACK, actionType: PROTOCOL.WAGER_SUBMIT, requestId: data.requestId });
+                    } else if (data.type === PROTOCOL.GUESS_SUBMIT) {
+                        if (!validateGuessPacket(conn, data)) {
+                            safeHostSend(conn, { type: PROTOCOL.ACTION_REJECTED, actionType: PROTOCOL.GUESS_SUBMIT, requestId: data.requestId, reason: "حدس نامعتبر است." });
+                            return;
+                        }
+                        if (data.requestId) {
+                            if (hostSecretState.processedRequestIds.size >= 5000) hostSecretState.processedRequestIds.clear();
+                            hostSecretState.processedRequestIds.add(data.requestId);
+                        }
+                        hostSecretState.guessState = { playerId: conn.playerId, submitted: true };
+                        safeHostSend(conn, { type: PROTOCOL.ACTION_ACK, actionType: PROTOCOL.GUESS_SUBMIT, requestId: data.requestId });
+                        evaluateGuess(data.hasGuess, data.guessText);
+                    } else if (data.type === PROTOCOL.DETECTIVE_QUERY) {
+                        if (!validateDetectivePacket(conn, data)) {
+                            safeHostSend(conn, { type: PROTOCOL.ACTION_REJECTED, actionType: PROTOCOL.DETECTIVE_QUERY, requestId: data.requestId, reason: "استعلام نامعتبر است." });
+                            return;
+                        }
+                        if (data.requestId) {
+                            if (hostSecretState.processedRequestIds.size >= 5000) hostSecretState.processedRequestIds.clear();
+                            hostSecretState.processedRequestIds.add(data.requestId);
+                        }
+                        let tar = gameState.players.find(p => p.id === data.targetId);
+                        hostSecretState.detectiveUsed = true;
+                        gameState.settings.detectiveUsed = true;
+                        let resText = tar && tar.role === 'spy'
+                            ? `⚠️ «${tar.name}» قطعاً جاسوس است!`
+                            : `✅ «${tar ? tar.name : 'متهم'}» شهروند بی‌گناه است.`;
+                        hostSecretState.detectiveInquiryResult = resText;
+                        safeHostSend(conn, { type: PROTOCOL.ACTION_ACK, actionType: PROTOCOL.DETECTIVE_QUERY, requestId: data.requestId });
+                        safeHostSend(conn, { type: PROTOCOL.DETECTIVE_RESULT, isSpy: tar ? tar.role === 'spy' : false, targetName: tar ? tar.name : "" });
+                        broadcastSnapshot();
+                    }
+                });
+
+                conn.on('close', () => {
+                    conn.connected = false;
+                    netHostConns = netHostConns.filter(c => c !== conn);
+                    updateHostConnectedPlayers();
+                    broadcastLobbyState();
+                    if (gameState.phase === 'vote') checkVoteCompletion();
+                    if (gameState.phase === 'wager') checkWagerCompletion();
+                });
+
+                conn.on('error', () => {
+                    conn.connected = false;
+                    if (gameState.phase === 'vote') checkVoteCompletion();
+                    if (gameState.phase === 'wager') checkWagerCompletion();
+                });
+            });
+        } catch(e) { showToast("خطا در ایجاد اتاق آنلاین!"); }
+    }
+
+    function updateHostConnectedPlayers() {
+        let hostName = document.getElementById('host-player-name').value.trim() || 'میزبان';
+        let active = netHostConns.filter(x => x.joined && x.connected);
+        document.getElementById('connected-players-count').textContent = active.length + 1;
+        document.getElementById('connected-players-list').textContent = [hostName, ...active.map(x => x.playerName)].join(' ، ');
+    }
+
+    function broadcastLobbyState() {
+        let hostName = document.getElementById('host-player-name').value.trim() || 'میزبان';
+        let playerNames = [hostName, ...netHostConns.filter(c => c.joined && c.connected).map(c => c.playerName)];
+        syncNetwork(PROTOCOL.LOBBY_STATE, { players: playerNames });
+    }
+
+    function attachClientConnListeners(conn, rawCode, name, savedReconnectToken) {
+        lastHostPing = Date.now();
+        clearInterval(clientHeartbeatCheck);
+        clientHeartbeatCheck = setInterval(() => {
+            if (gameState.network.isClient && !isReconnecting) {
+                if (Date.now() - lastHostPing > 12000) {
+                    showToast("ارتباط با میزبان قطع شد!");
+                    resetNetwork();
+                    setPhase('welcome');
+                }
+            }
+        }, 3000);
+
+        conn.on('open', () => {
+            isReconnecting = false;
+            lastHostPing = Date.now();
+            gameState.network.isClient = true;
+            safeClientSend({ type: 'JOIN', name: name, reconnectToken: savedReconnectToken });
+            document.getElementById('client-wait-box').classList.remove('hidden');
+            document.getElementById('connection-status-badge').textContent = `🟢 متصل به اتاق: ${rawCode}`;
+        });
+
+        conn.on('data', data => {
+            if (!data || typeof data !== 'object') return;
+            lastHostPing = Date.now();
+            if (data.type === PROTOCOL.PING) { safeClientSend({ type: PROTOCOL.PONG }); return; }
+            if (data.type === PROTOCOL.JOIN_REJECTED) {
+                showToast(`⛔ خطا: ${data.reason}`);
+                resetNetwork();
+                document.getElementById('client-wait-box').classList.add('hidden');
+                return;
+            }
+            if (data.type === PROTOCOL.JOIN_ACK) {
+                clientPrivateState.playerId = data.playerId;
+                clientPrivateState.sessionToken = data.sessionToken;
+                clientPrivateState.reconnectToken = data.reconnectToken;
+                try {
+                    localStorage.setItem(`spy_reconnect_${rawCode}`, data.reconnectToken);
+                } catch(e){}
+            } else if (data.type === PROTOCOL.ACTION_ACK) {
+                if (data.actionType === PROTOCOL.VOTE_CAST) {
+                    clientPrivateState.hasVoted = true;
+                    document.getElementById('vote-instruction-text').textContent = "رای شما ثبت شد. منتظر سایر بازیکنان بمانید...";
+                } else if (data.actionType === PROTOCOL.WAGER_SUBMIT) {
+                    clientPrivateState.hasWagered = true;
+                    const listEl = document.getElementById('wager-players-list');
+                    listEl.textContent = '';
+                    const successBox = document.createElement('div');
+                    successBox.className = 'text-center color-emerald';
+                    successBox.textContent = 'تصمیم شرط شما ثبت شد.';
+                    listEl.appendChild(successBox);
+                } else if (data.actionType === PROTOCOL.GUESS_SUBMIT) {
+                    clientPrivateState.hasGuessed = true;
+                }
+            } else if (data.type === PROTOCOL.ACTION_REJECTED) {
+                showToast(`خطا: ${data.reason || 'عملیات پذیرفته نشد.'}`);
+                if (data.actionType === PROTOCOL.VOTE_CAST) {
+                    clientPrivateState.hasVoted = false;
+                    document.getElementById('vote-instruction-text').textContent = "متهم اصلی را انتخاب کنید:";
+                } else if (data.actionType === PROTOCOL.WAGER_SUBMIT) {
+                    clientPrivateState.hasWagered = false;
+                    renderUI();
+                } else if (data.actionType === PROTOCOL.GUESS_SUBMIT) {
+                    clientPrivateState.hasGuessed = false;
+                }
+            } else if (data.type === PROTOCOL.LOBBY_STATE) {
+                const safePlayers = (data.players || []).map(escapeHtml).join(' ، ');
+                document.getElementById('client-wait-box').innerHTML = `🟢 متصل به اتاق! افراد حاضر:<br><strong>${safePlayers}</strong>`;
+            } else if (data.type === PROTOCOL.VOTE_PROGRESS) {
+                let el = document.getElementById('vote-instruction-text');
+                if (el) el.textContent = `آرا ثبت شده: ${data.received} از ${data.total}`;
+            } else if (data.type === PROTOCOL.STATE_SNAPSHOT) {
+                if (VALID_PHASES.has(data.phase)) gameState.phase = data.phase;
+                gameState.settings = sanitizeSettings(data.settings);
+                if (Array.isArray(data.players)) {
+                    gameState.players = data.players.map(toPublicPlayer).filter(Boolean);
+                }
+                gameState.round.num = Number.isInteger(data.roundNum) ? data.roundNum : 1;
+                gameState.round.roundId = typeof data.roundId === 'string' ? data.roundId : null;
+                gameState.round.history = sanitizeHistory(data.history);
+                if (data.timer && typeof data.timer.running === 'boolean' && Number.isFinite(data.timer.endAt)) {
+                    gameState.timer = data.timer;
+                    if (gameState.phase === 'timer' && gameState.timer.running) {
+                        runTick();
+                    }
+                }
+                gameState.vote = sanitizeVote(data.vote);
+                if (data.actionState) {
+                    clientPrivateState.hasVoted = !!data.actionState.hasVoted;
+                    clientPrivateState.hasWagered = !!data.actionState.hasWagered;
+                    clientPrivateState.hasGuessed = !!data.actionState.hasGuessed;
+                    clientPrivateState.hasUsedDetective = !!data.actionState.hasUsedDetective;
+                }
+                renderUI();
+            } else if (data.type === PROTOCOL.PRIVATE_ROLE) {
+                const validRoles = new Set(['citizen', 'spy', 'fool', 'detective']);
+                const validTeams = new Set(['citizen', 'spy']);
+                if (
+                    typeof data.playerId !== 'string' ||
+                    !validRoles.has(data.role) ||
+                    !validTeams.has(data.team) ||
+                    typeof data.secretWord !== 'string'
+                ) return;
+
+                clientPrivateState.role = data.role;
+                clientPrivateState.team = data.team;
+                clientPrivateState.secretWord = data.secretWord;
+                clientPrivateState.quest = typeof data.quest === 'string' ? data.quest : null;
+                clientPrivateState.fellowSpies = Array.isArray(data.fellowSpies) ? data.fellowSpies : [];
+                if (data.detectiveInquiryResult) {
+                    clientPrivateState.detectiveInquiryResult = data.detectiveInquiryResult;
+                    clientPrivateState.hasUsedDetective = true;
+                }
+
+                let me = gameState.players.find(p => p.id === clientPrivateState.playerId);
+                if (me) {
+                    me.role = data.role;
+                    me.team = data.team;
+                    me.quest = data.quest;
+                }
+                
+                if (gameState.phase === 'reveal') {
+                    renderRoleModalContent(clientPrivateState.playerId);
+                    dispatch({type: 'OPEN_MODAL', payload: 'role-modal'});
+                } else {
+                    showToast("نقش و مشخصات شما با اتاق همگام شد.");
+                }
+            } else if (data.type === PROTOCOL.TIMER_SYNC) {
+                if (typeof data.running === 'boolean' && Number.isFinite(data.pausedSec)) {
+                    lastSoundSecond = null;
+                    gameState.timer.pausedSec = data.pausedSec;
+                    gameState.timer.endAt = data.endAt;
+                    gameState.timer.running = data.running;
+                    if (data.running) {
+                        setPhase('timer');
+                        runTick();
+                    } else {
+                        clearInterval(timerInt);
+                        timerInt = null;
+                        renderTimer(data.pausedSec);
+                    }
+                }
+            } else if (data.type === PROTOCOL.DIRECTOR_UPDATE) {
+                gameState.round.history = sanitizeHistory(data.history);
+                if (gameState.phase === 'timer') renderUI();
+            } else if (data.type === PROTOCOL.VOTE_OPEN) {
+                pauseTimer();
+                gameState.timer.reason = data.isTimeout ? 'timeout' : 'emergency';
+                gameState.vote.pendingId = null;
+                clientPrivateState.hasVoted = false;
+                setPhase('vote');
+            } else if (data.type === PROTOCOL.WAGER_OPEN) {
+                gameState.vote.targetId = data.targetId;
+                clientPrivateState.hasWagered = false;
+                setPhase('wager');
+            } else if (data.type === PROTOCOL.GUESS_OPEN) {
+                gameState.vote.targetId = data.spyId;
+                clientPrivateState.hasGuessed = false;
+                setPhase('guess');
+            } else if (data.type === PROTOCOL.DETECTIVE_RESULT) {
+                clientPrivateState.hasUsedDetective = true;
+                let res = document.getElementById('detective-result-box');
+                const resText = data.isSpy
+                    ? `⚠️ «${data.targetName}» قطعاً جاسوس است!`
+                    : `✅ «${data.targetName}» شهروند بی‌گناه است.`;
+                clientPrivateState.detectiveInquiryResult = resText;
+
+                if (res) {
+                    if (data.isSpy) {
+                        res.innerHTML = `⚠️ <span class="color-rose">«${escapeHtml(data.targetName)}» قطعاً جاسوس است!</span>`;
+                    } else {
+                        res.innerHTML = `✅ <span class="color-emerald">«${escapeHtml(data.targetName)}» شهروند بی‌گناه است.</span>`;
+                    }
+                }
+                const btnDet = document.getElementById('btn-detective-inquiry');
+                if (btnDet) btnDet.disabled = true;
+                const selDet = document.getElementById('detective-target-select');
+                if (selDet) selDet.disabled = true;
+            } else if (data.type === PROTOCOL.NOTICE_MODAL) {
+                if (data.modal === 'multi-spy-notice-modal') {
+                    document.getElementById('multi-spy-notice-text').textContent = data.text;
+                    document.getElementById('btn-resume-game').classList.add('hidden');
+                    dispatch({type: 'OPEN_MODAL', payload: 'multi-spy-notice-modal'});
+                } else if (data.modal === 'innocent-notice-modal') {
+                    document.getElementById('innocent-notice-text').textContent = data.text;
+                    dispatch({type: 'OPEN_MODAL', payload: 'innocent-notice-modal'});
+                    setTimeout(() => {
+                        dispatch({type: 'CLOSE_MODAL', payload: 'innocent-notice-modal'});
+                    }, 2500);
+                }
+            } else if (data.type === PROTOCOL.ROUND_RESULT) {
+                if (data.isFinalMatch) {
+                    if (Array.isArray(data.players)) gameState.players = data.players.map(toPublicPlayer).filter(Boolean);
+                    setPhase('leaderboard');
+                } else {
+                    renderRemoteRoundResult(data);
+                }
+            }
+        });
+
+        conn.on('close', () => {
+            if (intentionalDisconnect) return;
+            showToast("اتصال قطع شد. در حال تلاش برای وصل مجدد...");
+            document.getElementById('connection-status-badge').textContent = '🟡 در حال اتصال مجدد...';
+            
+            if (isReconnecting) return;
+            isReconnecting = true;
+            
+            clearTimeout(reconnectTimeout);
+            reconnectTimeout = setTimeout(() => {
+                if (intentionalDisconnect || !gameState.network.isClient) {
+                    isReconnecting = false;
+                    return;
+                }
+                let token = null;
+                try {
+                    token = localStorage.getItem(`spy_reconnect_${rawCode}`);
+                } catch(e){}
+                try {
+                    if (netClientConn) {
+                        try { netClientConn.close(); } catch(err){}
+                    }
+                    if (!netPeer || netPeer.destroyed || netPeer.disconnected) {
+                        netPeer = new Peer();
+                        netPeer.on('open', () => {
+                            netClientConn = netPeer.connect(`SPY_ROOM_V_${rawCode}`);
+                            attachClientConnListeners(netClientConn, rawCode, name, token);
+                        });
+                    } else {
+                        netClientConn = netPeer.connect(`SPY_ROOM_V_${rawCode}`);
+                        attachClientConnListeners(netClientConn, rawCode, name, token);
+                    }
+                } catch(e) {
+                    isReconnecting = false;
+                    showToast("تلاش اتصال مجدد ناموفق بود.");
+                }
+            }, 2000);
+        });
+    }
+
+    function joinNetworkClient() {
+        let rawCode = document.getElementById('join-room-code').value.toUpperCase().trim();
+        let name = document.getElementById('join-player-name').value.trim();
+        
+        const roomCodeRegex = /^[23456789ABCDEFGHJKLMNPQRSTUVWXYZ]{5}$/;
+        if (!roomCodeRegex.test(rawCode)) {
+            showToast("کد ۵ رقمی اتاق نامعتبر است!");
+            return;
+        }
+        if (!name || name.length > 20) {
+            showToast("نام خود را به درستی وارد فرمایید (حداکثر ۲۰ کاراکتر)!");
+            return;
+        }
+
+        let savedReconnectToken = null;
+        try {
+            savedReconnectToken = localStorage.getItem(`spy_reconnect_${rawCode}`);
+        } catch(e){}
+
+        try {
+            if (netPeer) { try { netPeer.destroy(); } catch(e){} }
+            netPeer = new Peer();
+
+            netPeer.on('error', (err) => {
+                console.error("PeerJS Client Error:", err);
+                if (err.type === 'peer-unavailable') {
+                    showToast("کد اتاق یافت نشد یا اتاق بسته شده است!");
+                } else {
+                    showToast(`خطای اتصال به سرور: ${err.type || 'نامشخص'}`);
+                }
+            });
+
+            netPeer.on('open', () => {
+                netClientConn = netPeer.connect(`SPY_ROOM_V_${rawCode}`);
+                attachClientConnListeners(netClientConn, rawCode, name, savedReconnectToken);
+            });
+        } catch(e) { showToast("خطا در اتصال به اتاق!"); }
+    }
+
+    function resetNetwork() {
+        intentionalDisconnect = true;
+        isReconnecting = false;
+        clearTimeout(reconnectTimeout);
+        clearInterval(netHeartbeat);
+        clearInterval(clientHeartbeatCheck);
+        netHostConns.forEach(c => {
+            c.connected = false;
+            try { c.close(); } catch(e){}
+        });
+        netHostConns = [];
+        if (netClientConn) {
+            try { netClientConn.close(); } catch(e){}
+            netClientConn = null;
+        }
+        if (netPeer) {
+            try { netPeer.destroy(); } catch(e){}
+            netPeer = null;
+        }
+        gameState.network.isHost = false;
+        gameState.network.isClient = false;
+        document.getElementById('connection-status-badge').textContent = '🟢 وضعیت: آفلاین';
+
+        try {
+            Object.keys(localStorage).forEach(k => {
+                if (k.startsWith('spy_reconnect_')) {
+                    localStorage.removeItem(k);
+                }
+            });
+        } catch(e){}
+
+        setTimeout(() => { intentionalDisconnect = false; }, 500);
+    }
+
+    function syncNetwork(type, data={}) {
+        if (!gameState.network.isHost) return;
+        let packet = Object.assign({ type }, data);
+        netHostConns.forEach(c => {
+            if (c.connected && c.joined) {
+                safeHostSend(c, packet);
+            }
+        });
+    }
+
+    function getCustomWords() {
+        try {
+            const parsed = JSON.parse(localStorage.getItem('spy_custom_words'));
+            return Array.isArray(parsed) ? parsed.map(cleanCustomWord).filter(Boolean) : [];
+        } catch(e) { return []; }
+    }
+    function saveCustomWords(list) {
+        try {
+            localStorage.setItem('spy_custom_words', JSON.stringify(list));
+        } catch(e) {
+            console.warn("Storage write restricted:", e);
+        }
+    }
+    function addCustomWordDOM() {
+        let w = document.getElementById('cust-word').value.trim();
+        let f = document.getElementById('cust-fool').value.trim() || w;
+        let h = document.getElementById('cust-hint').value.trim() || "بدون راهنما";
+        
+        if (!w) { showToast("کلمه اصلی را وارد فرمایید!"); return; }
+        if (w.length > 50 || f.length > 50) { showToast("طول کلمه نباید بیشتر از ۵۰ کاراکتر باشد!"); return; }
+        if (h.length > 120) { showToast("طول راهنما نباید بیشتر از ۱۲۰ کاراکتر باشد!"); return; }
+
+        let list = getCustomWords();
+        if (list.length >= 1000) {
+            showToast("حداکثر سقف مجاز ثبت کلمات سفارشی (۱۰۰۰ عدد) تکمیل شده است.");
+            return;
+        }
+        list.push({ word: w, foolWord: f, hint: h, diff: "medium" });
+        saveCustomWords(list);
+        document.getElementById('cust-word').value = '';
+        document.getElementById('cust-fool').value = '';
+        document.getElementById('cust-hint').value = '';
+        renderCustomWordsList();
+        showToast("کلمه سفارشی با موفقیت اضافه شد!");
+    }
+    function deleteCustomWord(idx) {
+        let list = getCustomWords();
+        list.splice(idx, 1);
+        saveCustomWords(list);
+        renderCustomWordsList();
+    }
+    function renderCustomWordsList() {
+        let list = getCustomWords();
+        document.getElementById('cust-count').textContent = list.length;
+        let c = document.getElementById('custom-words-list');
+        c.innerHTML = '';
+        list.forEach((item, idx) => {
+            let div = document.createElement('div');
+            div.className = 'toggle-item p-6-10';
+            
+            let infoDiv = document.createElement('div');
+            infoDiv.className = 'flex-1';
+            infoDiv.innerHTML = `<strong>${escapeHtml(item.word)}</strong> <span class="color-secondary" style="font-size:0.75rem;">(${escapeHtml(item.hint||'')})</span>`;
+            
+            let delBtn = document.createElement('button');
+            delBtn.type = 'button';
+            delBtn.className = 'btn btn-ghost btn-sm color-rose w-auto m-0';
+            delBtn.style.padding = '2px 8px';
+            delBtn.textContent = '🗑️';
+            delBtn.setAttribute('aria-label', `حذف کلمه ${item.word}`);
+            delBtn.addEventListener('click', () => deleteCustomWord(idx));
+            
+            div.appendChild(infoDiv);
+            div.appendChild(delBtn);
+            c.appendChild(div);
+        });
+    }
+    function exportCustomWordsJSON() {
+        let list = getCustomWords();
+        let blob = new Blob([JSON.stringify({ version: 1, words: list }, null, 2)], { type: 'application/json' });
+        let url = URL.createObjectURL(blob);
+        let a = document.createElement('a');
+        a.href = url;
+        a.download = `SpyWords_Backup.json`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        setTimeout(() => URL.revokeObjectURL(url), 1500);
+    }
+    function cleanCustomWord(w) {
+        if (!w || typeof w !== 'object') return null;
+        const word = String(w.word || '').trim();
+        const foolWord = String(w.foolWord || word).trim();
+        const hint = String(w.hint || 'بدون راهنما').trim();
+        if (!word || word.length > 50) return null;
+        if (foolWord.length > 50) return null;
+        if (hint.length > 120) return null;
+        return {
+            word,
+            foolWord,
+            hint,
+            diff: ['easy', 'medium', 'hard'].includes(w.diff) ? w.diff : 'medium'
+        };
+    }
+    function importCustomWordsJSON(inputFile) {
+        let file = inputFile.files[0];
+        if (!file) return;
+        if (file.size > 512 * 1024) {
+            showToast("فایل بیش از حد بزرگ است (حداکثر ۵۱۲ کیلوبایت)!");
+            inputFile.value = '';
+            return;
+        }
+        let reader = new FileReader();
+        reader.onload = (e) => {
+            try {
+                let parsed = JSON.parse(e.target.result);
+                if (parsed && Array.isArray(parsed.words)) {
+                    let validWords = parsed.words.map(cleanCustomWord).filter(Boolean);
+                    if (validWords.length > 0) {
+                        let current = getCustomWords();
+                        let existing = new Set(current.map(x => normalizeWord(x.word)));
+                        let deduplicatedNew = [];
+                        let inMemorySeen = new Set();
+
+                        validWords.forEach(w => {
+                            let nw = normalizeWord(w.word);
+                            if (!existing.has(nw) && !inMemorySeen.has(nw)) {
+                                inMemorySeen.add(nw);
+                                deduplicatedNew.push(w);
+                            }
+                        });
+
+                        if (deduplicatedNew.length > 0) {
+                            saveCustomWords([...current, ...deduplicatedNew]);
+                            renderCustomWordsList();
+                            showToast(`${deduplicatedNew.length} کلمه جدید با موفقیت افزوده شد!`);
+                        } else {
+                            showToast("تمام کلمات فایل قبلاً ثبت شده بودند.");
+                        }
+                    } else {
+                        showToast("هیچ کلمه معتبری در فایل یافت نشد!");
+                    }
+                } else {
+                    showToast("ساختار فایل JSON نامعتبر است!");
+                }
+            } catch(err) { showToast("خطا در پردازش فایل JSON!"); }
+            inputFile.value = '';
+        };
+        reader.readAsText(file);
+    }
+
+    function exportScorecardImage() {
+        const renderCanvas = () => {
+            const canvas = document.getElementById('scorecard-canvas');
+            const ctx = canvas.getContext('2d');
+            if ('direction' in ctx) {
+                ctx.direction = 'rtl';
+            }
+            const sorted = [...gameState.players].sort((a, b) => b.score - a.score);
+
+            const rowHeight = 64;
+            const headerHeight = 140;
+            const footerHeight = 80;
+            const logicalWidth = 600;
+            const logicalHeight = Math.max(600, headerHeight + (sorted.length * rowHeight) + footerHeight);
+
+            const dpr = Math.max(1, window.devicePixelRatio || 1);
+            canvas.width = logicalWidth * dpr;
+            canvas.height = logicalHeight * dpr;
+            ctx.scale(dpr, dpr);
+
+            const grad = ctx.createLinearGradient(0, 0, 0, logicalHeight);
+            grad.addColorStop(0, '#0f172a'); grad.addColorStop(1, '#020617');
+            ctx.fillStyle = grad;
+            ctx.fillRect(0, 0, logicalWidth, logicalHeight);
+
+            const fontFam = "'Vazirmatn', 'B Yekan', 'Tahoma', 'Segoe UI', sans-serif";
+
+            ctx.textAlign = 'center';
+            ctx.fillStyle = '#38bdf8';
+            ctx.font = `bold 28px ${fontFam}`;
+            ctx.fillText('🕵️ کارنامه نهایی مسابقه جاسوس', logicalWidth / 2, 60);
+
+            ctx.font = `14px ${fontFam}`;
+            ctx.fillStyle = '#94a3b8';
+            ctx.fillText(`تعداد دست‌ها: ${gameState.round.num} | بازیکنان: ${sorted.length} نفر`, logicalWidth / 2, 95);
+
+            let startY = 130;
+            sorted.forEach((p, idx) => {
+                ctx.fillStyle = idx === 0 ? 'rgba(245, 158, 11, 0.15)' : 'rgba(30, 41, 59, 0.8)';
+                ctx.strokeStyle = idx === 0 ? '#f59e0b' : 'rgba(255, 255, 255, 0.1)';
+                ctx.lineWidth = 1;
+
+                ctx.fillRect(35, startY, logicalWidth - 70, 50);
+                ctx.strokeRect(35, startY, logicalWidth - 70, 50);
+
+                const medal = ['🥇', '🥈', '🥉'][idx] || `#${idx + 1}`;
+                const safeBidiName = `\u2067${p.name}\u2069`;
+                ctx.textAlign = 'right';
+                ctx.fillStyle = '#f8fafc';
+                ctx.font = `bold 16px ${fontFam}`;
+                ctx.fillText(`${medal}  ${safeBidiName}`, logicalWidth - 55, startY + 31);
+
+                ctx.textAlign = 'left';
+                ctx.fillStyle = idx === 0 ? '#f59e0b' : '#38bdf8';
+                ctx.font = `bold 16px ${fontFam}`;
+                ctx.fillText(`${p.score} امتیاز`, 55, startY + 31);
+
+                startY += rowHeight;
+            });
+
+            ctx.textAlign = 'center';
+            ctx.fillStyle = '#475569';
+            ctx.font = `12px ${fontFam}`;
+            ctx.fillText('ساخته شده با بازی جاسوس تحت وب', logicalWidth / 2, logicalHeight - 25);
+
+            const link = document.createElement('a');
+            link.download = `SpyGame-Scorecard-${Date.now()}.png`;
+            link.href = canvas.toDataURL('image/png');
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        };
+
+        if (document.fonts && document.fonts.ready) {
+            document.fonts.ready.then(renderCanvas);
+        } else {
+            renderCanvas();
+        }
+    }
+
+    function loadSavedNames() {
+        try {
+            const parsed = JSON.parse(localStorage.getItem('spy_saved_player_names'));
+            return Array.isArray(parsed) ? parsed : [];
+        } catch(e) { return []; }
+    }
+    function saveCurrentNames(names) {
+        try {
+            localStorage.setItem('spy_saved_player_names', JSON.stringify(names));
+        } catch(e) {
+            console.warn("Storage write restricted:", e);
+        }
+    }
+    function renderNameInputs(forceDefault = false) {
+        let countInput = document.getElementById('setup-players-count');
+        let count = parseInt(toLatinDigits(countInput.value), 10) || 4;
+        if (count < RULES.players.min) count = RULES.players.min;
+        if (count > RULES.players.max) count = RULES.players.max;
+        countInput.value = count;
+
+        let container = document.getElementById('name-inputs-container');
+        let currentInputs = Array.from(container.querySelectorAll('input')).map(inp => ({
+            name: inp.value.trim(),
+            pId: inp.dataset.playerId,
+            rTok: inp.dataset.reconnectToken
+        }));
+        let saved = loadSavedNames();
+        container.innerHTML = '';
+
+        for (let i = 1; i <= count; i++) {
+            let input = document.createElement('input');
+            input.type = 'text';
+            input.className = 'input-control mb-6';
+            input.placeholder = `نام بازیکن ${i}`;
+            input.setAttribute('aria-label', `نام بازیکن شماره ${i}`);
+
+            if (forceDefault) {
+                input.value = `بازیکن ${i}`;
+                input.dataset.playerId = generateId();
+                input.dataset.reconnectToken = generateId();
+            } else if (currentInputs[i - 1] && currentInputs[i - 1].name) {
+                input.value = currentInputs[i - 1].name;
+                input.dataset.playerId = currentInputs[i - 1].pId || generateId();
+                input.dataset.reconnectToken = currentInputs[i - 1].rTok || generateId();
+            } else if (saved[i - 1]) {
+                input.value = saved[i - 1];
+                input.dataset.playerId = generateId();
+                input.dataset.reconnectToken = generateId();
+            } else {
+                input.value = `بازیکن ${i}`;
+                input.dataset.playerId = generateId();
+                input.dataset.reconnectToken = generateId();
+            }
+            container.appendChild(input);
+        }
+    }
+
+    // Event Bindings
+    document.querySelectorAll('.info-btn').forEach(btn => {
+        btn.onclick = (e) => {
+            e.stopPropagation();
+            showInfoModal(btn.dataset.info);
+        };
+    });
+    document.getElementById('btn-info-modal-close').onclick = () => dispatch({type: 'CLOSE_MODAL', payload: 'info-modal'});
+
+    document.getElementById('btn-copy-room-code').onclick = () => {
+        const code = document.getElementById('room-code-display').textContent;
+        if (navigator.clipboard && code && code !== '-') {
+            navigator.clipboard.writeText(code)
+                .then(() => showToast("کد اتاق در حافظه کپی شد! 📋"))
+                .catch(() => showToast(`کد اتاق: ${code}`));
+        } else {
+            showToast(`کد اتاق: ${code}`);
+        }
+    };
+
+    document.getElementById('setup-players-count').addEventListener('change', () => {
+        if (!gameState.network.isHost) {
+            renderNameInputs(false);
+        }
+    });
+    document.getElementById('btn-sound-toggle').onclick = () => dispatch({type: 'TOGGLE_AUDIO'});
+    document.getElementById('theme-selector').onchange = (e) => dispatch({type: 'CHANGE_THEME', payload: e.target.value});
+    document.getElementById('btn-panic-open').onclick = () => dispatch({type: 'PANIC_OPEN'});
+    document.getElementById('panic-shield').onclick = () => dispatch({type: 'PANIC_TAP'});
+    document.getElementById('panic-shield').addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            dispatch({type: 'PANIC_TAP', source: 'keyboard'});
+        }
+    });
+    
+    document.getElementById('btn-restore-game').onclick = () => dispatch({type: 'RESTORE_GAME'});
+    document.getElementById('btn-discard-game').onclick = () => dispatch({type: 'DISCARD_GAME'});
+
+    document.getElementById('btn-nav-setup').onclick = () => {
+        resetNetwork();
+        dispatch({type: 'NAVIGATE', payload: 'setup'});
+    };
+    document.getElementById('btn-nav-multi').onclick = () => dispatch({type: 'NAVIGATE', payload: 'multi'});
+    document.getElementById('btn-open-words').onclick = () => dispatch({type: 'OPEN_MODAL', payload: 'custom-words-modal'});
+    document.getElementById('btn-back-welcome-1').onclick = () => {
+        resetNetwork();
+        dispatch({type: 'NAVIGATE', payload: 'welcome'});
+    };
+    document.getElementById('btn-back-welcome-2').onclick = () => dispatch({type: 'NAVIGATE', payload: 'welcome'});
+
+    document.getElementById('btn-host-init').onclick = () => dispatch({type: 'HOST_INIT'});
+    document.getElementById('btn-host-open-setup').onclick = () => {
+        let activePeers = netHostConns.filter(c => c.joined && c.connected);
+        if (activePeers.length < 2) { showToast("حداقل ۲ بازیکن دیگر باید آنلاین وصل باشند (جمعاً ۳ نفر)!"); return; }
+        
+        let hostName = document.getElementById('host-player-name').value.trim() || 'میزبان';
+        document.getElementById('setup-players-count').value = activePeers.length + 1;
+        renderNameInputs(false);
+        
+        let inps = document.querySelectorAll('#name-inputs-container input');
+        if (inps[0]) {
+            inps[0].value = hostName;
+            inps[0].dataset.playerId = generateId();
+            inps[0].dataset.reconnectToken = generateId();
+        }
+        activePeers.forEach((c, i) => {
+            if (inps[i+1]) {
+                inps[i+1].value = c.playerName;
+                inps[i+1].dataset.playerId = c.playerId;
+                inps[i+1].dataset.reconnectToken = c.reconnectToken;
+            }
+        });
+        dispatch({type: 'NAVIGATE', payload: 'setup'});
+    };
+
+    document.getElementById('btn-client-join').onclick = () => dispatch({type: 'CLIENT_JOIN'});
+
+    document.getElementById('toggle-limit').onchange = (e) => document.getElementById('vote-limit-box').classList.toggle('hidden', !e.target.checked);
+    document.getElementById('btn-reset-names').onclick = () => dispatch({type: 'RESET_NAMES'});
+    document.getElementById('btn-start-match').onclick = () => dispatch({type: 'START_MATCH'});
+
+    document.getElementById('btn-start-discussion').onclick = () => dispatch({type: 'START_TIMER'});
+    document.getElementById('btn-next-director').onclick = () => dispatch({type: 'NEXT_DIRECTOR'});
+    document.getElementById('btn-emergency-vote').onclick = () => dispatch({type: 'REQUEST_VOTE'});
+    document.getElementById('btn-confirm-end-1').onclick = () => dispatch({type: 'CONFIRM_END_MATCH'});
+    document.getElementById('btn-confirm-end-2').onclick = () => dispatch({type: 'CONFIRM_END_MATCH'});
+
+    document.getElementById('btn-cancel-vote').onclick = () => dispatch({type: 'CANCEL_VOTE'});
+    document.getElementById('btn-submit-wagers').onclick = () => dispatch({type: 'SUBMIT_WAGERS'});
+    document.getElementById('btn-submit-guess-yes').onclick = () => dispatch({type: 'SUBMIT_GUESS', payload: true});
+    document.getElementById('btn-submit-guess-no').onclick = () => dispatch({type: 'SUBMIT_GUESS', payload: false});
+
+    document.getElementById('btn-next-round').onclick = () => dispatch({type: 'NEXT_ROUND'});
+    document.getElementById('btn-export-image').onclick = () => dispatch({type: 'EXPORT_IMAGE'});
+    document.getElementById('btn-reset-match').onclick = () => dispatch({type: 'RESET_MATCH'});
+
+    document.getElementById('btn-add-custom-word').onclick = () => dispatch({type: 'ADD_CUSTOM_WORD'});
+    document.getElementById('btn-export-words').onclick = () => dispatch({type: 'EXPORT_WORDS_JSON'});
+    document.getElementById('import-words-file').onchange = (e) => dispatch({type: 'IMPORT_WORDS_JSON', payload: e.target});
+    document.getElementById('btn-close-words-modal').onclick = () => dispatch({type: 'CLOSE_MODAL', payload: 'custom-words-modal'});
+
+    document.getElementById('btn-confirm-vote-yes').onclick = () => dispatch({type: 'CONFIRM_VOTE_POPUP'});
+    document.getElementById('btn-confirm-vote-no').onclick = () => dispatch({type: 'CLOSE_MODAL', payload: 'vote-confirm-modal'});
+
+    document.getElementById('btn-detective-inquiry').onclick = () => dispatch({type: 'DETECTIVE_INQUIRY'});
+    document.getElementById('btn-role-close').onclick = () => dispatch({type: 'CLOSE_ROLE_CARD'});
+    document.getElementById('btn-resume-game').onclick = () => dispatch({type: 'RESUME_GAME'});
+
+    document.getElementById('btn-confirm-yes').onclick = () => dispatch({type: 'END_MATCH'});
+    document.getElementById('btn-confirm-no').onclick = () => dispatch({type: 'CLOSE_MODAL', payload: 'confirm-modal'});
+
+    window.addEventListener('pagehide', () => {
+        if (netPeer && !netPeer.destroyed) {
+            try { netPeer.destroy(); } catch(e){}
+        }
+    });
+
+    renderNameInputs();
+    renderCustomWordsList();
+
+    try {
+        const rawCombined = localStorage.getItem('spy_full_state_master');
+        if (rawCombined) {
+            const parsed = JSON.parse(rawCombined);
+            if (
+                parsed &&
+                parsed.version === SAVE_VERSION &&
+                parsed.state &&
+                Array.isArray(parsed.state.players) &&
+                parsed.state.players.length > 0 &&
+                !parsed.state.network?.isClient &&
+                !parsed.state.network?.isHost
+            ) {
+                document.getElementById('recovery-banner').classList.remove('hidden');
+            }
+        }
+    } catch(e){}
+</script>
+</body>
+</html>
