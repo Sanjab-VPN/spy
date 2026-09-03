@@ -386,6 +386,9 @@
         .fs-subtitle-panic { font-size: 0.8rem; opacity: 0.4; margin-top: 8px; }
         .scroll-y-160 { max-height: 160px; overflow-y: auto; }
         .scroll-y-modal { max-height: 85vh; overflow-y: auto; }
+        .lobby-player-row { display: flex; align-items: center; justify-content: space-between; padding: 4px 0; border-bottom: 1px solid rgba(255, 255, 255, 0.05); }
+        .lobby-kick-btn { background: none; border: none; color: var(--brand-rose); cursor: pointer; padding: 2px 6px; font-size: 0.85rem; border-radius: 6px; }
+        .lobby-kick-btn:hover { background: rgba(244, 63, 94, 0.2); }
 
         @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; animation-iteration-count: 1 !important; } }
         @media (max-width: 420px) { .app-container { padding: 16px; border-radius: 20px; } .timer-display { font-size: 3rem; } }
@@ -425,7 +428,6 @@
         </div>
     </div>
 
-    <!-- Screen 1: Welcome -->
     <section id="screen-welcome" class="screen-view">
         <h1>🕵️ بازی جاسوس</h1>
         <p>یک بازی معمایی، هیجانی و دورهمی. قبل از اینکه جاسوس کلمه رمز را کشف کند، او را شناسایی کنید!</p>
@@ -443,7 +445,6 @@
         <button type="button" id="btn-open-words" class="btn btn-ghost">✏️ بانک کلمات سفارشی</button>
     </section>
 
-    <!-- Screen 2: Multiplayer Lobby -->
     <section id="screen-multi" class="screen-view hidden">
         <h2>اتاق چندنفره آنلاین</h2>
         <div class="toggle-item" style="flex-direction:column; align-items:stretch; gap:10px;">
@@ -456,7 +457,7 @@
                 <div id="qrcode-container"></div>
                 <button type="button" id="btn-copy-room-code" class="btn btn-ghost btn-sm w-auto" style="margin:6px auto 0;">📋 کپی کد اتاق</button>
                 <div class="mt-10" style="font-weight:bold;">بازیکنان حاضر (<span id="connected-players-count">0</span>):</div>
-                <div id="connected-players-list" class="color-amber mt-4" style="font-size:0.85rem;"></div>
+                <div id="connected-players-list" class="mt-4" style="font-size:0.85rem;"></div>
                 <button type="button" id="btn-host-open-setup" class="btn btn-emerald mt-12">تنظیمات مسابقه و شروع 🚀</button>
             </div>
         </div>
@@ -473,7 +474,6 @@
         <button type="button" id="btn-back-welcome-1" class="btn btn-ghost">بازگشت</button>
     </section>
 
-    <!-- Screen 3: Match Setup -->
     <section id="screen-setup" class="screen-view hidden">
         <h2>تنظیمات مسابقه</h2>
         <div class="grid-2">
@@ -490,7 +490,7 @@
             <div class="input-group">
                 <label for="setup-category">دسته‌بندی کلمات:</label>
                 <select id="setup-category" class="input-control">
-                    <option value="all">همه موضوعات (۳۳۰ کلمه)</option>
+                    <option value="all">همه موضوعات</option>
                     <option value="places">اماکن و فضاها</option>
                     <option value="jobs">مشاغل و حرفه‌ها</option>
                     <option value="foods">غذاها و خوراکی‌ها</option>
@@ -508,6 +508,7 @@
                     <option value="all">همه سطوح</option>
                     <option value="easy">ساده</option>
                     <option value="medium">متوسط</option>
+                    <option value="hard">سخت</option>
                 </select>
             </div>
         </div>
@@ -591,7 +592,6 @@
         <button type="button" id="btn-back-welcome-2" class="btn btn-ghost">بازگشت</button>
     </section>
 
-    <!-- Screen 4: Reveal Roles -->
     <section id="screen-reveal" class="screen-view hidden">
         <h2>کارت‌های محرمانه</h2>
         <p id="reveal-instruction-text">گوشی را بچرخانید و کارت خود را ببینید.</p>
@@ -599,7 +599,6 @@
         <button type="button" id="btn-start-discussion" class="btn btn-emerald hidden">همه دیدند؛ شروع تایمر گفتگو ⏳</button>
     </section>
 
-    <!-- Screen 5: Discussion Timer -->
     <section id="screen-timer" class="screen-view hidden">
         <div id="oneword-banner" class="quest-box hidden text-center color-amber border-amber mb-12">⚡ قانون تک‌کلمه‌ای فعال است! فقط ۱ کلمه پاسخ دهید.</div>
         <div id="director-box" class="quest-box hidden text-center mb-12">
@@ -615,7 +614,6 @@
         <button type="button" id="btn-confirm-end-1" class="btn btn-ghost">پایان مسابقه و کارنامه 🏆</button>
     </section>
 
-    <!-- Screen 6: Voting -->
     <section id="screen-vote" class="screen-view hidden">
         <h2>رای‌گیری اخراج</h2>
         <p id="vote-instruction-text">متهم اصلی را انتخاب کنید:</p>
@@ -623,7 +621,6 @@
         <button type="button" id="btn-cancel-vote" class="btn btn-ghost">انصراف و بازگشت به گفتگو</button>
     </section>
 
-    <!-- Screen 7: Wager -->
     <section id="screen-wager" class="screen-view hidden">
         <h2>🎲 شرط‌بندی روی هویت مظنون</h2>
         <p>مظنون اخراج: <strong id="wager-target-name" class="color-rose"></strong></p>
@@ -631,7 +628,6 @@
         <button type="button" id="btn-submit-wagers" class="btn btn-emerald">ثبت شرط و رونمایی هویت ✅</button>
     </section>
 
-    <!-- Screen 8: Spy Guess (شفاهی ۳ گزینه‌ای) -->
     <section id="screen-guess" class="screen-view hidden">
         <h2>🎯 فرصت حدس کلمه رمز!</h2>
         <p><strong id="guess-spy-name" class="color-rose"></strong> شناسایی شد!<br>جاسوس کلمه حدس‌زده را به صورت <strong>شفاهی</strong> به جمع اعلام کند.</p>
@@ -646,7 +642,6 @@
         <div id="client-guess-wait-msg" class="quest-box text-center color-amber hidden">⏳ منتظر ثبت نتیجه نهایی حدس توسط میزبان بمانید...</div>
     </section>
 
-    <!-- Screen 9: Round Result -->
     <section id="screen-result" class="screen-view hidden">
         <h2 id="result-title">نتیجه این دست</h2>
         <div class="secret-box"><div id="result-desc" style="font-size: 0.95rem; line-height: 1.7;"></div></div>
@@ -659,7 +654,6 @@
         <button type="button" id="btn-confirm-end-2" class="btn btn-primary">اتمام مسابقه و کارنامه نهایی 🏆</button>
     </section>
 
-    <!-- Screen 10: Final Leaderboard -->
     <section id="screen-leaderboard" class="screen-view hidden">
         <h2>🏆 تابلوی افتخارات و کارنامه</h2>
         <div id="accolades-container" class="mb-16"></div>
@@ -673,7 +667,6 @@
     </section>
 </main>
 
-<!-- Info Modal -->
 <div id="info-modal" class="modal-overlay hidden" role="dialog" aria-modal="true">
     <div class="modal-card text-right">
         <h3 id="info-modal-title" class="color-primary mb-8 text-center">راهنما</h3>
@@ -682,7 +675,6 @@
     </div>
 </div>
 
-<!-- Custom Words Modal -->
 <div id="custom-words-modal" class="modal-overlay hidden" role="dialog" aria-modal="true">
     <div class="modal-card text-right scroll-y-modal">
         <h3 class="text-center">✏️ مدیریت کلمات سفارشی</h3>
@@ -707,7 +699,6 @@
     </div>
 </div>
 
-<!-- Vote Confirm Modal -->
 <div id="vote-confirm-modal" class="modal-overlay hidden" role="dialog" aria-modal="true">
     <div class="modal-card">
         <h3 class="color-amber">تایید رای</h3>
@@ -717,7 +708,6 @@
     </div>
 </div>
 
-<!-- Secret Role Modal -->
 <div id="role-modal" class="modal-overlay hidden" role="dialog" aria-modal="true">
     <div class="modal-card">
         <h3 id="modal-player-name">نام بازیکن</h3>
@@ -738,7 +728,6 @@
     </div>
 </div>
 
-<!-- Confirm End Modal -->
 <div id="confirm-modal" class="modal-overlay hidden" role="dialog" aria-modal="true">
     <div class="modal-card">
         <h3 id="confirm-modal-title">⚠️ تایید</h3>
@@ -753,6 +742,21 @@
 <script>
     window.lastTap = 0;
     let lastFocusedElement = null;
+    let clientClockOffset = 0;
+    let clientRoomSecret = null;
+
+    if (window.location.hash) {
+        const hashVal = window.location.hash.substring(1);
+        if (hashVal.includes('_')) {
+            const parts = hashVal.split('_');
+            const codeInp = document.getElementById('join-room-code');
+            if (codeInp) codeInp.value = parts[0].toUpperCase();
+            clientRoomSecret = parts[1];
+        } else if (hashVal.length === 5) {
+            const codeInp = document.getElementById('join-room-code');
+            if (codeInp) codeInp.value = hashVal.toUpperCase();
+        }
+    }
 
     const VALID_PHASES = new Set([
         'welcome', 'multi', 'setup', 'reveal', 'timer', 'vote', 'wager', 'guess', 'result', 'leaderboard'
@@ -838,9 +842,7 @@
         emerald: '#061412',
         crimson: '#14080a'
     };
-
-    /* بانک کامل و بدون حذفیات ۳۳۰ کلمه تک‌واژه‌ای استاندارد همراه با راهنماهای تک‌کلمه‌ای دقیق */
-    const WORD_PACKS = {
+      const WORD_PACKS = {
         places: [
             { word: "مدرسه", foolWord: "دانشگاه", hint: "درس", diff: "easy" },
             { word: "دانشگاه", foolWord: "مدرسه", hint: "استاد", diff: "easy" },
@@ -901,7 +903,32 @@
             { word: "انبار", foolWord: "کارخانه", hint: "کارتن", diff: "easy" },
             { word: "معدن", foolWord: "غار", hint: "کلنگ", diff: "medium" },
             { word: "بندر", foolWord: "گمرک", hint: "کشتی", diff: "medium" },
-            { word: "گمرک", foolWord: "بندر", hint: "ترخیص", diff: "medium" }
+            { word: "گمرک", foolWord: "بندر", hint: "ترخیص", diff: "medium" },
+            { word: "برج", foolWord: "ساختمان", hint: "بلندی", diff: "easy" },
+            { word: "ساختمان", foolWord: "برج", hint: "طبقه", diff: "easy" },
+            { word: "استادیوم", foolWord: "ورزشگاه", hint: "سکو", diff: "easy" },
+            { word: "کارگاه", foolWord: "کارخانه", hint: "افزار", diff: "easy" },
+            { word: "سفارتخانه", foolWord: "اداره", hint: "پاسپورت", diff: "medium" },
+            { word: "اداره", foolWord: "سفارتخانه", hint: "کارمند", diff: "easy" },
+            { word: "پاساژ", foolWord: "سوپرمارکت", hint: "ویترین", diff: "easy" },
+            { word: "بازار", foolWord: "پاساژ", hint: "چانه‌زنی", diff: "easy" },
+            { word: "قهوه‌خانه", foolWord: "کافه", hint: "تخته‌نرد", diff: "medium" },
+            { word: "کاخ", foolWord: "قصر", hint: "تاج", diff: "easy" },
+            { word: "قصر", foolWord: "کاخ", hint: "دروازه", diff: "easy" },
+            { word: "مهدکودک", foolWord: "مدرسه", hint: "بازی", diff: "easy" },
+            { word: "پالایشگاه", foolWord: "کارخانه", hint: "نفت", diff: "medium" },
+            { word: "تونل", foolWord: "پل", hint: "تاریکی", diff: "easy" },
+            { word: "زورخانه", foolWord: "باشگاه", hint: "میل", diff: "hard" },
+            { word: "سفره‌خانه سنتی", foolWord: "قهوه‌خانه", hint: "قلیان", diff: "medium" },
+            { word: "حمام سنتی", foolWord: "سونا", hint: "کیسه‌کشی", diff: "medium" },
+            { word: "بازار سنتی", foolWord: "سوپرمارکت", hint: "راسته", diff: "easy" },
+            { word: "دشت", foolWord: "کویر", hint: "علفزار", diff: "easy" },
+            { word: "خلیج", foolWord: "دریا", hint: "ساحل", diff: "easy" },
+            { word: "تالاب", foolWord: "دریاچه", hint: "پرنده‌مهاجر", diff: "medium" },
+            { word: "یخچال طبیعی", foolWord: "کوه یخ", hint: "انجماد", diff: "hard" },
+            { word: "آتشفشان", foolWord: "زلزله", hint: "گدازه", diff: "medium" },
+            { word: "جنگل بارانی", foolWord: "جنگل", hint: "رطوبت", diff: "medium" },
+            { word: "دریاچه نمک", foolWord: "دریاچه", hint: "نمک", diff: "easy" }
         ],
         jobs: [
             { word: "معلم", foolWord: "استاد", hint: "تخته", diff: "easy" },
@@ -953,7 +980,22 @@
             { word: "شعبده‌باز", foolWord: "دلقک", hint: "کلاه", diff: "medium" },
             { word: "داور", foolWord: "مربی", hint: "سوت", diff: "easy" },
             { word: "حسابدار", foolWord: "صراف", hint: "ماشین‌حساب", diff: "medium" },
-            { word: "فیلمبردار", foolWord: "عکاس", hint: "کلاکت", diff: "medium" }
+            { word: "فیلمبردار", foolWord: "عکاس", hint: "کلاکت", diff: "medium" },
+            { word: "برنامه‌نویس", foolWord: "مهندس کامپیوتر", hint: "کدنویسی", diff: "medium" },
+            { word: "معمار", foolWord: "مهندس", hint: "نقشه", diff: "easy" },
+            { word: "مهندس", foolWord: "معمار", hint: "پل", diff: "easy" },
+            { word: "سفیر", foolWord: "وزیر", hint: "دیپلمات", diff: "medium" },
+            { word: "وزیر", foolWord: "سفیر", hint: "دولت", diff: "medium" },
+            { word: "کارگردان", foolWord: "بازیگر", hint: "صحنه", diff: "easy" },
+            { word: "بازیگر", foolWord: "کارگردان", hint: "فیلمنامه", diff: "easy" },
+            { word: "خواننده", foolWord: "نوازنده", hint: "میکروفون", diff: "easy" },
+            { word: "نوازنده", foolWord: "خواننده", hint: "ساز", diff: "easy" },
+            { word: "کتابدار", foolWord: "معلم", hint: "قفسه", diff: "easy" },
+            { word: "سرآشپز", foolWord: "آشپز", hint: "رستوران", diff: "easy" },
+            { word: "تکنسین", foolWord: "مکانیک", hint: "تعمیر", diff: "easy" },
+            { word: "دامپزشک", foolWord: "پزشک", hint: "حیوان", diff: "easy" },
+            { word: "مترجم", foolWord: "معلم", hint: "زبان", diff: "medium" },
+            { word: "راهنمای تور", foolWord: "راننده تاکسی", hint: "بلندگو", diff: "easy" }
         ],
         foods: [
             { word: "پیتزا", foolWord: "لازانیا", hint: "پنیر", diff: "easy" },
@@ -1005,7 +1047,19 @@
             { word: "سیرترشی", foolWord: "ترشی", hint: "سرکه", diff: "medium" },
             { word: "حلوا", foolWord: "شله‌زرد", hint: "آرد", diff: "easy" },
             { word: "فرنی", foolWord: "حلیم", hint: "نشاسته", diff: "easy" },
-            { word: "باقلوا", foolWord: "کیک", hint: "شهد", diff: "medium" }
+            { word: "باقلوا", foolWord: "کیک", hint: "شهد", diff: "medium" },
+            { word: "ته‌چین", foolWord: "چلوکباب", hint: "زعفران", diff: "medium" },
+            { word: "زرشک‌پلو", foolWord: "چلوکباب", hint: "برنج", diff: "easy" },
+            { word: "کشک‌بادمجان", foolWord: "میرزاقاسمی", hint: "پیش‌غذا", diff: "medium" },
+            { word: "میرزاقاسمی", foolWord: "کشک‌بادمجان", hint: "گوجه", diff: "medium" },
+            { word: "سمنو", foolWord: "حلوا", hint: "جوانه‌گندم", diff: "medium" },
+            { word: "آجیل", foolWord: "تخمه", hint: "خشکبار", diff: "easy" },
+            { word: "کمپوت", foolWord: "آبمیوه", hint: "قوطی", diff: "easy" },
+            { word: "دلستر", foolWord: "نوشابه", hint: "جو", diff: "easy" },
+            { word: "ماست", foolWord: "دوغ", hint: "تخمیر", diff: "easy" },
+            { word: "کره", foolWord: "پنیر", hint: "نان", diff: "easy" },
+            { word: "پنیر", foolWord: "کره", hint: "لبنیات", diff: "easy" },
+            { word: "سوپ جو", foolWord: "آش رشته", hint: "خامه", diff: "easy" }
         ],
         objects: [
             { word: "یخچال", foolWord: "فریزر", hint: "خنک", diff: "easy" },
@@ -1030,10 +1084,10 @@
             { word: "شامپو", foolWord: "صابون", hint: "حمام", diff: "easy" },
             { word: "بالش", foolWord: "تشک", hint: "خواب", diff: "easy" },
             { word: "پتو", foolWord: "ملحفه", hint: "روانداز", diff: "easy" },
-            { word: "تشک", foolWord: "تخت", hint: "تخت", diff: "easy" },
+            { word: "تشک", foolWord: "تخت", hint: "فنر", diff: "easy" },
             { word: "لوستر", foolWord: "چراغ‌خواب", hint: "سقف", diff: "easy" },
             { word: "آباژور", foolWord: "لوستر", hint: "پاتختی", diff: "medium" },
-            { word: "پرده", foolWord: "پنجره", hint: "پنجره", diff: "easy" },
+            { word: "پرده", foolWord: "پنجره", hint: "پارچه", diff: "easy" },
             { word: "فرش", foolWord: "موکت", hint: "تاروپود", diff: "easy" },
             { word: "کمد", foolWord: "دراور", hint: "لباس", diff: "easy" },
             { word: "دراور", foolWord: "کمد", hint: "کشو", diff: "easy" },
@@ -1046,7 +1100,7 @@
             { word: "کیف پول", foolWord: "جاکارتی", hint: "اسکناس", diff: "easy" },
             { word: "کوله‌پشتی", foolWord: "کیف دستی", hint: "بند", diff: "easy" },
             { word: "چمدان", foolWord: "ساک", hint: "چرخ‌دار", diff: "easy" },
-            { word: "کلید", foolWord: "قفل", hint: "قفل", diff: "easy" },
+            { word: "کلید", foolWord: "قفل", hint: "دندانه", diff: "easy" },
             { word: "چکش", foolWord: "آچار", hint: "میخ", diff: "easy" },
             { word: "اره", foolWord: "چاقو", hint: "دندانه", diff: "easy" },
             { word: "پیچ‌گوشتی", foolWord: "آچار", hint: "پیچ", diff: "easy" },
@@ -1061,12 +1115,33 @@
             { word: "شمع", foolWord: "فانوس", hint: "فیتیله", diff: "easy" },
             { word: "فانوس", foolWord: "شمع", hint: "روشنایی", diff: "medium" },
             { word: "باتری", foolWord: "شارژر", hint: "انرژی", diff: "easy" },
-            { word: "پریز", foolWord: "دوشاخه", hint: "دوشاخه", diff: "easy" },
+            { word: "پریز", foolWord: "دوشاخه", hint: "ولتاژ", diff: "easy" },
             { word: "طناب", foolWord: "نخ", hint: "گره", diff: "easy" },
             { word: "دفترچه یادداشت", foolWord: "کتاب", hint: "ورق", diff: "easy" },
             { word: "خودکار", foolWord: "مداد", hint: "جوهر", diff: "easy" },
             { word: "مدادتراش", foolWord: "پاک‌کن", hint: "تراشیدن", diff: "easy" },
-            { word: "پاک‌کن", foolWord: "مدادتراش", hint: "سفید", diff: "easy" }
+            { word: "پاک‌کن", foolWord: "مدادتراش", hint: "سفید", diff: "easy" },
+            { word: "ریموت کنترل", foolWord: "تلویزیون", hint: "دکمه", diff: "easy" },
+            { word: "شارژر", foolWord: "باتری", hint: "سیم", diff: "easy" },
+            { word: "کیف مدرسه", foolWord: "کوله‌پشتی", hint: "زیپ", diff: "easy" },
+            { word: "جامدادی", foolWord: "کیف مدرسه", hint: "مداد", diff: "easy" },
+            { word: "ماژیک", foolWord: "خودکار", hint: "رنگ", diff: "easy" },
+            { word: "تخته‌سیاه", foolWord: "دفترچه یادداشت", hint: "گچ", diff: "easy" },
+            { word: "ساعت شنی", foolWord: "ساعت دیواری", hint: "ماسه", diff: "medium" },
+            { word: "دوربین عکاسی", foolWord: "دوربین فیلمبرداری", hint: "لنز", diff: "medium" },
+            { word: "عینک طبی", foolWord: "عینک آفتابی", hint: "نمره", diff: "easy" },
+            { word: "بادکنک", foolWord: "بادبادک", hint: "نفس", diff: "easy" },
+            { word: "بادبادک", foolWord: "بادکنک", hint: "نخ", diff: "easy" },
+            { word: "عروسک", foolWord: "اسباب‌بازی", hint: "پارچه", diff: "easy" },
+            { word: "اسباب‌بازی", foolWord: "عروسک", hint: "پلاستیک", diff: "easy" },
+            { word: "پادکست", foolWord: "رادیو", hint: "میکروفون", diff: "easy" },
+            { word: "هدست واقعیت مجازی", foolWord: "عینک سه‌بعدی", hint: "شبیه‌سازی", diff: "medium" },
+            { word: "پاوربانک", foolWord: "شارژر", hint: "کابل", diff: "easy" },
+            { word: "روتر وای‌فای", foolWord: "مودم", hint: "آنتن", diff: "easy" },
+            { word: "ساعت هوشمند", foolWord: "ساعت مچی", hint: "نبض", diff: "medium" },
+            { word: "دوربین مداربسته", foolWord: "دزدگیر", hint: "نظارت", diff: "medium" },
+            { word: "پرینتر", foolWord: "اسکنر", hint: "جوهر", diff: "easy" },
+            { word: "کنسول بازی", foolWord: "رایانه", hint: "دسته", diff: "easy" }
         ],
         vehicles: [
             { word: "خودرو", foolWord: "تاکسی", hint: "فرمان", diff: "easy" },
@@ -1098,7 +1173,17 @@
             { word: "موشک", foolWord: "فضاپیما", hint: "پرتاب", diff: "medium" },
             { word: "فضاپیما", foolWord: "موشک", hint: "مدار", diff: "medium" },
             { word: "تله‌کابین", foolWord: "قطار", hint: "سیم‌بکسل", diff: "easy" },
-            { word: "کالسکه", foolWord: "فرغون", hint: "نوزاد", diff: "easy" }
+            { word: "کالسکه", foolWord: "فرغون", hint: "نوزاد", diff: "easy" },
+            { word: "ون", foolWord: "مینی‌بوس", hint: "صندلی", diff: "easy" },
+            { word: "فرغون", foolWord: "چرخ‌دستی", hint: "باغبانی", diff: "easy" },
+            { word: "چرخ‌دستی", foolWord: "فرغون", hint: "سوپرمارکت", diff: "easy" },
+            { word: "کشتی جنگی", foolWord: "زیردریایی", hint: "توپ", diff: "medium" },
+            { word: "ماشین مسابقه", foolWord: "خودرو", hint: "سرعت", diff: "easy" },
+            { word: "اتوبوس دوطبقه", foolWord: "اتوبوس", hint: "طبقه", diff: "easy" },
+            { word: "یخ‌شکن", foolWord: "کشتی تفریحی", hint: "قطب", diff: "medium" },
+            { word: "کشتی صیادی", foolWord: "قایق موتوری", hint: "تور", diff: "easy" },
+            { word: "تراموا", foolWord: "مترو", hint: "ریل", diff: "easy" },
+            { word: "پهپاد", foolWord: "هلی‌کوپتر", hint: "کنترل‌ازراه‌دور", diff: "medium" }
         ],
         animals: [
             { word: "شیر", foolWord: "ببر", hint: "یال", diff: "easy" },
@@ -1106,7 +1191,7 @@
             { word: "پلنگ", foolWord: "یوزپلنگ", hint: "خال‌دار", diff: "easy" },
             { word: "گرگ", foolWord: "شغال", hint: "زوزه", diff: "easy" },
             { word: "روباه", foolWord: "گرگ", hint: "دم‌بوته‌ای", diff: "easy" },
-            { word: "خرس", foolWord: "پانسی", hint: "کندو", diff: "easy" },
+            { word: "خرس", foolWord: "پاندا", hint: "کندو", diff: "easy" },
             { word: "فیل", foolWord: "کرگدن", hint: "خرطوم", diff: "easy" },
             { word: "زرافه", foolWord: "شترمرغ", hint: "گردن‌دراز", diff: "easy" },
             { word: "گورخر", foolWord: "اسب", hint: "راه‌راه", diff: "easy" },
@@ -1150,7 +1235,17 @@
             { word: "شترمرغ", foolWord: "لک‌لک", hint: "تخم‌بزرگ", diff: "easy" },
             { word: "خفاش", foolWord: "جغد", hint: "وارونه", diff: "medium" },
             { word: "حلزون", foolWord: "لاک‌پشت", hint: "صدف", diff: "easy" },
-            { word: "کرم خاکی", foolWord: "مار", hint: "باغچه", diff: "easy" }
+            { word: "کرم خاکی", foolWord: "مار", hint: "باغچه", diff: "easy" },
+            { word: "گاومیش", foolWord: "گاو", hint: "باتلاق", diff: "easy" },
+            { word: "قاطر", foolWord: "اسب", hint: "بارکش", diff: "easy" },
+            { word: "همستر", foolWord: "خرگوش", hint: "چرخ", diff: "easy" },
+            { word: "شاهین", foolWord: "عقاب", hint: "شکار", diff: "medium" },
+            { word: "کرگدن", foolWord: "اسب‌آبی", hint: "شاخ", diff: "medium" },
+            { word: "اسب‌آبی", foolWord: "کرگدن", hint: "رودخانه", diff: "medium" },
+            { word: "ملخ", foolWord: "سنجاقک", hint: "پرش", diff: "easy" },
+            { word: "سنجاقک", foolWord: "ملخ", hint: "بال", diff: "easy" },
+            { word: "شامپانزه", foolWord: "میمون", hint: "هوش", diff: "easy" },
+            { word: "پاندا", foolWord: "خرس", hint: "بامبو", diff: "easy" }
         ],
         sports: [
             { word: "فوتبال", foolWord: "والیبال", hint: "دروازه", diff: "easy" },
@@ -1177,7 +1272,20 @@
             { word: "بولینگ", foolWord: "بیلیارد", hint: "پین", diff: "easy" },
             { word: "دارت", foolWord: "تیراندازی", hint: "خال‌وسط", diff: "easy" },
             { word: "گیم‌نت", foolWord: "کلوپ", hint: "دسته", diff: "easy" },
-            { word: "پازل", foolWord: "شطرنج", hint: "تکه", diff: "easy" }
+            { word: "پازل", foolWord: "شطرنج", hint: "تکه", diff: "easy" },
+            { word: "اسکی", foolWord: "اسنوبرد", hint: "برف", diff: "easy" },
+            { word: "اسنوبرد", foolWord: "اسکی", hint: "شیب", diff: "easy" },
+            { word: "اسکیت‌بورد", foolWord: "اسکیت", hint: "رمپ", diff: "easy" },
+            { word: "والیبال ساحلی", foolWord: "والیبال", hint: "شن", diff: "easy" },
+            { word: "گلف", foolWord: "بولینگ", hint: "چوب", diff: "easy" },
+            { word: "دوومیدانی", foolWord: "کشتی", hint: "مدال", diff: "easy" },
+            { word: "دوز", foolWord: "منچ", hint: "ضربدر", diff: "easy" },
+            { word: "کبدی", foolWord: "کشتی", hint: "تنفس", diff: "medium" },
+            { word: "پاسور", foolWord: "تخته‌نرد", hint: "ورق", diff: "easy" },
+            { word: "طناب‌کشی", foolWord: "کشتی", hint: "زور", diff: "easy" },
+            { word: "بدنسازی", foolWord: "باشگاه", hint: "دمبل", diff: "easy" },
+            { word: "اسکی روی آب", foolWord: "موج‌سواری", hint: "قایق", diff: "medium" },
+            { word: "پارکور", foolWord: "ژیمناستیک", hint: "پرش", diff: "medium" }
         ],
         events: [
             { word: "تولد", foolWord: "عروسی", hint: "کیک", diff: "easy" },
@@ -1204,7 +1312,22 @@
             { word: "کسوف", foolWord: "خسوف", hint: "خورشیدگرفتگی", diff: "medium" },
             { word: "خسوف", foolWord: "کسوف", hint: "ماه‌گرفتگی", diff: "medium" },
             { word: "آتش‌بازی", foolWord: "چهارشنبه‌سوری", hint: "فشفشه", diff: "easy" },
-            { word: "کارنامه", foolWord: "امتحان", hint: "نمره", diff: "easy" }
+            { word: "کارنامه", foolWord: "امتحان", hint: "نمره", diff: "easy" },
+            { word: "افطار", foolWord: "سحری", hint: "روزه", diff: "easy" },
+            { word: "سحری", foolWord: "افطار", hint: "اذان", diff: "easy" },
+            { word: "مهمانی", foolWord: "جشن", hint: "تعارف", diff: "easy" },
+            { word: "جشن", foolWord: "مهمانی", hint: "بادکنک", diff: "easy" },
+            { word: "کنسرت", foolWord: "تئاتر", hint: "صحنه", diff: "easy" },
+            { word: "سونامی", foolWord: "سیل", hint: "موج", diff: "medium" },
+            { word: "گردباد", foolWord: "طوفان", hint: "چرخش", diff: "medium" },
+            { word: "بارش شهاب", foolWord: "رعدوبرق", hint: "آرزو", diff: "medium" },
+            { word: "بازگشایی مدارس", foolWord: "امتحان", hint: "زنگ", diff: "easy" },
+            { word: "پیک‌نیک", foolWord: "کمپینگ", hint: "سبد غذا", diff: "easy" },
+            { word: "المپیک", foolWord: "جام‌جهانی", hint: "مشعل", diff: "medium" },
+            { word: "نمایشگاه کتاب", foolWord: "کتابخانه", hint: "غرفه", diff: "easy" },
+            { word: "مهمانی لباس مبدل", foolWord: "جشن تولد", hint: "نقاب", diff: "easy" },
+            { word: "رژه", foolWord: "جشن", hint: "پرچم", diff: "easy" },
+            { word: "قالیبافی", foolWord: "گلیم‌بافی", hint: "دار قالی", diff: "hard" }
         ]
     };
 
@@ -1221,10 +1344,43 @@
         "در پاسخ به یک سوال، اول چند ثانیه سکوت کن بعد جواب بده.",
         "دستت را روی میز مشت کن و حین صحبت چند ثانیه نگه دار.",
         "حداقل یک بار گلویت را صاف کن انگار استرس داری.",
-        "قبل از جواب دادن بگو: «سوال سختی بود ولی...»"
+        "قبل از جواب دادن بگو: «سوال سختی بود ولی...»",
+        "یک بار وسط حرف زدنت، جمله را نصفه رها کن و دوباره از اول شروعش کن.",
+        "حداقل یک بار به شوخی بگو: «من که کاره‌ای نیستم!»",
+        "در طول این دست، یک بار برای یکی از بازیکنان دست تکان بده یا چشمک بزن.",
+        "قبل از رای‌گیری، با صدای بلند بگو: «فکر کنم باید بیشتر فکر کنیم!»",
+        "یک بار دستت را روی قلبت بگذار و با لحن جدی حرف بزن.",
+        "حداقل یک بار از یک بازیکن بپرس: «تو مطمئنی؟»",
+        "در بین صحبت‌ها، یک بار به آرامی سرت را کج کن انگار داری فکر می‌کنی.",
+        "یک بار وانمود کن یادت رفته چه می‌خواستی بگویی.",
+        "حداقل یک بار جمله‌ات را با «راستش رو بخوای...» شروع کن، حتی اگر بعدش جمله‌ات را عوض کنی.",
+        "در طول این دست، به کسی که کمتر صحبت کرده یک سوال مستقیم بپرس.",
+        "یک بار میان حرف زدن یک نفر دیگر، به ساعت روی دیوار یا گوشی کسی نگاه کن.",
+        "حداقل یک بار با اطمینان بگو: «بذار من توضیح بدم» حتی اگر لازم نباشد.",
+        "یک بار انگشتانت را روی میز یا پایت مثل طبل بزن، انگار کمی عصبی هستی.",
+        "قبل از پاسخ‌دادن به یک سوال، بگو: «هوم، سوال جالبیه.»",
+        "حداقل یک بار به بازیکن کناری‌ات بدون دلیل خاص لبخند بزن.",
+        "یک بار وانمود کن صدایی شنیدی و به اطراف نگاه کن.",
+        "حداقل یک بار جمله‌ات را با «در واقع...» شروع کن.",
+        "یک بار دستت را بالا بیاور انگار می‌خواهی چیزی بگویی، بعد پشیمان شو و ساکت بمان.",
+        "در پاسخ به یک سوال، اول با یک ضدسوال جواب بده (پاسخ دادن به سوال با سوال دیگر).",
+        "حداقل یک بار به یکی از بازیکنان بگو: «حرفت رو باور دارم.»",
+        "یک بار موهایت یا لباست را مرتب کن، انگار کمی مضطربی.",
+        "حداقل یک بار وسط بحث، آرام تا سه بشمار و بعد جواب بده.",
+        "یک بار قبل از نظردادن بگو: «بیایید منطقی باشیم.»",
+        "حداقل یک بار به شوخی بگو: «همه‌تون بهم مشکوکید، نه؟»",
+        "یک بار در طول این دست، صدایت را کمی پایین‌تر از حالت عادی کن.",
+        "یک بار وسط صحبت‌کردن، ناخودآگاه به در ورودی اتاق نگاه کن انگار منتظر کسی هستی.",
+        "جمله‌ی یکی از بازیکنان قبلی را تقریباً کلمه‌به‌کلمه تکرار کن و بگو «دقیقاً همینو می‌خواستم بگم».",
+        "یک بار وسط بازی آب دهانت را با صدا قورت بده.",
+        "وقتی نوبت توئه یک سوال بپرس، ولی قبل از تمام‌شدنِ جواب، وسط حرف طرف بپر و بگو «آها فهمیدم».",
+        "یک بار بدون دلیل خاص بگو: «هوا امروز عجیب سرده‌ها» (یا گرمه، بسته به فصل).",
+        "وقتی کسی از تو سوالی نپرسیده، خودت داوطلبانه یک نکته‌ی اضافه درباره‌ی موضوع بگو که کسی نخواسته بود.",
+        "یک بار پاهایت را ناگهان زیر صندلی جمع کن، انگار می‌خواهی فرار کنی.",
+        "یک بار وسط بازی گوشیِ (خاموش) خودت را از جیب دربیار، نگاهش کن و دوباره بذار سرجایش.",
+        "یک بار به کسی که هنوز حرف نزده مستقیم نگاه کن و بگو «تو چرا این‌قدر ساکتی؟»"
     ];
-
-        function showToast(msg) {
+    function showToast(msg) {
         const c = document.getElementById('toast-container');
         if (!c) return;
         while (c.children.length >= 3) {
@@ -1246,12 +1402,17 @@
         return array;
     }
 
-    function escapeHtml(str) { return String(str || '').replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;','\'':'&#39;'}[m])); }
-    function generateId() { return (typeof crypto !== 'undefined' && crypto.randomUUID) ? crypto.randomUUID() : 'p_' + Math.random().toString(36).substring(2, 11); }
+    function escapeHtml(str) {
+        return String(str || '').replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;','\'':'&#39;'}[m]));
+    }
+
+    function generateId() {
+        return (typeof crypto !== 'undefined' && crypto.randomUUID) ? crypto.randomUUID() : 'p_' + Math.random().toString(36).substring(2, 11);
+    }
     
     function normalizeWord(t) {
         let s = toLatinDigits(t).trim().toLowerCase();
-        s = s.replace(/[\u200c\u200b\u200e\u200f\uFEFF]/g, ' ');
+        s = s.replace(/[\u200B-\u200F\u202A-\u202E\u2060-\u2069\uFEFF]/g, ' ');
         s = s.replace(/[ً-ٰٟ]/g, '');
         s = s.replace(/ي/g, 'ی').replace(/ك/g, 'ک').replace(/ة/g, 'ه').replace(/ؤ/g, 'و').replace(/إ|أ|آ/g, 'ا');
         s = s.replace(/[.,\/#!$%\^&\*;:{}=\-_`~()؟?!،؛«»"']/g, ' ');
@@ -1284,7 +1445,9 @@
     };
     unlockAudioEvents.forEach(evt => document.addEventListener(evt, unlockHandler, { passive: true }));
 
-    function vibrate(pat) { if (navigator.vibrate) navigator.vibrate(pat); }
+    function vibrate(pat) {
+        if (navigator.vibrate) navigator.vibrate(pat);
+    }
 
     let silentKeepAliveNode = null;
     function keepAudioAlive() {
@@ -1349,8 +1512,17 @@
         } catch(e) {}
     }
 
-    function playVictoryFanfare() { vibrate([150, 100, 250]); if (isMuted) return; [523.25, 659.25, 783.99, 1046.50].forEach((f,i)=>setTimeout(()=>playTone(f, 0.25, 'triangle'), i*140)); }
-    function playCardFlip() { vibrate(40); if (isMuted) return; playTone(400, 0.08, 'sine'); }
+    function playVictoryFanfare() {
+        vibrate([150, 100, 250]);
+        if (isMuted) return;
+        [523.25, 659.25, 783.99, 1046.50].forEach((f,i)=>setTimeout(()=>playTone(f, 0.25, 'triangle'), i*140));
+    }
+
+    function playCardFlip() {
+        vibrate(40);
+        if (isMuted) return;
+        playTone(400, 0.08, 'sine');
+    }
 
     let wakeLockSentinel = null;
     async function requestWakeLock() {
@@ -1361,6 +1533,7 @@
             }
         } catch(e) {}
     }
+
     async function releaseWakeLock() {
         if (wakeLockSentinel) {
             try { await wakeLockSentinel.release(); } catch(e) {}
@@ -1375,7 +1548,8 @@
                 await requestWakeLock();
             }
             if (gameState.phase === 'timer' && gameState.timer.running) {
-                const diff = Math.ceil((gameState.timer.endAt - Date.now()) / 1000);
+                let nowRef = gameState.network.isClient ? (Date.now() + clientClockOffset) : Date.now();
+                const diff = Math.ceil((gameState.timer.endAt - nowRef) / 1000);
                 if (diff <= 0) {
                     gameState.timer.pausedSec = 0;
                     gameState.timer.running = false;
@@ -1422,13 +1596,12 @@
         vote: { limit: Infinity, targetId: null, pendingId: null, tieNote: '' },
         localVoteIndex: 0,
         localWagerIndex: 0,
-        network: { isHost: false, isClient: false, peerId: null, code: null }
+        network: { isHost: false, isClient: false, peerId: null, code: null, roomSecret: null }
     };
 
     let hostSecretState = {
         secretWord: null,
         foolWord: null,
-        category: '',
         hint: '',
         roles: {},
         votesCast: {},
@@ -1518,7 +1691,7 @@
     function restoreSecrets(raw) {
         if (!raw || typeof raw !== 'object') {
             return {
-                secretWord: null, foolWord: null, category: '', hint: '',
+                secretWord: null, foolWord: null, hint: '',
                 roles: {}, votesCast: {}, wagersCast: {},
                 processedRequestIds: new Set(), detectiveUsed: false,
                 detectiveInquiryResult: null, guessVerdict: null
@@ -1527,7 +1700,6 @@
         return {
             secretWord: raw.secretWord || null,
             foolWord: raw.foolWord || null,
-            category: raw.category || '',
             hint: raw.hint || '',
             roles: raw.roles || {},
             votesCast: raw.votesCast || {},
@@ -1695,7 +1867,7 @@
             case 'PANIC_OPEN': {
                 if (gameState.phase === 'timer' && gameState.timer.running && !gameState.network.isClient) {
                     gameState.timer.wasRunningBeforePanic = true;
-                    pauseTimer();
+                    pauseTimer(true);
                 } else {
                     gameState.timer.wasRunningBeforePanic = false;
                 }
@@ -1815,9 +1987,16 @@
                 }
                 break;
             case 'CANCEL_VOTE':
+                if (gameState.network.isClient) return;
                 if (gameState.timer.reason === 'timeout') return;
                 resumeTimer();
-                if (gameState.network.isHost) syncNetwork(PROTOCOL.TIMER_SYNC, { running: true, endAt: gameState.timer.endAt, pausedSec: gameState.timer.pausedSec });
+                if (gameState.network.isHost) {
+                    syncNetwork(PROTOCOL.TIMER_SYNC, {
+                        running: true,
+                        endAt: gameState.timer.endAt,
+                        pausedSec: gameState.timer.pausedSec
+                    });
+                }
                 break;
 
             case 'SELECT_SUSPECT': {
@@ -1978,7 +2157,7 @@
                         const parsed = JSON.parse(rawCombined);
                         if (parsed.state && parsed.state.version === SAVE_VERSION && Array.isArray(parsed.state.players)) {
                             gameState = parsed.state;
-                            gameState.network = { isHost: false, isClient: false, peerId: null, code: null };
+                            gameState.network = { isHost: false, isClient: false, peerId: null, code: null, roomSecret: null };
                             hostSecretState = restoreSecrets(parsed.secrets);
                         }
                     }
@@ -2062,6 +2241,13 @@
             requestWakeLock();
         } else if (p === 'welcome' || p === 'leaderboard') {
             releaseWakeLock();
+        }
+        if (p === 'welcome' || p === 'leaderboard') {
+            try {
+                Object.keys(localStorage).forEach(k => {
+                    if (k.startsWith('spy_reconnect_')) localStorage.removeItem(k);
+                });
+            } catch(e){}
         }
         commitState();
     }
@@ -2207,7 +2393,9 @@
         if (gameState.settings.cat === 'custom') {
             pool = getCustomWords();
         } else if (gameState.settings.cat === 'all') {
-            pool = Object.values(WORD_PACKS).flat();
+            pool = Object.entries(WORD_PACKS).flatMap(([catKey, arr]) =>
+                arr.map(w => ({ ...w, _cat: catKey }))
+            );
         } else {
             pool = WORD_PACKS[gameState.settings.cat] || WORD_PACKS.places;
         }
@@ -2228,7 +2416,7 @@
         }
         let chosen = availablePool[Math.floor(Math.random() * availablePool.length)];
         gameState.match.usedWordKeys.push(normalizeWord(chosen.word));
-        gameState.round.category = getCategoryLabel(gameState.settings.cat);
+        gameState.round.category = chosen._cat ? getCategoryLabel(chosen._cat) : getCategoryLabel(gameState.settings.cat);
 
         gameState.round.num++;
         gameState.round.roundId = generateId();
@@ -2266,7 +2454,6 @@
             wasRunningBeforePanic: false
         };
 
-        // فعال کردن تمام بازیکنان حاضر و تماشاچیان برای دست جدید
         gameState.players.forEach(p => {
             p.isSpectator = false;
             p.isAlive = true;
@@ -2279,7 +2466,6 @@
 
         hostSecretState.secretWord = chosen.word;
         hostSecretState.foolWord = chosen.foolWord || chosen.word;
-        hostSecretState.category = gameState.round.category;
         hostSecretState.hint = chosen.hint;
         hostSecretState.roles = {};
 
@@ -2351,7 +2537,8 @@
         clearInterval(timerInt);
         timerInt = setInterval(() => {
             if (!gameState.timer.running) return;
-            let diff = Math.ceil((gameState.timer.endAt - Date.now()) / 1000);
+            let nowRef = gameState.network.isClient ? (Date.now() + clientClockOffset) : Date.now();
+            let diff = Math.ceil((gameState.timer.endAt - nowRef) / 1000);
             if (diff <= 0) {
                 clearInterval(timerInt);
                 timerInt = null;
@@ -2385,12 +2572,12 @@
         }, 500);
     }
 
-    function pauseTimer() {
+    function pauseTimer(silent = false) {
         gameState.timer.running = false;
         clearInterval(timerInt);
         timerInt = null;
         stopAudioKeepAlive();
-        playSiren();
+        if (!silent) playSiren();
     }
 
     function resumeTimer() {
@@ -2726,7 +2913,6 @@
         }
         return html;
     }
-
     let previousPhase = null;
     function renderUI() {
         document.querySelectorAll('.screen-view').forEach(e => e.classList.add('hidden'));
@@ -3123,7 +3309,6 @@
         cardEl.addEventListener('pointerdown', startHold);
         cardEl.addEventListener('pointerup', endHold);
         cardEl.addEventListener('pointercancel', endHold);
-        cardEl.addEventListener('pointerleave', endHold);
 
         cardEl.addEventListener('keydown', (e) => {
             if (e.key === 'Enter' || e.key === ' ') {
@@ -3215,6 +3400,18 @@
         syncNetwork(PROTOCOL.STATE_SNAPSHOT, buildPublicSnapshot());
     }
 
+    function kickPlayerFromLobby(playerId) {
+        const conn = netHostConns.find(c => c.playerId === playerId);
+        if (conn) {
+            conn.connected = false;
+            try { conn.close(); } catch(e){}
+            netHostConns = netHostConns.filter(c => c !== conn);
+        }
+        gameState.players = gameState.players.filter(p => p.id !== playerId);
+        updateHostConnectedPlayers();
+        broadcastLobbyState();
+    }
+
     function initNetworkHost() {
         let hostName = document.getElementById('host-player-name').value.trim();
         if (!hostName) {
@@ -3223,13 +3420,15 @@
         }
 
         let code = generateRoomCode();
+        let roomSecret = generateId();
+        gameState.network.roomSecret = roomSecret;
         document.getElementById('room-code-display').textContent = code;
         document.getElementById('host-room-info').classList.remove('hidden');
 
         const qrBox = document.getElementById('qrcode-container');
         qrBox.innerHTML = '';
         if (typeof QRCode !== 'undefined') {
-            new QRCode(qrBox, { text: code, width: 120, height: 120, colorDark: "#090d16", colorLight: "#ffffff" });
+            new QRCode(qrBox, { text: `${code}_${roomSecret}`, width: 120, height: 120, colorDark: "#090d16", colorLight: "#ffffff" });
         }
 
         try {
@@ -3270,7 +3469,7 @@
                                 if (gameState.phase === 'wager') checkWagerCompletion();
                             }
                         }
-                        safeHostSend(c, { type: PROTOCOL.PING });
+                        safeHostSend(c, { type: PROTOCOL.PING, serverTime: Date.now() });
                     });
                 }, 4000);
             });
@@ -3280,21 +3479,20 @@
                 conn.sessionToken = generateId();
                 conn.connected = true;
                 conn.lastSeenAt = Date.now();
-                conn.rateWindow = Date.now();
-                conn.packetCount = 0;
+                conn.tokens = 40;
+                conn.lastRefill = Date.now();
 
                 conn.on('data', data => {
                     if (!data || typeof data !== 'object') return;
                     
                     const now = Date.now();
-                    if (now - conn.rateWindow > 1000) {
-                        conn.rateWindow = now;
-                        conn.packetCount = 0;
-                    }
-                    if (++conn.packetCount > 40) {
+                    conn.tokens = Math.min(40, conn.tokens + (now - conn.lastRefill) * (40 / 1000));
+                    conn.lastRefill = now;
+                    if (conn.tokens < 1) {
                         conn.close();
                         return;
                     }
+                    conn.tokens -= 1;
 
                     conn.lastSeenAt = now;
                     conn.connected = true;
@@ -3303,13 +3501,26 @@
                     if (data.type === 'JOIN') {
                         if (conn.joined) return;
 
+                        if (data.roomSecret && gameState.network.roomSecret && data.roomSecret !== gameState.network.roomSecret) {
+                            conn.close();
+                            return;
+                        }
+
+                        if (netHostConns.filter(c => c.joined && c.connected).length + 1 >= RULES.players.max) {
+                            conn.close();
+                            return;
+                        }
+
                         let isMidGame = gameState.phase !== 'welcome' && gameState.phase !== 'setup' && gameState.phase !== 'multi';
                         let matchedPlayer = null;
                         if (data.reconnectToken) {
                             matchedPlayer = gameState.players.find(p => p.reconnectToken === data.reconnectToken);
                         }
 
-                        let cleanName = String(data.name || '').trim().replace(/\s+/g, ' ');
+                        let cleanName = String(data.name || '')
+                            .replace(/[\u200B-\u200F\u202A-\u202E\u2060-\u2069\uFEFF]/g, '')
+                            .trim()
+                            .replace(/\s+/g, ' ');
                         if (cleanName.length < 1 || cleanName.length > 20) {
                             conn.close();
                             return;
@@ -3333,6 +3544,9 @@
                             broadcastLobbyState();
                             return;
                         } else {
+                            let dup = gameState.players.some(p => normalizeWord(p.name) === normalizeWord(cleanName));
+                            if (dup) cleanName += ` (${gameState.players.length + 1})`;
+
                             conn.playerId = generateId();
                             conn.reconnectToken = generateId();
                             conn.playerName = cleanName;
@@ -3453,7 +3667,31 @@
         let hostName = document.getElementById('host-player-name').value.trim() || 'میزبان';
         let active = netHostConns.filter(x => x.joined && x.connected);
         document.getElementById('connected-players-count').textContent = active.length + 1;
-        document.getElementById('connected-players-list').textContent = [hostName, ...active.map(x => x.playerName)].join(' ، ');
+        const listContainer = document.getElementById('connected-players-list');
+        listContainer.innerHTML = '';
+        
+        const hostRow = document.createElement('div');
+        hostRow.className = 'lobby-player-row color-amber';
+        hostRow.textContent = `👑 ${hostName}`;
+        listContainer.appendChild(hostRow);
+
+        active.forEach(c => {
+            const row = document.createElement('div');
+            row.className = 'lobby-player-row';
+            
+            const nameSpan = document.createElement('span');
+            nameSpan.textContent = c.playerName;
+            
+            const kickBtn = document.createElement('button');
+            kickBtn.type = 'button';
+            kickBtn.className = 'lobby-kick-btn';
+            kickBtn.textContent = '🗑️ اخراج';
+            kickBtn.onclick = () => kickPlayerFromLobby(c.playerId);
+
+            row.appendChild(nameSpan);
+            row.appendChild(kickBtn);
+            listContainer.appendChild(row);
+        });
     }
 
     function broadcastLobbyState() {
@@ -3474,11 +3712,20 @@
             }
         }, 3000);
 
+        const connectGuard = setTimeout(() => {
+            if (!conn || !conn.open) {
+                showToast("اتصال به میزبان برقرار نشد.");
+                resetNetwork(); 
+                setPhase('welcome');
+            }
+        }, 10000);
+
         conn.on('open', () => {
+            clearTimeout(connectGuard);
             isReconnecting = false;
             lastHostPing = Date.now();
             gameState.network.isClient = true;
-            safeClientSend({ type: 'JOIN', name: name, reconnectToken: savedReconnectToken });
+            safeClientSend({ type: 'JOIN', name: name, reconnectToken: savedReconnectToken, roomSecret: clientRoomSecret });
             document.getElementById('client-wait-box').classList.remove('hidden');
             document.getElementById('connection-status-badge').textContent = `🟢 متصل به اتاق: ${rawCode}`;
         });
@@ -3486,7 +3733,13 @@
         conn.on('data', data => {
             if (!data || typeof data !== 'object') return;
             lastHostPing = Date.now();
-            if (data.type === PROTOCOL.PING) { safeClientSend({ type: PROTOCOL.PONG }); return; }
+            if (data.type === PROTOCOL.PING) {
+                if (data.serverTime) {
+                    clientClockOffset = data.serverTime - Date.now();
+                }
+                safeClientSend({ type: PROTOCOL.PONG });
+                return;
+            }
             
             if (data.type === PROTOCOL.JOIN_ACK) {
                 clientPrivateState.playerId = data.playerId;
@@ -3628,6 +3881,7 @@
         });
 
         conn.on('close', () => {
+            clearTimeout(connectGuard);
             if (intentionalDisconnect) return;
             document.getElementById('connection-status-badge').textContent = '🟡 در حال اتصال مجدد...';
             
@@ -3650,6 +3904,11 @@
                     }
                     if (!netPeer || netPeer.destroyed || netPeer.disconnected) {
                         netPeer = new Peer();
+                        netPeer.on('error', (err) => {
+                            console.error("PeerJS Reconnect Error:", err);
+                            resetNetwork();
+                            setPhase('welcome');
+                        });
                         netPeer.on('open', () => {
                             netClientConn = netPeer.connect(`SPY_ROOM_V_${rawCode}`);
                             attachClientConnListeners(netClientConn, rawCode, name, token);
@@ -3687,6 +3946,15 @@
         try {
             if (netPeer) { try { netPeer.destroy(); } catch(e){} }
             netPeer = new Peer();
+
+            netPeer.on('error', (err) => {
+                console.error("PeerJS Client Error:", err);
+                showToast(err.type === 'peer-unavailable'
+                    ? "اتاقی با این کد یافت نشد یا میزبان آفلاین است."
+                    : `خطای اتصال: ${err.type || 'نامشخص'}`);
+                resetNetwork();
+                setPhase('welcome');
+            });
 
             netPeer.on('open', () => {
                 netClientConn = netPeer.connect(`SPY_ROOM_V_${rawCode}`);
@@ -4013,7 +4281,6 @@
         }
     }
 
-    // Event Bindings
     document.querySelectorAll('.info-btn').forEach(btn => {
         btn.onclick = (e) => {
             e.stopPropagation();
@@ -4104,7 +4371,6 @@
     document.getElementById('btn-cancel-vote').onclick = () => dispatch({type: 'CANCEL_VOTE'});
     document.getElementById('btn-submit-wagers').onclick = () => dispatch({type: 'SUBMIT_WAGERS'});
 
-    // هندلر دکمه‌های حدس شفاهی ۳ گزینه‌ای
     document.getElementById('btn-guess-correct').onclick = () => dispatch({type: 'SPY_GUESS_VERDICT', verdict: 'correct'});
     document.getElementById('btn-guess-wrong').onclick = () => dispatch({type: 'SPY_GUESS_VERDICT', verdict: 'wrong'});
     document.getElementById('btn-guess-pass').onclick = () => dispatch({type: 'SPY_GUESS_VERDICT', verdict: 'pass'});
@@ -4131,7 +4397,20 @@
         if (netPeer && !netPeer.destroyed) {
             try { netPeer.destroy(); } catch(e){}
         }
+        if (gameState.phase === 'leaderboard' || gameState.phase === 'welcome') {
+            try {
+                Object.keys(localStorage).forEach(k => {
+                    if (k.startsWith('spy_reconnect_')) localStorage.removeItem(k);
+                });
+            } catch(e){}
+        }
     });
+
+    const allCatOpt = document.querySelector('#setup-category option[value="all"]');
+    if (allCatOpt && typeof WORD_PACKS !== 'undefined') {
+        const totalWordsCount = Object.values(WORD_PACKS).flat().length;
+        allCatOpt.textContent = `همه موضوعات (${totalWordsCount} کلمه)`;
+    }
 
     renderNameInputs();
     renderCustomWordsList();
