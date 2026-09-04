@@ -418,7 +418,7 @@
         .fs-subtitle-panic { font-size: 0.8rem; opacity: 0.4; margin-top: 8px; }
         .scroll-y-160 { max-height: 160px; overflow-y: auto; }
         .scroll-y-modal { max-height: 85vh; overflow-y: auto; }
-        .lobby-player-row { display: flex; align-items: center; justify-content: space-between; padding: 4px 0; border-bottom: 1px solid rgba(255, 255, 255, 0.05); }
+        .lobby-player-row { display: flex; align-items: center; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid rgba(255, 255, 255, 0.05); }
         .lobby-kick-btn { background: none; border: none; color: var(--brand-rose); cursor: pointer; padding: 2px 6px; font-size: 0.85rem; border-radius: 6px; }
         .lobby-kick-btn:hover { background: rgba(244, 63, 94, 0.2); }
 
@@ -471,14 +471,14 @@
 
         <button type="button" class="card-menu" id="btn-nav-multi">
             <span class="card-menu-title">🌐 بازی آنلاین با چند گوشی</span>
-            <span class="card-menu-desc">اتصال همه بازیکنان به یک اتاق مشترک از طریق اینترنت</span>
+            <span class="card-menu-desc">اتصال تمام گوشی‌ها به یک مودم Wi-Fi مشترک یا هات‌اسپات</span>
         </button>
 
         <button type="button" id="btn-open-words" class="btn btn-ghost">✏️ بانک کلمات سفارشی</button>
     </section>
 
     <section id="screen-multi" class="screen-view hidden">
-        <h2>اتاق چندنفره آنلاین</h2>
+        <h2>اتاق چندنفره Wi-Fi</h2>
         <div class="toggle-item" style="flex-direction:column; align-items:stretch; gap:10px;">
             <label for="host-player-name" style="font-weight:bold; color:var(--text-primary); font-size:0.9rem;">👑 ساخت اتاق مسابقه (میزبان):</label>
             <input type="text" id="host-player-name" class="input-control" placeholder="نام شما (میزبان)..." maxlength="20">
@@ -524,7 +524,7 @@
         <div class="input-group">
             <div class="label-text">
                 <span>دسته‌بندی موضوعات کلمات:</span>
-                <button type="button" id="btn-toggle-all-cats" class="btn btn-ghost btn-sm" style="padding:2px 8px; font-size:0.75rem;">همه موضوعات (+500 کلمه)</button>
+                <button type="button" id="btn-toggle-all-cats" class="btn btn-ghost btn-sm" style="padding:2px 8px; font-size:0.75rem;">همه موضوعات (+450 کلمه)</button>
             </div>
             <div class="chips-grid" id="category-chips-container">
                 <label class="chip-item"><input type="checkbox" name="setup-cat" value="places" checked> اماکن و فضاها</label>
@@ -788,29 +788,9 @@
         'welcome', 'multi', 'setup', 'reveal', 'timer', 'vote', 'wager', 'guess', 'result', 'leaderboard'
     ]);
 
-    function toLatinDigits(v) {
-        const faDigits = '۰۱۲۳۴۵۶۷۸۹٠١٢٣٤٥٦٧٨٩';
-        const enDigits = '01234567890123456789';
-        return String(v || '').replace(/[۰-۹٠-٩]/g, d => enDigits[faDigits.indexOf(d)]);
-    }
-
-    function renderTimer(sec) {
-        const t = document.getElementById('timer-text');
-        if (!t) return;
-        const validSec = Math.max(0, parseInt(sec, 10) || 0);
-        const m = Math.floor(validSec / 60);
-        const s = validSec % 60;
-        t.textContent = `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
-        t.className = 'timer-display';
-        if (validSec <= 10 && validSec > 0) {
-            t.classList.add('timer-danger');
-        } else if (validSec <= 30 && validSec > 0) {
-            t.classList.add('timer-warning');
-        }
-    }
-
     const PROTOCOL = {
         LOBBY_STATE: 'LOBBY_STATE',
+        FULL_SYNC: 'FULL_SYNC',
         STATE_SNAPSHOT: 'STATE_SNAPSHOT',
         PRIVATE_ROLE: 'PRIVATE_ROLE',
         ROLE_SEEN: 'ROLE_SEEN',
@@ -895,6 +875,7 @@
         emerald: '#061412',
         crimson: '#14080a'
     };
+
     const WORD_PACKS = {
         places: [
             { word: "مدرسه", foolWord: "دانشگاه", hint: "درس", diff: "easy" },
@@ -1433,6 +1414,28 @@
         "یک بار وسط بازی گوشیِ (خاموش) خودت را از جیب دربیار، نگاهش کن و دوباره بذار سرجایش.",
         "یک بار به کسی که هنوز حرف نزده مستقیم نگاه کن و بگو «تو چرا این‌قدر ساکتی؟»"
     ];
+
+    function toLatinDigits(v) {
+        const faDigits = '۰۱۲۳۴۵۶۷۸۹٠١٢٣٤٥٦٧٨٩';
+        const enDigits = '01234567890123456789';
+        return String(v || '').replace(/[۰-۹٠-٩]/g, d => enDigits[faDigits.indexOf(d)]);
+    }
+
+    function renderTimer(sec) {
+        const t = document.getElementById('timer-text');
+        if (!t) return;
+        const validSec = Math.max(0, parseInt(sec, 10) || 0);
+        const m = Math.floor(validSec / 60);
+        const s = validSec % 60;
+        t.textContent = `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+        t.className = 'timer-display';
+        if (validSec <= 10 && validSec > 0) {
+            t.classList.add('timer-danger');
+        } else if (validSec <= 30 && validSec > 0) {
+            t.classList.add('timer-warning');
+        }
+    }
+
     function showToast(msg) {
         const c = document.getElementById('toast-container');
         if (!c) return;
@@ -1595,45 +1598,12 @@
         } catch(e) {}
     }
 
-    document.addEventListener('visibilitychange', async () => {
-        if (document.visibilityState === 'visible') {
-            await requestWakeLock();
-            if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume().catch(()=>{});
-            if (gameState.phase === 'timer' && gameState.timer.running) {
-                let nowRef = gameState.network.isClient ? (Date.now() + clientClockOffset) : Date.now();
-                const diff = Math.ceil((gameState.timer.endAt - nowRef) / 1000);
-                if (diff <= 0) {
-                    gameState.timer.pausedSec = 0;
-                    gameState.timer.running = false;
-                    clearInterval(timerInt);
-                    timerInt = null;
-                    stopAudioKeepAlive();
-                    renderTimer(0);
-                    if (!gameState.network.isClient) {
-                        gameState.timer.reason = 'timeout';
-                        playTone(900, 0.7);
-                        setPhase('vote');
-                        if (gameState.network.isHost) {
-                            syncNetwork(PROTOCOL.VOTE_OPEN, { isTimeout: true, candidates: gameState.players.filter(p=>p.isAlive && !p.isSpectator).map(p=>({id:p.id, name:p.name})) });
-                        }
-                    }
-                }
-            }
-        } else {
-            if (gameState.settings.revealHold && !document.getElementById('role-modal').classList.contains('hidden')) {
-                const activePlayer = gameState.players.find(x => x.id === activeModalPlayerId);
-                const isDetectivePending = activePlayer && activePlayer.role === 'detective' && !(gameState.settings.detectiveUsed || hostSecretState.detectiveUsed || clientPrivateState.hasUsedDetective);
-                if (!isDetectivePending) {
-                    dispatch({type: 'CLOSE_ROLE_CARD'});
-                }
-            }
-        }
-    });
-
-    const SAVE_VERSION = 10;
+    const SAVE_VERSION = 11;
     let gameState = {
         version: SAVE_VERSION,
+        stateVersion: 1,
         phase: 'welcome',
+        phaseEndsAt: null,
         match: { usedWordKeys: [] },
         settings: {
             playersCount: 4, spiesCount: 1, timerMin: 4, cats: ['places', 'jobs', 'foods', 'objects', 'vehicles', 'animals', 'sports', 'events'], diff: 'all',
@@ -1684,7 +1654,6 @@
     let intentionalDisconnect = false;
     let reconnectTimeout = null;
     let isReconnecting = false;
-    let lastHostPing = Date.now();
     let hostInitAttempts = 0;
     let timerInt = null;
     let lastSoundSecond = null;
@@ -1695,6 +1664,34 @@
     let clientHeartbeatCheck = null;
     let activeModalPlayerId = null;
 
+    const PEER_CONFIG = {
+        config: {
+            iceServers: [
+                { urls: 'stun:stun.l.google.com:19302' },
+                { urls: 'stun:stun1.l.google.com:19302' },
+                { urls: 'stun:stun.cloudflare.com:3478' }
+            ],
+            iceCandidatePoolSize: 4
+        }
+    };
+
+    const HEARTBEAT_MS = 3000;
+    const DEAD_AFTER_MS = 12000;
+
+    function wrapConn(conn) {
+        conn.lastSeen = Date.now();
+        conn.isAlive = () => conn.open && (Date.now() - conn.lastSeen) < DEAD_AFTER_MS;
+        conn.safeSend = (data) => {
+            if (!conn.open) return false;
+            try {
+                conn.send(data);
+                return true;
+            } catch (e) {
+                return false;
+            }
+        };
+        return conn;
+    }
     let savedTheme = 'default';
     try {
         savedTheme = localStorage.getItem('spy_selected_theme') || 'default';
@@ -1772,6 +1769,7 @@
             isAlive: Boolean(p.isAlive),
             hasSeen: Boolean(p.hasSeen),
             isSpectator: Boolean(p.isSpectator),
+            online: p.online !== undefined ? Boolean(p.online) : true,
             score: Number.isFinite(p.score) ? p.score : 0,
             stats: {
                 cw: Number(p.stats?.cw) || 0,
@@ -1836,11 +1834,13 @@
     function buildPublicSnapshot(player = null) {
         const snapshot = {
             phase: gameState.phase,
+            phaseEndsAt: gameState.phaseEndsAt,
             settings: gameState.settings,
             players: gameState.players.map(toPublicPlayer),
             roundNum: gameState.round.num,
             roundId: gameState.round.roundId,
             history: gameState.round.history,
+            stateVersion: gameState.stateVersion,
             timer: {
                 running: gameState.timer.running,
                 endAt: gameState.timer.endAt,
@@ -1864,31 +1864,52 @@
         return snapshot;
     }
 
-    function safeClientSend(packet) {
-        if (!netClientConn || !netClientConn.open) {
-            return false;
+    function buildPrivateRole(player) {
+        if (!player) return null;
+        if (player.isSpectator) {
+            return {
+                playerId: player.id,
+                role: 'spectator',
+                team: 'spectator',
+                hintTitle: 'وضعیت شما در این دور:',
+                secretWord: 'شما در این دست تماشاچی هستید (دست بعد وارد می‌شوید)',
+                quest: null,
+                fellowSpies: [],
+                detectiveInquiryResult: null,
+                isSpectator: true
+            };
         }
-        try {
-            netClientConn.send(packet);
-            return true;
-        } catch(e) {
-            return false;
-        }
+        const sec = hostSecretState.roles[player.id];
+        if (!sec) return null;
+        return {
+            playerId: player.id,
+            role: player.role,
+            team: player.team,
+            hintTitle: player.role === 'spy' ? sec.hintTitle : 'کلمه رمز شما:',
+            secretWord: player.role === 'spy' ? sec.hint : (player.role === 'fool' ? hostSecretState.foolWord : hostSecretState.secretWord),
+            quest: player.quest,
+            fellowSpies: (gameState.settings.knownSpies && player.role === 'spy') ? gameState.players.filter(x => x.role === 'spy' && x.id !== player.id).map(x => x.name) : [],
+            detectiveInquiryResult: (player.role === 'detective') ? hostSecretState.detectiveInquiryResult : null,
+            isSpectator: false
+        };
     }
 
-    function safeHostSend(conn, packet) {
-        if (!conn || !conn.connected) return false;
-        try {
-            conn.send(packet);
-            return true;
-        } catch(e) {
-            console.warn("Host send failed:", e);
-            return false;
-        }
+    function sendFullSync(conn) {
+        if (!conn || !conn.open || !conn.joined) return false;
+        const player = gameState.players.find(p => p.id === conn.playerId);
+        if (!player) return false;
+
+        return conn.safeSend({
+            type: PROTOCOL.FULL_SYNC,
+            serverTime: Date.now(),
+            snapshot: buildPublicSnapshot(player),
+            role: buildPrivateRole(player)
+        });
     }
 
-    function isActivePlayerConnection(conn) {
-        return netHostConns.some(c => c === conn && c.connected && c.joined && c.playerId === conn.playerId);
+    function broadcastFullSync() {
+        gameState.stateVersion++;
+        netHostConns.filter(c => c.joined && c.open).forEach(c => sendFullSync(c));
     }
 
     function showInfoModal(key) {
@@ -1942,7 +1963,7 @@
                         gameState.timer.wasRunningBeforePanic = false;
                         resumeTimer();
                         if (gameState.network.isHost) {
-                            syncNetwork(PROTOCOL.TIMER_SYNC, { running: true, endAt: gameState.timer.endAt, pausedSec: gameState.timer.pausedSec });
+                            broadcastFullSync();
                         }
                     }
                     window.lastTap = 0;
@@ -2010,17 +2031,19 @@
                 if (gameState.phase !== 'timer' || !gameState.settings.director) return;
                 calcDirectorTurn(); 
                 commitState();
-                if (gameState.network.isHost) syncNetwork(PROTOCOL.DIRECTOR_UPDATE, { history: gameState.round.history });
+                if (gameState.network.isHost) broadcastFullSync();
                 break;
 
             case 'REQUEST_VOTE':
                 if (gameState.phase !== 'timer') return;
                 if (gameState.network.isClient) {
-                    safeClientSend({
-                        type: PROTOCOL.EMERGENCY_VOTE_REQUEST,
-                        playerId: clientPrivateState.playerId,
-                        sessionToken: clientPrivateState.sessionToken
-                    });
+                    if (netClientConn) {
+                        netClientConn.safeSend({
+                            type: PROTOCOL.EMERGENCY_VOTE_REQUEST,
+                            playerId: clientPrivateState.playerId,
+                            sessionToken: clientPrivateState.sessionToken
+                        });
+                    }
                     return;
                 }
                 if (gameState.settings.voteLimitEnabled) {
@@ -2037,7 +2060,7 @@
                 gameState.localVoteIndex = 0;
                 setPhase('vote');
                 if (gameState.network.isHost) {
-                    syncNetwork(PROTOCOL.VOTE_OPEN, { isTimeout: false, candidates: gameState.players.filter(p=>p.isAlive && !p.isSpectator).map(p=>({id:p.id, name:p.name})) });
+                    broadcastFullSync();
                 }
                 break;
             case 'CANCEL_VOTE':
@@ -2045,11 +2068,7 @@
                 if (gameState.timer.reason === 'timeout') return;
                 resumeTimer();
                 if (gameState.network.isHost) {
-                    syncNetwork(PROTOCOL.TIMER_SYNC, {
-                        running: true,
-                        endAt: gameState.timer.endAt,
-                        pausedSec: gameState.timer.pausedSec
-                    });
+                    broadcastFullSync();
                 }
                 break;
 
@@ -2074,14 +2093,16 @@
                 if (gameState.network.isClient) {
                     if (clientPrivateState.hasVoted) return;
                     document.getElementById('vote-instruction-text').textContent = "در حال ارسال رای به میزبان...";
-                    safeClientSend({
-                        type: PROTOCOL.VOTE_CAST,
-                        requestId: generateId(),
-                        roundId: gameState.round.roundId,
-                        playerId: clientPrivateState.playerId,
-                        sessionToken: clientPrivateState.sessionToken,
-                        suspectId: suspectId
-                    });
+                    if (netClientConn) {
+                        netClientConn.safeSend({
+                            type: PROTOCOL.VOTE_CAST,
+                            requestId: generateId(),
+                            roundId: gameState.round.roundId,
+                            playerId: clientPrivateState.playerId,
+                            sessionToken: clientPrivateState.sessionToken,
+                            suspectId: suspectId
+                        });
+                    }
                 } else {
                     handleLocalVote(suspectId);
                 }
@@ -2097,7 +2118,7 @@
                     setPhase('wager');
                     if (gameState.network.isHost) {
                         hostSecretState.wagersCast = {};
-                        syncNetwork(PROTOCOL.WAGER_OPEN, { targetId: gameState.vote.targetId, targetName: gameState.players.find(p=>p.id===gameState.vote.targetId)?.name });
+                        broadcastFullSync();
                     }
                 } else {
                     processElimination([]);
@@ -2120,14 +2141,16 @@
                     noticeBox.textContent = 'در حال ثبت شرط...';
                     listEl.appendChild(noticeBox);
 
-                    safeClientSend({
-                        type: PROTOCOL.WAGER_SUBMIT,
-                        requestId: generateId(),
-                        roundId: gameState.round.roundId,
-                        playerId: clientPrivateState.playerId,
-                        sessionToken: clientPrivateState.sessionToken,
-                        amount: myBetAmt
-                    });
+                    if (netClientConn) {
+                        netClientConn.safeSend({
+                            type: PROTOCOL.WAGER_SUBMIT,
+                            requestId: generateId(),
+                            roundId: gameState.round.roundId,
+                            playerId: clientPrivateState.playerId,
+                            sessionToken: clientPrivateState.sessionToken,
+                            amount: myBetAmt
+                        });
+                    }
                 } else if (gameState.network.isHost) {
                     let hostP = gameState.players.find(p => p.isHost) || gameState.players[0];
                     if (hostP && hostP.isAlive && !hostP.isSpectator && hostP.id !== gameState.vote.targetId && hostP.score > 0) {
@@ -2172,17 +2195,19 @@
                     if (p) p.hasSeen = true;
                 }
                 if (gameState.network.isClient && clientPrivateState.playerId) {
-                    safeClientSend({
-                        type: PROTOCOL.ROLE_SEEN,
-                        playerId: clientPrivateState.playerId,
-                        sessionToken: clientPrivateState.sessionToken,
-                        roundId: gameState.round.roundId
-                    });
+                    if (netClientConn) {
+                        netClientConn.safeSend({
+                            type: PROTOCOL.ROLE_SEEN,
+                            playerId: clientPrivateState.playerId,
+                            sessionToken: clientPrivateState.sessionToken,
+                            roundId: gameState.round.roundId
+                        });
+                    }
                 }
                 activeModalPlayerId = null;
                 dispatch({ type: 'CLOSE_MODAL', payload: 'role-modal' });
                 if (gameState.network.isHost) {
-                    broadcastSnapshot();
+                    broadcastFullSync();
                 }
                 commitState();
                 break;
@@ -2190,14 +2215,16 @@
                 if (gameState.settings.detectiveUsed || hostSecretState.detectiveUsed || clientPrivateState.hasUsedDetective) return;
                 let tid = document.getElementById('detective-target-select').value;
                 if (gameState.network.isClient) {
-                    safeClientSend({
-                        type: PROTOCOL.DETECTIVE_QUERY,
-                        requestId: generateId(),
-                        roundId: gameState.round.roundId,
-                        playerId: clientPrivateState.playerId,
-                        sessionToken: clientPrivateState.sessionToken,
-                        targetId: tid
-                    });
+                    if (netClientConn) {
+                        netClientConn.safeSend({
+                            type: PROTOCOL.DETECTIVE_QUERY,
+                            requestId: generateId(),
+                            roundId: gameState.round.roundId,
+                            playerId: clientPrivateState.playerId,
+                            sessionToken: clientPrivateState.sessionToken,
+                            targetId: tid
+                        });
+                    }
                 } else {
                     handleDetectiveQueryInternal(tid);
                 }
@@ -2286,9 +2313,10 @@
         }
     }
 
-    function setPhase(p) {
+    function setPhase(p, durationSec = 0) {
         if (!VALID_PHASES.has(p)) return;
         gameState.phase = p;
+        gameState.phaseEndsAt = durationSec > 0 ? Date.now() + (durationSec * 1000) : null;
         requestWakeLock();
         if (p === 'welcome' || p === 'leaderboard') {
             try {
@@ -2407,50 +2435,13 @@
                 isAlive: true,
                 hasSeen: false,
                 isSpectator: false,
+                online: true,
                 role: 'citizen',
                 team: 'citizen',
                 quest: null,
                 stats: old ? old.stats : { sw: 0, cw: 0, spiesCaught: 0, vs: 0, bw: 0, bl: 0, spyGuesses: 0, innocentVotesReceived: 0, foolEscaped: 0, wagerProfit: 0 }
             };
         });
-    }
-
-    function sendPrivateRole(conn, player) {
-        if (!conn || !conn.connected) return false;
-        if (player.isSpectator) {
-            return safeHostSend(conn, {
-                type: PROTOCOL.PRIVATE_ROLE,
-                playerId: player.id,
-                role: 'spectator',
-                team: 'spectator',
-                hintTitle: 'وضعیت شما در این دور:',
-                secretWord: 'شما در این دست تماشاچی هستید (دست بعد وارد می‌شوید)',
-                quest: null,
-                fellowSpies: [],
-                detectiveInquiryResult: null
-            });
-        }
-        const sec = hostSecretState.roles[player.id];
-        if (!sec) return false;
-        return safeHostSend(conn, {
-            type: PROTOCOL.PRIVATE_ROLE,
-            playerId: player.id,
-            role: player.role,
-            team: player.team,
-            hintTitle: player.role === 'spy' ? sec.hintTitle : 'کلمه رمز شما:',
-            secretWord: player.role === 'spy' ? sec.hint : (player.role === 'fool' ? hostSecretState.foolWord : hostSecretState.secretWord),
-            quest: player.quest,
-            fellowSpies: (gameState.settings.knownSpies && player.role === 'spy') ? gameState.players.filter(x => x.role === 'spy' && x.id !== player.id).map(x => x.name) : [],
-            detectiveInquiryResult: (player.role === 'detective') ? hostSecretState.detectiveInquiryResult : null
-        });
-    }
-
-    function syncPlayerAfterReconnect(conn, player) {
-        safeHostSend(conn, {
-            type: PROTOCOL.STATE_SNAPSHOT,
-            ...buildPublicSnapshot(player)
-        });
-        sendPrivateRole(conn, player);
     }
 
     function getRandomCryptoInt(max) {
@@ -2597,18 +2588,7 @@
         setPhase('reveal');
 
         if (gameState.network.isHost) {
-            broadcastSnapshot();
-            netHostConns.filter(c => c.joined && c.connected).forEach(conn => {
-                let po = gameState.players.find(p => p.id === conn.playerId);
-                if (po) sendPrivateRole(conn, po);
-            });
-            setTimeout(() => {
-                if (!gameState.network.isHost) return;
-                netHostConns.filter(c => c.joined && c.connected).forEach(conn => {
-                    let po = gameState.players.find(p => p.id === conn.playerId);
-                    if (po) syncPlayerAfterReconnect(conn, po);
-                });
-            }, 2500);
+            broadcastFullSync();
         }
         return true;
     }
@@ -2619,15 +2599,13 @@
         lastSoundSecond = null;
         gameState.timer.pausedSec = gameState.settings.timerMin * 60;
         gameState.timer.endAt = Date.now() + (gameState.timer.pausedSec * 1000);
+        gameState.phaseEndsAt = gameState.timer.endAt;
         gameState.timer.running = true;
         if (gameState.settings.director) calcDirectorTurn();
         setPhase('timer');
         runTick();
         if (gameState.network.isHost) {
-            if (gameState.settings.director) {
-                syncNetwork(PROTOCOL.DIRECTOR_UPDATE, { history: gameState.round.history });
-            }
-            syncNetwork(PROTOCOL.TIMER_SYNC, { endAt: gameState.timer.endAt, pausedSec: gameState.timer.pausedSec, running: true });
+            broadcastFullSync();
         }
     }
 
@@ -2636,7 +2614,9 @@
         timerInt = setInterval(() => {
             if (!gameState.timer.running) return;
             let nowRef = gameState.network.isClient ? (Date.now() + clientClockOffset) : Date.now();
-            let diff = Math.ceil((gameState.timer.endAt - nowRef) / 1000);
+            let targetEnd = gameState.phaseEndsAt || gameState.timer.endAt || nowRef;
+            let diff = Math.ceil((targetEnd - nowRef) / 1000);
+
             if (diff <= 0) {
                 clearInterval(timerInt);
                 timerInt = null;
@@ -2650,7 +2630,7 @@
                 gameState.localVoteIndex = 0;
                 setPhase('vote');
                 if (gameState.network.isHost) {
-                    syncNetwork(PROTOCOL.VOTE_OPEN, { isTimeout: true, candidates: gameState.players.filter(p=>p.isAlive && !p.isSpectator).map(p=>({id:p.id, name:p.name})) });
+                    broadcastFullSync();
                 }
             } else {
                 gameState.timer.pausedSec = diff;
@@ -2672,6 +2652,7 @@
 
     function pauseTimer(silent = false) {
         gameState.timer.running = false;
+        gameState.phaseEndsAt = null;
         clearInterval(timerInt);
         timerInt = null;
         stopAudioKeepAlive();
@@ -2684,6 +2665,7 @@
         lastSoundSecond = null;
         gameState.timer.running = true;
         gameState.timer.endAt = Date.now() + (gameState.timer.pausedSec * 1000);
+        gameState.phaseEndsAt = gameState.timer.endAt;
         setPhase('timer');
         runTick();
     }
@@ -2716,7 +2698,7 @@
         if (!gameState.network.isHost) return true;
         let hostP = gameState.players.find(p => p.isHost) || gameState.players[0];
         if (hostP && hostP.id === playerId) return true;
-        return netHostConns.some(c => c.playerId === playerId && c.joined && c.connected);
+        return netHostConns.some(c => c.playerId === playerId && c.joined && c.open && c.isAlive());
     }
 
     function handleLocalVote(suspectId) {
@@ -2844,7 +2826,7 @@
         if (sus.role === 'spy') {
             setPhase('guess');
             if (gameState.network.isHost) {
-                syncNetwork(PROTOCOL.GUESS_OPEN, { spyId: sus.id, spyName: sus.name });
+                broadcastFullSync();
             }
         } else {
             sus.stats.innocentVotesReceived = (sus.stats.innocentVotesReceived || 0) + 1;
@@ -2896,7 +2878,7 @@
             buildHostRoundResult('spy', spyGuessed, sudden);
         } else {
             resumeTimer();
-            if (gameState.network.isHost) syncNetwork(PROTOCOL.TIMER_SYNC, { running: true, endAt: gameState.timer.endAt, pausedSec: gameState.timer.pausedSec });
+            if (gameState.network.isHost) broadcastFullSync();
         }
     }
 
@@ -2992,7 +2974,7 @@
         if (selDet) selDet.disabled = true;
 
         if (gameState.network.isHost) {
-            broadcastSnapshot();
+            broadcastFullSync();
         }
         commitState();
     }
@@ -3009,19 +2991,632 @@
         }
         return html;
     }
-    const PEER_CONFIG = {
-        config: {
-            iceServers: [
-                { urls: 'stun:stun.l.google.com:19302' },
-                { urls: 'stun:stun1.l.google.com:19302' },
-                { urls: 'stun:stun.cloudflare.com:3478' },
-                { urls: 'turn:openrelay.metered.ca:80', username: 'openrelayproject', credential: 'openrelayproject' },
-                { urls: 'turn:openrelay.metered.ca:443', username: 'openrelayproject', credential: 'openrelayproject' },
-                { urls: 'turn:openrelay.metered.ca:443?transport=tcp', username: 'openrelayproject', credential: 'openrelayproject' }
-            ]
-        }
-    };
 
+    function generateRoomCode() {
+        const chars = '23456789ABCDEFGHJKLMNPQRSTUVWXYZ';
+        const limit = 256 - (256 % chars.length);
+        let result = '';
+        while (result.length < 5) {
+            const bytes = new Uint8Array(8);
+            if (window.crypto && crypto.getRandomValues) {
+                crypto.getRandomValues(bytes);
+                for (const b of bytes) {
+                    if (b < limit) {
+                        result += chars[b % chars.length];
+                        if (result.length === 5) break;
+                    }
+                }
+            } else {
+                result += chars[Math.floor(Math.random() * chars.length)];
+            }
+        }
+        return result;
+    }
+
+    function validateVotePacket(conn, data) {
+        let voter = gameState.players.find(p => p.id === conn.playerId);
+        let suspect = gameState.players.find(p => p.id === data.suspectId);
+        return (conn.open && conn.joined && voter && voter.isAlive && !voter.isSpectator && suspect && suspect.isAlive && !suspect.isSpectator && voter.id !== suspect.id && gameState.phase === 'vote' && data.roundId === gameState.round.roundId && data.sessionToken === conn.sessionToken && !hostSecretState.votesCast[voter.id]);
+    }
+
+    function validateWagerPacket(conn, data) {
+        let voter = gameState.players.find(p => p.id === conn.playerId);
+        return (conn.open && conn.joined && voter && voter.isAlive && !voter.isSpectator && voter.score > 0 && gameState.phase === 'wager' && data.roundId === gameState.round.roundId && data.sessionToken === conn.sessionToken && Number.isInteger(data.amount) && data.amount >= 0 && data.amount <= voter.score && !hostSecretState.wagersCast[voter.id]);
+    }
+
+    function validateDetectivePacket(conn, data) {
+        let det = gameState.players.find(p => p.id === conn.playerId);
+        let tar = gameState.players.find(p => p.id === data.targetId);
+        return (
+            conn.open &&
+            conn.joined &&
+            gameState.phase === 'reveal' &&
+            det &&
+            det.isAlive &&
+            !det.isSpectator &&
+            det.role === 'detective' &&
+            !hostSecretState.detectiveUsed &&
+            tar &&
+            tar.isAlive &&
+            !tar.isSpectator &&
+            tar.id !== det.id &&
+            data.roundId === gameState.round.roundId &&
+            data.sessionToken === conn.sessionToken
+        );
+    }
+
+    function kickPlayerFromLobby(playerId) {
+        const conn = netHostConns.find(c => c.playerId === playerId);
+        if (conn) {
+            try { conn.close(); } catch(e){}
+            dropHostConn(conn);
+        } else {
+            gameState.players = gameState.players.filter(p => p.id !== playerId);
+            updateHostConnectedPlayers();
+            broadcastLobbyState();
+        }
+    }
+
+    function dropHostConn(conn) {
+        netHostConns = netHostConns.filter(c => c !== conn);
+        const p = gameState.players.find(player => player.id === conn.playerId);
+        if (p) {
+            p.online = false;
+        }
+        updateHostConnectedPlayers();
+        broadcastLobbyState();
+        if (gameState.phase === 'vote') checkVoteCompletion();
+        if (gameState.phase === 'wager') checkWagerCompletion();
+    }
+
+    function startHostHeartbeat() {
+        clearInterval(netHeartbeat);
+        netHeartbeat = setInterval(() => {
+            const now = Date.now();
+            netHostConns.slice().forEach(c => {
+                if (!c.isAlive()) {
+                    try { c.close(); } catch(e){}
+                    dropHostConn(c);
+                    return;
+                }
+                c.safeSend({ type: PROTOCOL.PING, serverTime: now });
+            });
+        }, HEARTBEAT_MS);
+    }
+
+    function initNetworkHost() {
+        let hostName = document.getElementById('host-player-name').value.trim();
+        if (!hostName) {
+            showToast("لطفاً نام خود (میزبان) را وارد کنید!");
+            return;
+        }
+
+        let code = generateRoomCode();
+        document.getElementById('room-code-display').textContent = code;
+        document.getElementById('host-room-info').classList.remove('hidden');
+
+        const qrBox = document.getElementById('qrcode-container');
+        qrBox.innerHTML = '';
+        if (typeof QRCode !== 'undefined') {
+            new QRCode(qrBox, { text: code, width: 120, height: 120, colorDark: "#090d16", colorLight: "#ffffff" });
+        }
+
+        try {
+            if (netPeer) { try { netPeer.destroy(); } catch(e){} }
+            const peer = new Peer(`SPY_ROOM_V_${code}`, PEER_CONFIG);
+            netPeer = peer;
+            
+            peer.on('error', (err) => {
+                console.error("PeerJS Host Error:", err);
+                if (err.type === 'unavailable-id') {
+                    peer.destroy();
+                    if (hostInitAttempts < 5) {
+                        hostInitAttempts++;
+                        initNetworkHost();
+                    } else {
+                        showToast("تلاش‌های ساخت اتاق آنلاین ناموفق بود. مجدداً امتحان فرمایید.");
+                        hostInitAttempts = 0;
+                    }
+                } else {
+                    showToast(`خطا در سرویس اتاق: ${err.type || 'قطع سرویس'}`);
+                }
+            });
+
+            peer.on('disconnected', () => {
+                if (!peer.destroyed) {
+                    setTimeout(() => peer.reconnect(), 1500);
+                }
+            });
+
+            peer.on('open', () => {
+                hostInitAttempts = 0;
+                gameState.network.isHost = true;
+                gameState.network.code = code;
+                document.getElementById('connection-status-badge').textContent = `👑 میزبان اتاق: ${code}`;
+                updateHostConnectedPlayers();
+                startHostHeartbeat();
+                requestWakeLock();
+            });
+
+            peer.on('connection', rawConn => {
+                const conn = wrapConn(rawConn);
+
+                conn.on('open', () => {
+                    conn.sessionToken = generateId();
+                    conn.joined = false;
+                    netHostConns.push(conn);
+                });
+
+                conn.on('data', data => {
+                    if (!data || typeof data !== 'object') return;
+                    conn.lastSeen = Date.now();
+                    if (data.type === PROTOCOL.PONG) return;
+
+                    if (data.type === PROTOCOL.REQUEST_SYNC) {
+                        if (!conn.joined) return;
+                        sendFullSync(conn);
+                        return;
+                    }
+
+                    if (data.type === 'JOIN') {
+                        if (conn.joined) return;
+
+                        if (netHostConns.filter(c => c.joined && c.open).length + 1 >= RULES.players.max) {
+                            conn.close();
+                            return;
+                        }
+
+                        let isMidGame = gameState.phase !== 'welcome' && gameState.phase !== 'setup' && gameState.phase !== 'multi';
+                        let matchedPlayer = null;
+                        if (data.reconnectToken) {
+                            matchedPlayer = gameState.players.find(p => p.reconnectToken === data.reconnectToken);
+                        }
+
+                        let cleanName = String(data.name || '')
+                            .replace(/[\u200B-\u200F\u202A-\u202E\u2060-\u2069\uFEFF]/g, '')
+                            .trim()
+                            .replace(/\s+/g, ' ');
+                        if (cleanName.length < 1 || cleanName.length > 20) {
+                            conn.close();
+                            return;
+                        }
+
+                        if (matchedPlayer) {
+                            const oldConn = netHostConns.find(c => c !== conn && c.joined && c.playerId === matchedPlayer.id);
+                            if (oldConn) {
+                                try { oldConn.close(); } catch(e){}
+                                netHostConns = netHostConns.filter(c => c !== oldConn);
+                            }
+
+                            conn.playerId = matchedPlayer.id;
+                            conn.reconnectToken = matchedPlayer.reconnectToken;
+                            conn.playerName = matchedPlayer.name;
+                            conn.joined = true;
+                            matchedPlayer.online = true;
+
+                            conn.safeSend({ 
+                                type: PROTOCOL.JOIN_ACK, 
+                                playerId: conn.playerId, 
+                                sessionToken: conn.sessionToken, 
+                                reconnectToken: conn.reconnectToken, 
+                                isSpectator: matchedPlayer.isSpectator 
+                            });
+                            sendFullSync(conn);
+                            updateHostConnectedPlayers();
+                            broadcastLobbyState();
+                            return;
+                        } else {
+                            let dup = gameState.players.some(p => normalizeWord(p.name) === normalizeWord(cleanName));
+                            if (dup) cleanName += ` (${gameState.players.length + 1})`;
+
+                            conn.playerId = generateId();
+                            conn.reconnectToken = generateId();
+                            conn.playerName = cleanName;
+                            conn.joined = true;
+
+                            let newPlayer = {
+                                id: conn.playerId,
+                                reconnectToken: conn.reconnectToken,
+                                name: cleanName,
+                                isHost: false,
+                                isSpectator: isMidGame,
+                                score: 0,
+                                isAlive: !isMidGame,
+                                hasSeen: isMidGame,
+                                online: true,
+                                role: isMidGame ? 'spectator' : 'citizen',
+                                team: isMidGame ? 'spectator' : 'citizen',
+                                quest: null,
+                                stats: { sw: 0, cw: 0, spiesCaught: 0, vs: 0, bw: 0, bl: 0, spyGuesses: 0, innocentVotesReceived: 0, foolEscaped: 0, wagerProfit: 0 }
+                            };
+
+                            gameState.players.push(newPlayer);
+                            conn.safeSend({ 
+                                type: PROTOCOL.JOIN_ACK, 
+                                playerId: conn.playerId, 
+                                sessionToken: conn.sessionToken, 
+                                reconnectToken: conn.reconnectToken, 
+                                isSpectator: isMidGame 
+                            });
+                            if (isMidGame) {
+                                sendFullSync(conn);
+                            }
+                            updateHostConnectedPlayers();
+                            broadcastLobbyState();
+                            if (isMidGame) broadcastFullSync();
+                            return;
+                        }
+                    }
+
+                    if (data.requestId && hostSecretState.processedRequestIds.has(data.requestId)) {
+                        return;
+                    }
+
+                    if (data.type === PROTOCOL.ROLE_SEEN) {
+                        const player = gameState.players.find(p => p.id === conn.playerId);
+                        if (!conn.joined || !player || data.playerId !== conn.playerId || data.sessionToken !== conn.sessionToken || data.roundId !== gameState.round.roundId) {
+                            return;
+                        }
+                        player.hasSeen = true;
+                        broadcastFullSync();
+                        commitState();
+                    } else if (data.type === PROTOCOL.EMERGENCY_VOTE_REQUEST) {
+                        if (!conn.joined || data.playerId !== conn.playerId || data.sessionToken !== conn.sessionToken) {
+                            return;
+                        }
+                        let sender = gameState.players.find(p => p.id === conn.playerId);
+                        if (sender && sender.isAlive && !sender.isSpectator && gameState.phase === 'timer') {
+                            dispatch({type: 'REQUEST_VOTE'});
+                        }
+                    } else if (data.type === PROTOCOL.VOTE_CAST) {
+                        if (!validateVotePacket(conn, data)) {
+                            conn.safeSend({ type: PROTOCOL.ACTION_REJECTED, actionType: PROTOCOL.VOTE_CAST, requestId: data.requestId, reason: "رای نامعتبر است." });
+                            return;
+                        }
+                        if (data.requestId) {
+                            if (hostSecretState.processedRequestIds.size >= 5000) hostSecretState.processedRequestIds.clear();
+                            hostSecretState.processedRequestIds.add(data.requestId);
+                        }
+                        hostSecretState.votesCast[conn.playerId] = data.suspectId;
+                        conn.safeSend({ type: PROTOCOL.ACTION_ACK, actionType: PROTOCOL.VOTE_CAST, requestId: data.requestId });
+                        checkVoteCompletion();
+                    } else if (data.type === PROTOCOL.WAGER_SUBMIT) {
+                        if (!validateWagerPacket(conn, data)) {
+                            conn.safeSend({ type: PROTOCOL.ACTION_REJECTED, actionType: PROTOCOL.WAGER_SUBMIT, requestId: data.requestId, reason: "مقدار شرط نامعتبر است." });
+                            return;
+                        }
+                        if (data.requestId) {
+                            if (hostSecretState.processedRequestIds.size >= 5000) hostSecretState.processedRequestIds.clear();
+                            hostSecretState.processedRequestIds.add(data.requestId);
+                        }
+                        submitWagerUnified(conn.playerId, data.amount);
+                        conn.safeSend({ type: PROTOCOL.ACTION_ACK, actionType: PROTOCOL.WAGER_SUBMIT, requestId: data.requestId });
+                    } else if (data.type === PROTOCOL.DETECTIVE_QUERY) {
+                        if (!validateDetectivePacket(conn, data)) {
+                            conn.safeSend({ type: PROTOCOL.ACTION_REJECTED, actionType: PROTOCOL.DETECTIVE_QUERY, requestId: data.requestId, reason: "استعلام نامعتبر است." });
+                            return;
+                        }
+                        if (data.requestId) {
+                            if (hostSecretState.processedRequestIds.size >= 5000) hostSecretState.processedRequestIds.clear();
+                            hostSecretState.processedRequestIds.add(data.requestId);
+                        }
+                        let tar = gameState.players.find(p => p.id === data.targetId);
+                        hostSecretState.detectiveUsed = true;
+                        gameState.settings.detectiveUsed = true;
+                        let resText = tar && tar.role === 'spy'
+                            ? `⚠️ «${tar.name}» قطعاً جاسوس است!`
+                            : `✅ «${tar ? tar.name : 'متهم'}» شهروند بی‌گناه است.`;
+                        hostSecretState.detectiveInquiryResult = resText;
+                        conn.safeSend({ type: PROTOCOL.ACTION_ACK, actionType: PROTOCOL.DETECTIVE_QUERY, requestId: data.requestId });
+                        conn.safeSend({ type: PROTOCOL.DETECTIVE_RESULT, isSpy: tar ? tar.role === 'spy' : false, targetName: tar ? tar.name : "" });
+                        broadcastFullSync();
+                    }
+                });
+
+                conn.on('close', () => dropHostConn(conn));
+                conn.on('error', () => dropHostConn(conn));
+            });
+        } catch(e) { showToast("خطا در ایجاد اتاق آنلاین!"); }
+    }
+
+    function updateHostConnectedPlayers() {
+        let hostName = document.getElementById('host-player-name').value.trim() || 'میزبان';
+        let active = netHostConns.filter(x => x.joined && x.open);
+        document.getElementById('connected-players-count').textContent = active.length + 1;
+        const listContainer = document.getElementById('connected-players-list');
+        listContainer.innerHTML = '';
+        
+        const hostRow = document.createElement('div');
+        hostRow.className = 'lobby-player-row color-amber';
+        hostRow.textContent = `👑 ${hostName}`;
+        listContainer.appendChild(hostRow);
+
+        active.forEach(c => {
+            const row = document.createElement('div');
+            row.className = 'lobby-player-row';
+            
+            const nameSpan = document.createElement('span');
+            nameSpan.textContent = c.playerName;
+            
+            const kickBtn = document.createElement('button');
+            kickBtn.type = 'button';
+            kickBtn.className = 'lobby-kick-btn';
+            kickBtn.textContent = '🗑️ اخراج';
+            kickBtn.onclick = () => kickPlayerFromLobby(c.playerId);
+
+            row.appendChild(nameSpan);
+            row.appendChild(kickBtn);
+            listContainer.appendChild(row);
+        });
+    }
+
+    function broadcastLobbyState() {
+        let hostName = document.getElementById('host-player-name').value.trim() || 'میزبان';
+        let playerNames = [hostName, ...netHostConns.filter(c => c.joined && c.open).map(c => c.playerName)];
+        syncNetwork(PROTOCOL.LOBBY_STATE, { players: playerNames });
+    }
+
+    function attachClientConnListeners(conn, rawCode, name, savedReconnectToken) {
+        clearInterval(clientHeartbeatCheck);
+        clientHeartbeatCheck = setInterval(() => {
+            if (gameState.network.isClient && !isReconnecting) {
+                if (!conn.isAlive()) {
+                    try { conn.close(); } catch(e){}
+                    scheduleClientReconnect(rawCode, name);
+                }
+            }
+        }, 3000);
+
+        const connectGuard = setTimeout(() => {
+            if (!conn || !conn.open) {
+                showToast("اتصال برقرار نشد، در حال تلاش دوباره...");
+                scheduleClientReconnect(rawCode, name);
+            }
+        }, 8000);
+
+        conn.on('open', () => {
+            clearTimeout(connectGuard);
+            isReconnecting = false;
+            gameState.network.isClient = true;
+            conn.lastSeen = Date.now();
+            conn.safeSend({ type: 'JOIN', name: name, reconnectToken: savedReconnectToken });
+            document.getElementById('client-wait-box').classList.remove('hidden');
+            document.getElementById('connection-status-badge').textContent = `🟢 متصل به اتاق: ${rawCode}`;
+            requestWakeLock();
+        });
+
+        conn.on('data', data => {
+            if (!data || typeof data !== 'object') return;
+            conn.lastSeen = Date.now();
+            if (data.type === PROTOCOL.PING) {
+                if (data.serverTime) {
+                    clientClockOffset = data.serverTime - Date.now();
+                }
+                conn.safeSend({ type: PROTOCOL.PONG });
+                return;
+            }
+            
+            if (data.type === PROTOCOL.JOIN_ACK) {
+                clientPrivateState.playerId = data.playerId;
+                clientPrivateState.sessionToken = data.sessionToken;
+                clientPrivateState.reconnectToken = data.reconnectToken;
+                clientPrivateState.isSpectator = !!data.isSpectator;
+                if (data.isSpectator) {
+                    showToast("شما به عنوان تماشاچی وارد شدید و در دست بعد بازی می‌کنید.");
+                }
+                try {
+                    localStorage.setItem(`spy_reconnect_${rawCode}`, data.reconnectToken);
+                } catch(e){}
+            } else if (data.type === PROTOCOL.ACTION_ACK) {
+                if (data.actionType === PROTOCOL.VOTE_CAST) {
+                    clientPrivateState.hasVoted = true;
+                    document.getElementById('vote-instruction-text').textContent = "رای شما ثبت شد. منتظر سایر بازیکنان بمانید...";
+                } else if (data.actionType === PROTOCOL.WAGER_SUBMIT) {
+                    clientPrivateState.hasWagered = true;
+                    const listEl = document.getElementById('wager-players-list');
+                    listEl.textContent = '';
+                    const successBox = document.createElement('div');
+                    successBox.className = 'text-center color-emerald';
+                    successBox.textContent = 'تصمیم شرط شما ثبت شد.';
+                    listEl.appendChild(successBox);
+                }
+            } else if (data.type === PROTOCOL.ACTION_REJECTED) {
+                showToast(`خطا: ${data.reason || 'عملیات پذیرفته نشد.'}`);
+                if (data.actionType === PROTOCOL.VOTE_CAST) {
+                    clientPrivateState.hasVoted = false;
+                    document.getElementById('vote-instruction-text').textContent = "متهم اصلی را انتخاب کنید:";
+                } else if (data.actionType === PROTOCOL.WAGER_SUBMIT) {
+                    clientPrivateState.hasWagered = false;
+                    renderUI();
+                }
+            } else if (data.type === PROTOCOL.LOBBY_STATE) {
+                const safePlayers = (data.players || []).map(escapeHtml).join(' ، ');
+                document.getElementById('client-wait-box').innerHTML = `🟢 متصل به اتاق! افراد حاضر:<br><strong>${safePlayers}</strong>`;
+            } else if (data.type === PROTOCOL.VOTE_PROGRESS) {
+                let el = document.getElementById('vote-instruction-text');
+                if (el) el.textContent = `آرا ثبت شده: ${data.received} از ${data.total}`;
+            } else if (data.type === PROTOCOL.FULL_SYNC) {
+                if (data.serverTime) {
+                    clientClockOffset = data.serverTime - Date.now();
+                }
+                const snap = data.snapshot;
+                if (snap) {
+                    if (VALID_PHASES.has(snap.phase)) gameState.phase = snap.phase;
+                    gameState.phaseEndsAt = snap.phaseEndsAt;
+                    gameState.settings = sanitizeSettings(snap.settings);
+                    if (Array.isArray(snap.players)) {
+                        gameState.players = snap.players.map(toPublicPlayer).filter(Boolean);
+                    }
+                    gameState.round.num = Number.isInteger(snap.roundNum) ? snap.roundNum : 1;
+                    gameState.round.roundId = typeof snap.roundId === 'string' ? snap.roundId : null;
+                    gameState.round.history = sanitizeHistory(snap.history);
+                    gameState.vote = sanitizeVote(snap.vote);
+                    if (snap.actionState) {
+                        clientPrivateState.hasVoted = !!snap.actionState.hasVoted;
+                        clientPrivateState.hasWagered = !!snap.actionState.hasWagered;
+                        clientPrivateState.hasUsedDetective = !!snap.actionState.hasUsedDetective;
+                    }
+                }
+                if (data.role) {
+                    clientPrivateState.role = data.role.role;
+                    clientPrivateState.team = data.role.team;
+                    clientPrivateState.hintTitle = data.role.hintTitle || 'کلمه رمز شما:';
+                    clientPrivateState.secretWord = data.role.secretWord;
+                    clientPrivateState.quest = data.role.quest;
+                    clientPrivateState.fellowSpies = data.role.fellowSpies || [];
+                    clientPrivateState.detectiveInquiryResult = data.role.detectiveInquiryResult;
+                    clientPrivateState.isSpectator = !!data.role.isSpectator;
+                }
+                if (gameState.phase === 'timer') {
+                    runTick();
+                }
+                renderUI();
+            } else if (data.type === PROTOCOL.ROUND_RESULT) {
+                if (data.isFinalMatch) {
+                    if (Array.isArray(data.players)) gameState.players = data.players.map(toPublicPlayer).filter(Boolean);
+                    setPhase('leaderboard');
+                } else {
+                    renderRemoteRoundResult(data);
+                }
+            }
+        });
+
+        conn.on('close', () => {
+            clearTimeout(connectGuard);
+            scheduleClientReconnect(rawCode, name);
+        });
+
+        conn.on('error', () => {
+            scheduleClientReconnect(rawCode, name);
+        });
+    }
+
+    function scheduleClientReconnect(rawCode, name) {
+        if (intentionalDisconnect || !gameState.network.isClient || isReconnecting) return;
+        isReconnecting = true;
+        document.getElementById('connection-status-badge').textContent = '🟡 در حال اتصال مجدد...';
+        
+        clearTimeout(reconnectTimeout);
+        reconnectTimeout = setTimeout(() => {
+            if (intentionalDisconnect || !gameState.network.isClient) {
+                isReconnecting = false;
+                return;
+            }
+            let token = null;
+            try {
+                token = localStorage.getItem(`spy_reconnect_${rawCode}`);
+            } catch(e){}
+
+            try {
+                if (netClientConn) {
+                    try { netClientConn.close(); } catch(err){}
+                }
+                if (!netPeer || netPeer.destroyed || netPeer.disconnected) {
+                    netPeer = new Peer(PEER_CONFIG);
+                    netPeer.on('error', () => {
+                        isReconnecting = false;
+                        scheduleClientReconnect(rawCode, name);
+                    });
+                    netPeer.on('open', () => {
+                        const raw = netPeer.connect(`SPY_ROOM_V_${rawCode}`, { reliable: true });
+                        netClientConn = wrapConn(raw);
+                        attachClientConnListeners(netClientConn, rawCode, name, token);
+                    });
+                } else {
+                    const raw = netPeer.connect(`SPY_ROOM_V_${rawCode}`, { reliable: true });
+                    netClientConn = wrapConn(raw);
+                    attachClientConnListeners(netClientConn, rawCode, name, token);
+                }
+            } catch(e) {
+                isReconnecting = false;
+                scheduleClientReconnect(rawCode, name);
+            }
+        }, 2000);
+    }
+
+    function joinNetworkClient() {
+        let rawCode = document.getElementById('join-room-code').value.toUpperCase().trim();
+        let name = document.getElementById('join-player-name').value.trim();
+        
+        const roomCodeRegex = /^[23456789ABCDEFGHJKLMNPQRSTUVWXYZ]{5}$/;
+        if (!roomCodeRegex.test(rawCode)) {
+            showToast("کد ۵ رقمی اتاق نامعتبر است!");
+            return;
+        }
+        if (!name || name.length > 20) {
+            showToast("نام خود را به درستی وارد فرمایید (حداکثر ۲۰ کاراکتر)!");
+            return;
+        }
+
+        let savedReconnectToken = null;
+        try {
+            savedReconnectToken = localStorage.getItem(`spy_reconnect_${rawCode}`);
+        } catch(e){}
+
+        try {
+            if (netPeer) { try { netPeer.destroy(); } catch(e){} }
+            const peer = new Peer(PEER_CONFIG);
+            netPeer = peer;
+
+            peer.on('error', (err) => {
+                console.error("PeerJS Client Error:", err);
+                showToast(err.type === 'peer-unavailable'
+                    ? "اتاقی با این کد یافت نشد یا میزبان آفلاین است."
+                    : `خطای اتصال: ${err.type || 'نامشخص'}`);
+                resetNetwork();
+                setPhase('welcome');
+            });
+
+            peer.on('open', () => {
+                const raw = peer.connect(`SPY_ROOM_V_${rawCode}`, { reliable: true });
+                netClientConn = wrapConn(raw);
+                attachClientConnListeners(netClientConn, rawCode, name, savedReconnectToken);
+            });
+        } catch(e) { showToast("خطا در اتصال به اتاق!"); }
+    }
+
+    function resetNetwork() {
+        intentionalDisconnect = true;
+        isReconnecting = false;
+        clearTimeout(reconnectTimeout);
+        clearInterval(netHeartbeat);
+        clearInterval(clientHeartbeatCheck);
+        netHostConns.forEach(c => {
+            try { c.close(); } catch(e){}
+        });
+        netHostConns = [];
+        if (netClientConn) {
+            try { netClientConn.close(); } catch(e){}
+            netClientConn = null;
+        }
+        if (netPeer) {
+            try { netPeer.destroy(); } catch(e){}
+            netPeer = null;
+        }
+        gameState.network.isHost = false;
+        gameState.network.isClient = false;
+        document.getElementById('connection-status-badge').textContent = '🟢 وضعیت: آفلاین';
+
+        try {
+            Object.keys(localStorage).forEach(k => {
+                if (k.startsWith('spy_reconnect_')) {
+                    localStorage.removeItem(k);
+                }
+            });
+        } catch(e){}
+
+        setTimeout(() => { intentionalDisconnect = false; }, 500);
+    }
+
+    function syncNetwork(type, data={}) {
+        if (!gameState.network.isHost) return;
+        let packet = Object.assign({ type }, data);
+        netHostConns.forEach(c => {
+            if (c.open && c.joined) {
+                c.safeSend(packet);
+            }
+        });
+    }
     let previousPhase = null;
     function renderUI() {
         document.querySelectorAll('.screen-view').forEach(e => e.classList.add('hidden'));
@@ -3468,7 +4063,8 @@
 
     function restorePhaseBindings() {
         if (gameState.phase === 'timer' && gameState.timer.running) {
-            const diff = Math.ceil((gameState.timer.endAt - Date.now()) / 1000);
+            let targetEnd = gameState.phaseEndsAt || gameState.timer.endAt || Date.now();
+            const diff = Math.ceil((targetEnd - Date.now()) / 1000);
             if (diff <= 0) {
                 gameState.timer.pausedSec = 0;
                 gameState.timer.running = false;
@@ -3478,670 +4074,6 @@
                 resumeTimer();
             }
         }
-    }
-
-    function generateRoomCode() {
-        const chars = '23456789ABCDEFGHJKLMNPQRSTUVWXYZ';
-        const limit = 256 - (256 % chars.length);
-        let result = '';
-        while (result.length < 5) {
-            const bytes = new Uint8Array(8);
-            if (window.crypto && crypto.getRandomValues) {
-                crypto.getRandomValues(bytes);
-                for (const b of bytes) {
-                    if (b < limit) {
-                        result += chars[b % chars.length];
-                        if (result.length === 5) break;
-                    }
-                }
-            } else {
-                result += chars[Math.floor(Math.random() * chars.length)];
-            }
-        }
-        return result;
-    }
-
-    function validateVotePacket(conn, data) {
-        let voter = gameState.players.find(p => p.id === conn.playerId);
-        let suspect = gameState.players.find(p => p.id === data.suspectId);
-        return (isActivePlayerConnection(conn) && voter && voter.isAlive && !voter.isSpectator && suspect && suspect.isAlive && !suspect.isSpectator && voter.id !== suspect.id && gameState.phase === 'vote' && data.roundId === gameState.round.roundId && data.sessionToken === conn.sessionToken && !hostSecretState.votesCast[voter.id]);
-    }
-
-    function validateWagerPacket(conn, data) {
-        let voter = gameState.players.find(p => p.id === conn.playerId);
-        return (isActivePlayerConnection(conn) && voter && voter.isAlive && !voter.isSpectator && voter.score > 0 && gameState.phase === 'wager' && data.roundId === gameState.round.roundId && data.sessionToken === conn.sessionToken && Number.isInteger(data.amount) && data.amount >= 0 && data.amount <= voter.score && !hostSecretState.wagersCast[voter.id]);
-    }
-
-    function validateDetectivePacket(conn, data) {
-        let det = gameState.players.find(p => p.id === conn.playerId);
-        let tar = gameState.players.find(p => p.id === data.targetId);
-        return (
-            isActivePlayerConnection(conn) &&
-            gameState.phase === 'reveal' &&
-            det &&
-            det.isAlive &&
-            !det.isSpectator &&
-            det.role === 'detective' &&
-            !hostSecretState.detectiveUsed &&
-            tar &&
-            tar.isAlive &&
-            !tar.isSpectator &&
-            tar.id !== det.id &&
-            data.roundId === gameState.round.roundId &&
-            data.sessionToken === conn.sessionToken
-        );
-    }
-
-    function broadcastSnapshot() {
-        syncNetwork(PROTOCOL.STATE_SNAPSHOT, buildPublicSnapshot());
-    }
-
-    function kickPlayerFromLobby(playerId) {
-        const conn = netHostConns.find(c => c.playerId === playerId);
-        if (conn) {
-            conn.connected = false;
-            try { conn.close(); } catch(e){}
-            netHostConns = netHostConns.filter(c => c !== conn);
-        }
-        gameState.players = gameState.players.filter(p => p.id !== playerId);
-        updateHostConnectedPlayers();
-        broadcastLobbyState();
-    }
-
-    function initNetworkHost() {
-        let hostName = document.getElementById('host-player-name').value.trim();
-        if (!hostName) {
-            showToast("لطفاً نام خود (میزبان) را وارد کنید!");
-            return;
-        }
-
-        let code = generateRoomCode();
-        document.getElementById('room-code-display').textContent = code;
-        document.getElementById('host-room-info').classList.remove('hidden');
-
-        const qrBox = document.getElementById('qrcode-container');
-        qrBox.innerHTML = '';
-        if (typeof QRCode !== 'undefined') {
-            new QRCode(qrBox, { text: code, width: 120, height: 120, colorDark: "#090d16", colorLight: "#ffffff" });
-        }
-
-        try {
-            if (netPeer) { try { netPeer.destroy(); } catch(e){} }
-            netPeer = new Peer(`SPY_ROOM_V_${code}`, PEER_CONFIG);
-            
-            netPeer.on('error', (err) => {
-                console.error("PeerJS Host Error:", err);
-                if (err.type === 'unavailable-id') {
-                    if (hostInitAttempts < 5) {
-                        hostInitAttempts++;
-                        initNetworkHost();
-                    } else {
-                        showToast("تلاش‌های ساخت اتاق آنلاین ناموفق بود. مجدداً امتحان فرمایید.");
-                        hostInitAttempts = 0;
-                    }
-                } else {
-                    showToast(`خطا در سرویس اتاق: ${err.type || 'قطع سرویس'}`);
-                }
-            });
-
-            netPeer.on('open', () => {
-                hostInitAttempts = 0;
-                gameState.network.isHost = true;
-                gameState.network.code = code;
-                document.getElementById('connection-status-badge').textContent = `👑 میزبان اتاق: ${code}`;
-                updateHostConnectedPlayers();
-                
-                clearInterval(netHeartbeat);
-                netHeartbeat = setInterval(() => {
-                    const now = Date.now();
-                    netHostConns.forEach(c => {
-                        if (c.joined && now - (c.lastSeenAt || now) > 15000) {
-                            if (c.connected) {
-                                c.connected = false;
-                                showToast(`⚠️ یکی از بازیکنان از دسترس خارج شد.`);
-                                if (gameState.phase === 'vote') checkVoteCompletion();
-                                if (gameState.phase === 'wager') checkWagerCompletion();
-                            }
-                        }
-                        safeHostSend(c, { type: PROTOCOL.PING, serverTime: Date.now() });
-                    });
-                }, 4000);
-            });
-
-            netPeer.on('connection', conn => {
-                netHostConns.push(conn);
-                conn.sessionToken = generateId();
-                conn.connected = true;
-                conn.lastSeenAt = Date.now();
-                conn.tokens = 40;
-                conn.lastRefill = Date.now();
-
-                conn.on('data', data => {
-                    if (!data || typeof data !== 'object') return;
-                    
-                    const now = Date.now();
-                    conn.tokens = Math.min(40, conn.tokens + (now - conn.lastRefill) * (40 / 1000));
-                    conn.lastRefill = now;
-                    if (conn.tokens < 1) {
-                        conn.close();
-                        return;
-                    }
-                    conn.tokens -= 1;
-
-                    conn.lastSeenAt = now;
-                    conn.connected = true;
-                    if (data.type === PROTOCOL.PONG) return;
-
-                    if (data.type === PROTOCOL.REQUEST_SYNC) {
-                        if (!conn.joined) return;
-                        let p = gameState.players.find(x => x.id === conn.playerId);
-                        if (p) syncPlayerAfterReconnect(conn, p);
-                        return;
-                    }
-
-                    if (data.type === 'JOIN') {
-                        if (conn.joined) return;
-
-                        if (netHostConns.filter(c => c.joined && c.connected).length + 1 >= RULES.players.max) {
-                            conn.close();
-                            return;
-                        }
-
-                        let isMidGame = gameState.phase !== 'welcome' && gameState.phase !== 'setup' && gameState.phase !== 'multi';
-                        let matchedPlayer = null;
-                        if (data.reconnectToken) {
-                            matchedPlayer = gameState.players.find(p => p.reconnectToken === data.reconnectToken);
-                        }
-
-                        let cleanName = String(data.name || '')
-                            .replace(/[\u200B-\u200F\u202A-\u202E\u2060-\u2069\uFEFF]/g, '')
-                            .trim()
-                            .replace(/\s+/g, ' ');
-                        if (cleanName.length < 1 || cleanName.length > 20) {
-                            conn.close();
-                            return;
-                        }
-
-                        if (matchedPlayer) {
-                            const oldConn = netHostConns.find(c => c !== conn && c.joined && c.playerId === matchedPlayer.id);
-                            if (oldConn) {
-                                oldConn.connected = false;
-                                try { oldConn.close(); } catch(e){}
-                                netHostConns = netHostConns.filter(c => c !== oldConn);
-                            }
-
-                            conn.playerId = matchedPlayer.id;
-                            conn.reconnectToken = matchedPlayer.reconnectToken;
-                            conn.playerName = matchedPlayer.name;
-                            conn.joined = true;
-                            safeHostSend(conn, { type: PROTOCOL.JOIN_ACK, playerId: conn.playerId, sessionToken: conn.sessionToken, reconnectToken: conn.reconnectToken, isSpectator: matchedPlayer.isSpectator });
-                            syncPlayerAfterReconnect(conn, matchedPlayer);
-                            updateHostConnectedPlayers();
-                            broadcastLobbyState();
-                            return;
-                        } else {
-                            let dup = gameState.players.some(p => normalizeWord(p.name) === normalizeWord(cleanName));
-                            if (dup) cleanName += ` (${gameState.players.length + 1})`;
-
-                            conn.playerId = generateId();
-                            conn.reconnectToken = generateId();
-                            conn.playerName = cleanName;
-                            conn.joined = true;
-
-                            let newPlayer = {
-                                id: conn.playerId,
-                                reconnectToken: conn.reconnectToken,
-                                name: cleanName,
-                                isHost: false,
-                                isSpectator: isMidGame,
-                                score: 0,
-                                isAlive: !isMidGame,
-                                hasSeen: isMidGame,
-                                role: isMidGame ? 'spectator' : 'citizen',
-                                team: isMidGame ? 'spectator' : 'citizen',
-                                quest: null,
-                                stats: { sw: 0, cw: 0, spiesCaught: 0, vs: 0, bw: 0, bl: 0, spyGuesses: 0, innocentVotesReceived: 0, foolEscaped: 0, wagerProfit: 0 }
-                            };
-
-                            gameState.players.push(newPlayer);
-                            safeHostSend(conn, { type: PROTOCOL.JOIN_ACK, playerId: conn.playerId, sessionToken: conn.sessionToken, reconnectToken: conn.reconnectToken, isSpectator: isMidGame });
-                            if (isMidGame) {
-                                safeHostSend(conn, { type: PROTOCOL.STATE_SNAPSHOT, ...buildPublicSnapshot(newPlayer) });
-                                sendPrivateRole(conn, newPlayer);
-                            }
-                            updateHostConnectedPlayers();
-                            broadcastLobbyState();
-                            if (isMidGame) broadcastSnapshot();
-                            return;
-                        }
-                    }
-
-                    if (data.requestId && hostSecretState.processedRequestIds.has(data.requestId)) {
-                        return;
-                    }
-
-                    if (data.type === PROTOCOL.ROLE_SEEN) {
-                        const player = gameState.players.find(p => p.id === conn.playerId);
-                        if (!isActivePlayerConnection(conn) || !player || data.playerId !== conn.playerId || data.sessionToken !== conn.sessionToken || data.roundId !== gameState.round.roundId) {
-                            return;
-                        }
-                        player.hasSeen = true;
-                        broadcastSnapshot();
-                        commitState();
-                    } else if (data.type === PROTOCOL.EMERGENCY_VOTE_REQUEST) {
-                        if (!isActivePlayerConnection(conn) || data.playerId !== conn.playerId || data.sessionToken !== conn.sessionToken) {
-                            return;
-                        }
-                        let sender = gameState.players.find(p => p.id === conn.playerId);
-                        if (sender && sender.isAlive && !sender.isSpectator && gameState.phase === 'timer') {
-                            dispatch({type: 'REQUEST_VOTE'});
-                        }
-                    } else if (data.type === PROTOCOL.VOTE_CAST) {
-                        if (!validateVotePacket(conn, data)) {
-                            safeHostSend(conn, { type: PROTOCOL.ACTION_REJECTED, actionType: PROTOCOL.VOTE_CAST, requestId: data.requestId, reason: "رای نامعتبر است." });
-                            return;
-                        }
-                        if (data.requestId) {
-                            if (hostSecretState.processedRequestIds.size >= 5000) hostSecretState.processedRequestIds.clear();
-                            hostSecretState.processedRequestIds.add(data.requestId);
-                        }
-                        hostSecretState.votesCast[conn.playerId] = data.suspectId;
-                        safeHostSend(conn, { type: PROTOCOL.ACTION_ACK, actionType: PROTOCOL.VOTE_CAST, requestId: data.requestId });
-                        checkVoteCompletion();
-                    } else if (data.type === PROTOCOL.WAGER_SUBMIT) {
-                        if (!validateWagerPacket(conn, data)) {
-                            safeHostSend(conn, { type: PROTOCOL.ACTION_REJECTED, actionType: PROTOCOL.WAGER_SUBMIT, requestId: data.requestId, reason: "مقدار شرط نامعتبر است." });
-                            return;
-                        }
-                        if (data.requestId) {
-                            if (hostSecretState.processedRequestIds.size >= 5000) hostSecretState.processedRequestIds.clear();
-                            hostSecretState.processedRequestIds.add(data.requestId);
-                        }
-                        submitWagerUnified(conn.playerId, data.amount);
-                        safeHostSend(conn, { type: PROTOCOL.ACTION_ACK, actionType: PROTOCOL.WAGER_SUBMIT, requestId: data.requestId });
-                    } else if (data.type === PROTOCOL.DETECTIVE_QUERY) {
-                        if (!validateDetectivePacket(conn, data)) {
-                            safeHostSend(conn, { type: PROTOCOL.ACTION_REJECTED, actionType: PROTOCOL.DETECTIVE_QUERY, requestId: data.requestId, reason: "استعلام نامعتبر است." });
-                            return;
-                        }
-                        if (data.requestId) {
-                            if (hostSecretState.processedRequestIds.size >= 5000) hostSecretState.processedRequestIds.clear();
-                            hostSecretState.processedRequestIds.add(data.requestId);
-                        }
-                        let tar = gameState.players.find(p => p.id === data.targetId);
-                        hostSecretState.detectiveUsed = true;
-                        gameState.settings.detectiveUsed = true;
-                        let resText = tar && tar.role === 'spy'
-                            ? `⚠️ «${tar.name}» قطعاً جاسوس است!`
-                            : `✅ «${tar ? tar.name : 'متهم'}» شهروند بی‌گناه است.`;
-                        hostSecretState.detectiveInquiryResult = resText;
-                        safeHostSend(conn, { type: PROTOCOL.ACTION_ACK, actionType: PROTOCOL.DETECTIVE_QUERY, requestId: data.requestId });
-                        safeHostSend(conn, { type: PROTOCOL.DETECTIVE_RESULT, isSpy: tar ? tar.role === 'spy' : false, targetName: tar ? tar.name : "" });
-                        broadcastSnapshot();
-                    }
-                });
-
-                conn.on('close', () => {
-                    conn.connected = false;
-                    netHostConns = netHostConns.filter(c => c !== conn);
-                    updateHostConnectedPlayers();
-                    broadcastLobbyState();
-                    if (gameState.phase === 'vote') checkVoteCompletion();
-                    if (gameState.phase === 'wager') checkWagerCompletion();
-                });
-
-                conn.on('error', () => {
-                    conn.connected = false;
-                    if (gameState.phase === 'vote') checkVoteCompletion();
-                    if (gameState.phase === 'wager') checkWagerCompletion();
-                });
-            });
-        } catch(e) { showToast("خطا در ایجاد اتاق آنلاین!"); }
-    }
-
-    function updateHostConnectedPlayers() {
-        let hostName = document.getElementById('host-player-name').value.trim() || 'میزبان';
-        let active = netHostConns.filter(x => x.joined && x.connected);
-        document.getElementById('connected-players-count').textContent = active.length + 1;
-        const listContainer = document.getElementById('connected-players-list');
-        listContainer.innerHTML = '';
-        
-        const hostRow = document.createElement('div');
-        hostRow.className = 'lobby-player-row color-amber';
-        hostRow.textContent = `👑 ${hostName}`;
-        listContainer.appendChild(hostRow);
-
-        active.forEach(c => {
-            const row = document.createElement('div');
-            row.className = 'lobby-player-row';
-            
-            const nameSpan = document.createElement('span');
-            nameSpan.textContent = c.playerName;
-            
-            const kickBtn = document.createElement('button');
-            kickBtn.type = 'button';
-            kickBtn.className = 'lobby-kick-btn';
-            kickBtn.textContent = '🗑️ اخراج';
-            kickBtn.onclick = () => kickPlayerFromLobby(c.playerId);
-
-            row.appendChild(nameSpan);
-            row.appendChild(kickBtn);
-            listContainer.appendChild(row);
-        });
-    }
-
-    function broadcastLobbyState() {
-        let hostName = document.getElementById('host-player-name').value.trim() || 'میزبان';
-        let playerNames = [hostName, ...netHostConns.filter(c => c.joined && c.connected).map(c => c.playerName)];
-        syncNetwork(PROTOCOL.LOBBY_STATE, { players: playerNames });
-    }
-
-    function attachClientConnListeners(conn, rawCode, name, savedReconnectToken) {
-        lastHostPing = Date.now();
-        clearInterval(clientHeartbeatCheck);
-        clientHeartbeatCheck = setInterval(() => {
-            if (gameState.network.isClient && !isReconnecting) {
-                if (Date.now() - lastHostPing > 15000) {
-                    resetNetwork();
-                    setPhase('welcome');
-                }
-            }
-        }, 3000);
-
-        const connectGuard = setTimeout(() => {
-            if (!conn || !conn.open) {
-                showToast("اتصال به میزبان برقرار نشد. کد اتاق را بررسی فرمایید.");
-                resetNetwork(); 
-                setPhase('welcome');
-            }
-        }, 8000);
-
-        conn.on('open', () => {
-            clearTimeout(connectGuard);
-            isReconnecting = false;
-            lastHostPing = Date.now();
-            gameState.network.isClient = true;
-            safeClientSend({ type: 'JOIN', name: name, reconnectToken: savedReconnectToken });
-            document.getElementById('client-wait-box').classList.remove('hidden');
-            document.getElementById('connection-status-badge').textContent = `🟢 متصل به اتاق: ${rawCode}`;
-        });
-
-        conn.on('data', data => {
-            if (!data || typeof data !== 'object') return;
-            lastHostPing = Date.now();
-            if (data.type === PROTOCOL.PING) {
-                if (data.serverTime) {
-                    clientClockOffset = data.serverTime - Date.now();
-                }
-                safeClientSend({ type: PROTOCOL.PONG });
-                return;
-            }
-            
-            if (data.type === PROTOCOL.JOIN_ACK) {
-                clientPrivateState.playerId = data.playerId;
-                clientPrivateState.sessionToken = data.sessionToken;
-                clientPrivateState.reconnectToken = data.reconnectToken;
-                clientPrivateState.isSpectator = !!data.isSpectator;
-                if (data.isSpectator) {
-                    showToast("شما به عنوان تماشاچی وارد شدید و در دست بعد بازی می‌کنید.");
-                }
-                try {
-                    localStorage.setItem(`spy_reconnect_${rawCode}`, data.reconnectToken);
-                } catch(e){}
-            } else if (data.type === PROTOCOL.ACTION_ACK) {
-                if (data.actionType === PROTOCOL.VOTE_CAST) {
-                    clientPrivateState.hasVoted = true;
-                    document.getElementById('vote-instruction-text').textContent = "رای شما ثبت شد. منتظر سایر بازیکنان بمانید...";
-                } else if (data.actionType === PROTOCOL.WAGER_SUBMIT) {
-                    clientPrivateState.hasWagered = true;
-                    const listEl = document.getElementById('wager-players-list');
-                    listEl.textContent = '';
-                    const successBox = document.createElement('div');
-                    successBox.className = 'text-center color-emerald';
-                    successBox.textContent = 'تصمیم شرط شما ثبت شد.';
-                    listEl.appendChild(successBox);
-                }
-            } else if (data.type === PROTOCOL.ACTION_REJECTED) {
-                showToast(`خطا: ${data.reason || 'عملیات پذیرفته نشد.'}`);
-                if (data.actionType === PROTOCOL.VOTE_CAST) {
-                    clientPrivateState.hasVoted = false;
-                    document.getElementById('vote-instruction-text').textContent = "متهم اصلی را انتخاب کنید:";
-                } else if (data.actionType === PROTOCOL.WAGER_SUBMIT) {
-                    clientPrivateState.hasWagered = false;
-                    renderUI();
-                }
-            } else if (data.type === PROTOCOL.LOBBY_STATE) {
-                const safePlayers = (data.players || []).map(escapeHtml).join(' ، ');
-                document.getElementById('client-wait-box').innerHTML = `🟢 متصل به اتاق! افراد حاضر:<br><strong>${safePlayers}</strong>`;
-            } else if (data.type === PROTOCOL.VOTE_PROGRESS) {
-                let el = document.getElementById('vote-instruction-text');
-                if (el) el.textContent = `آرا ثبت شده: ${data.received} از ${data.total}`;
-            } else if (data.type === PROTOCOL.STATE_SNAPSHOT) {
-                if (VALID_PHASES.has(data.phase)) gameState.phase = data.phase;
-                gameState.settings = sanitizeSettings(data.settings);
-                if (Array.isArray(data.players)) {
-                    gameState.players = data.players.map(toPublicPlayer).filter(Boolean);
-                }
-                gameState.round.num = Number.isInteger(data.roundNum) ? data.roundNum : 1;
-                gameState.round.roundId = typeof data.roundId === 'string' ? data.roundId : null;
-                gameState.round.history = sanitizeHistory(data.history);
-                if (data.timer && typeof data.timer.running === 'boolean' && Number.isFinite(data.timer.endAt)) {
-                    gameState.timer = data.timer;
-                    if (gameState.phase === 'timer' && gameState.timer.running) {
-                        runTick();
-                    }
-                }
-                gameState.vote = sanitizeVote(data.vote);
-                if (data.actionState) {
-                    clientPrivateState.hasVoted = !!data.actionState.hasVoted;
-                    clientPrivateState.hasWagered = !!data.actionState.hasWagered;
-                    clientPrivateState.hasUsedDetective = !!data.actionState.hasUsedDetective;
-                }
-                renderUI();
-            } else if (data.type === PROTOCOL.PRIVATE_ROLE) {
-                clientPrivateState.role = data.role;
-                clientPrivateState.team = data.team;
-                clientPrivateState.hintTitle = data.hintTitle || 'کلمه رمز شما:';
-                clientPrivateState.secretWord = data.secretWord;
-                clientPrivateState.quest = typeof data.quest === 'string' ? data.quest : null;
-                clientPrivateState.fellowSpies = Array.isArray(data.fellowSpies) ? data.fellowSpies : [];
-                if (data.detectiveInquiryResult) {
-                    clientPrivateState.detectiveInquiryResult = data.detectiveInquiryResult;
-                    clientPrivateState.hasUsedDetective = true;
-                }
-
-                let me = gameState.players.find(p => p.id === clientPrivateState.playerId);
-                if (me) {
-                    me.role = data.role;
-                    me.team = data.team;
-                    me.quest = data.quest;
-                }
-                
-                if (gameState.phase === 'reveal') {
-                    renderRoleModalContent(clientPrivateState.playerId);
-                    dispatch({type: 'OPEN_MODAL', payload: 'role-modal'});
-                }
-            } else if (data.type === PROTOCOL.TIMER_SYNC) {
-                if (typeof data.running === 'boolean' && Number.isFinite(data.pausedSec)) {
-                    lastSoundSecond = null;
-                    gameState.timer.pausedSec = data.pausedSec;
-                    gameState.timer.endAt = data.endAt;
-                    gameState.timer.running = data.running;
-                    if (data.running) {
-                        setPhase('timer');
-                        runTick();
-                    } else {
-                        clearInterval(timerInt);
-                        timerInt = null;
-                        renderTimer(data.pausedSec);
-                    }
-                }
-            } else if (data.type === PROTOCOL.DIRECTOR_UPDATE) {
-                gameState.round.history = sanitizeHistory(data.history);
-                if (gameState.phase === 'timer') renderUI();
-            } else if (data.type === PROTOCOL.VOTE_OPEN) {
-                pauseTimer();
-                gameState.timer.reason = data.isTimeout ? 'timeout' : 'emergency';
-                gameState.vote.pendingId = null;
-                clientPrivateState.hasVoted = false;
-                setPhase('vote');
-            } else if (data.type === PROTOCOL.WAGER_OPEN) {
-                gameState.vote.targetId = data.targetId;
-                clientPrivateState.hasWagered = false;
-                setPhase('wager');
-            } else if (data.type === PROTOCOL.GUESS_OPEN) {
-                gameState.vote.targetId = data.spyId;
-                setPhase('guess');
-            } else if (data.type === PROTOCOL.DETECTIVE_RESULT) {
-                clientPrivateState.hasUsedDetective = true;
-                let res = document.getElementById('detective-result-box');
-                const resText = data.isSpy
-                    ? `⚠️ «${data.targetName}» قطعاً جاسوس است!`
-                    : `✅ «${data.targetName}» شهروند بی‌گناه است.`;
-                clientPrivateState.detectiveInquiryResult = resText;
-
-                if (res) {
-                    if (data.isSpy) {
-                        res.innerHTML = `⚠️ <span class="color-rose">«${escapeHtml(data.targetName)}» قطعاً جاسوس است!</span>`;
-                    } else {
-                        res.innerHTML = `✅ <span class="color-emerald">${escapeHtml(data.targetName)}» شهروند بی‌گناه است.</span>`;
-                    }
-                }
-            } else if (data.type === PROTOCOL.ROUND_RESULT) {
-                if (data.isFinalMatch) {
-                    if (Array.isArray(data.players)) gameState.players = data.players.map(toPublicPlayer).filter(Boolean);
-                    setPhase('leaderboard');
-                } else {
-                    renderRemoteRoundResult(data);
-                }
-            }
-        });
-
-        conn.on('close', () => {
-            clearTimeout(connectGuard);
-            if (intentionalDisconnect) return;
-            document.getElementById('connection-status-badge').textContent = '🟡 در حال اتصال مجدد...';
-            
-            if (isReconnecting) return;
-            isReconnecting = true;
-            
-            clearTimeout(reconnectTimeout);
-            reconnectTimeout = setTimeout(() => {
-                if (intentionalDisconnect || !gameState.network.isClient) {
-                    isReconnecting = false;
-                    return;
-                }
-                let token = null;
-                try {
-                    token = localStorage.getItem(`spy_reconnect_${rawCode}`);
-                } catch(e){}
-                try {
-                    if (netClientConn) {
-                        try { netClientConn.close(); } catch(err){}
-                    }
-                    if (!netPeer || netPeer.destroyed || netPeer.disconnected) {
-                        netPeer = new Peer(PEER_CONFIG);
-                        netPeer.on('error', (err) => {
-                            console.error("PeerJS Reconnect Error:", err);
-                            resetNetwork();
-                            setPhase('welcome');
-                        });
-                        netPeer.on('open', () => {
-                            netClientConn = netPeer.connect(`SPY_ROOM_V_${rawCode}`);
-                            attachClientConnListeners(netClientConn, rawCode, name, token);
-                        });
-                    } else {
-                        netClientConn = netPeer.connect(`SPY_ROOM_V_${rawCode}`);
-                        attachClientConnListeners(netClientConn, rawCode, name, token);
-                    }
-                } catch(e) {
-                    isReconnecting = false;
-                }
-            }, 2500);
-        });
-    }
-
-    function joinNetworkClient() {
-        let rawCode = document.getElementById('join-room-code').value.toUpperCase().trim();
-        let name = document.getElementById('join-player-name').value.trim();
-        
-        const roomCodeRegex = /^[23456789ABCDEFGHJKLMNPQRSTUVWXYZ]{5}$/;
-        if (!roomCodeRegex.test(rawCode)) {
-            showToast("کد ۵ رقمی اتاق نامعتبر است!");
-            return;
-        }
-        if (!name || name.length > 20) {
-            showToast("نام خود را به درستی وارد فرمایید (حداکثر ۲۰ کاراکتر)!");
-            return;
-        }
-
-        let savedReconnectToken = null;
-        try {
-            savedReconnectToken = localStorage.getItem(`spy_reconnect_${rawCode}`);
-        } catch(e){}
-
-        try {
-            if (netPeer) { try { netPeer.destroy(); } catch(e){} }
-            netPeer = new Peer(PEER_CONFIG);
-
-            netPeer.on('error', (err) => {
-                console.error("PeerJS Client Error:", err);
-                showToast(err.type === 'peer-unavailable'
-                    ? "اتاقی با این کد یافت نشد یا میزبان آفلاین است."
-                    : `خطای اتصال: ${err.type || 'نامشخص'}`);
-                resetNetwork();
-                setPhase('welcome');
-            });
-
-            netPeer.on('open', () => {
-                netClientConn = netPeer.connect(`SPY_ROOM_V_${rawCode}`);
-                attachClientConnListeners(netClientConn, rawCode, name, savedReconnectToken);
-            });
-        } catch(e) { showToast("خطا در اتصال به اتاق!"); }
-    }
-
-    function resetNetwork() {
-        intentionalDisconnect = true;
-        isReconnecting = false;
-        clearTimeout(reconnectTimeout);
-        clearInterval(netHeartbeat);
-        clearInterval(clientHeartbeatCheck);
-        netHostConns.forEach(c => {
-            c.connected = false;
-            try { c.close(); } catch(e){}
-        });
-        netHostConns = [];
-        if (netClientConn) {
-            try { netClientConn.close(); } catch(e){}
-            netClientConn = null;
-        }
-        if (netPeer) {
-            try { netPeer.destroy(); } catch(e){}
-            netPeer = null;
-        }
-        gameState.network.isHost = false;
-        gameState.network.isClient = false;
-        document.getElementById('connection-status-badge').textContent = '🟢 وضعیت: آفلاین';
-
-        try {
-            Object.keys(localStorage).forEach(k => {
-                if (k.startsWith('spy_reconnect_')) {
-                    localStorage.removeItem(k);
-                }
-            });
-        } catch(e){}
-
-        setTimeout(() => { intentionalDisconnect = false; }, 500);
-    }
-
-    function syncNetwork(type, data={}) {
-        if (!gameState.network.isHost) return;
-        let packet = Object.assign({ type }, data);
-        netHostConns.forEach(c => {
-            if (c.connected && c.joined) {
-                safeHostSend(c, packet);
-            }
-        });
     }
 
     function getCustomWords() {
@@ -4418,6 +4350,35 @@
         }
     }
 
+    document.addEventListener('visibilitychange', async () => {
+        if (document.visibilityState === 'visible') {
+            await requestWakeLock();
+            if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume().catch(()=>{});
+            
+            if (gameState.network.isClient) {
+                if (netClientConn && netClientConn.isAlive()) {
+                    netClientConn.safeSend({ type: PROTOCOL.REQUEST_SYNC });
+                } else if (netClientConn) {
+                    const rawCode = document.getElementById('join-room-code').value.toUpperCase().trim();
+                    const name = document.getElementById('join-player-name').value.trim();
+                    scheduleClientReconnect(rawCode, name);
+                }
+            }
+
+            if (gameState.phase === 'timer') {
+                runTick();
+            }
+        } else {
+            if (gameState.settings.revealHold && !document.getElementById('role-modal').classList.contains('hidden')) {
+                const activePlayer = gameState.players.find(x => x.id === activeModalPlayerId);
+                const isDetectivePending = activePlayer && activePlayer.role === 'detective' && !(gameState.settings.detectiveUsed || hostSecretState.detectiveUsed || clientPrivateState.hasUsedDetective);
+                if (!isDetectivePending) {
+                    dispatch({type: 'CLOSE_ROLE_CARD'});
+                }
+            }
+        }
+    });
+
     document.querySelectorAll('.info-btn').forEach(btn => {
         btn.onclick = (e) => {
             e.stopPropagation();
@@ -4481,7 +4442,7 @@
 
     document.getElementById('btn-host-init').onclick = () => dispatch({type: 'HOST_INIT'});
     document.getElementById('btn-host-open-setup').onclick = () => {
-        let activePeers = netHostConns.filter(c => c.joined && c.connected);
+        let activePeers = netHostConns.filter(c => c.joined && c.open);
         if (activePeers.length < 2) { showToast("حداقل ۲ بازیکن دیگر باید آنلاین وصل باشند (جمعاً ۳ نفر)!"); return; }
         
         let hostName = document.getElementById('host-player-name').value.trim() || 'میزبان';
@@ -4506,8 +4467,8 @@
 
     document.getElementById('btn-client-join').onclick = () => dispatch({type: 'CLIENT_JOIN'});
     document.getElementById('btn-client-resync').onclick = () => {
-        if (gameState.network.isClient) {
-            safeClientSend({ type: PROTOCOL.REQUEST_SYNC });
+        if (gameState.network.isClient && netClientConn) {
+            netClientConn.safeSend({ type: PROTOCOL.REQUEST_SYNC });
             showToast('درخواست بروزرسانی ارسال شد...');
         }
     };
