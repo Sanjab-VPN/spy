@@ -104,7 +104,7 @@
             font: inherit;
         }
 
-        :where(button, input, select, textarea, .player-card, .card-menu):focus-visible {
+        :where(button, input, select, textarea, .player-card, .card-menu, .chip-item):focus-visible {
             outline: 3px solid var(--brand-primary);
             outline-offset: 3px;
         }
@@ -120,7 +120,7 @@
             -webkit-user-select: auto;
         }
 
-        .btn, .player-card, .card-menu, .info-btn {
+        .btn, .player-card, .card-menu, .info-btn, .chip-item {
             touch-action: manipulation;
         }
 
@@ -225,6 +225,36 @@
         }
         .input-control:focus { border-color: var(--brand-primary); }
 
+        .chips-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+            gap: 8px;
+            margin-bottom: 6px;
+        }
+        .chip-item {
+            background: var(--surface-input);
+            border: 1px solid var(--border-glow);
+            border-radius: 12px;
+            padding: 8px 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: border-color 0.2s, background 0.2s;
+        }
+        .chip-item:hover {
+            border-color: var(--brand-primary);
+            background: rgba(15, 23, 42, 0.8);
+        }
+        .chip-item input[type="checkbox"] {
+            accent-color: var(--brand-primary);
+            width: 16px;
+            height: 16px;
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+
         #room-code-display, #join-room-code {
             unicode-bidi: isolate;
             direction: ltr;
@@ -236,6 +266,7 @@
 
         @media (max-width: 380px) {
             .grid-2 { grid-template-columns: 1fr; }
+            .chips-grid { grid-template-columns: 1fr; }
         }
 
         .toggle-item { background: rgba(15, 23, 42, 0.5); border: 1px solid var(--border-glow); padding: 10px 14px; border-radius: 16px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
@@ -309,7 +340,7 @@
         .role-spectator { background: rgba(168, 85, 247, 0.15); color: var(--brand-secondary); border: 1px solid rgba(168, 85, 247, 0.3); }
 
         .secret-box { background: var(--surface-input); padding: 14px; border-radius: 16px; margin: 14px 0; border: 1px dashed rgba(255, 255, 255, 0.15); }
-        .secret-word { font-size: 1.45rem; font-weight: 800; color: var(--brand-amber); }
+        .secret-word { font-size: 1.45rem; font-weight: 800; color: var(--brand-amber); margin-top: 4px; }
         .quest-box { background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border-glow); border-radius: 14px; padding: 10px 12px; margin-top: 10px; font-size: 0.82rem; color: var(--brand-primary); text-align: right; }
 
         .score-table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 0.9rem; }
@@ -363,6 +394,7 @@
         .mt-12 { margin-top: 12px; }
         .mt-14 { margin-top: 14px; }
         .mt-16 { margin-top: 16px; }
+        .mb-4 { margin-bottom: 4px; }
         .mb-6 { margin-bottom: 6px; }
         .mb-8 { margin-bottom: 8px; }
         .mb-12 { margin-bottom: 12px; }
@@ -486,22 +518,26 @@
                 <input type="text" id="setup-spies-count" class="input-control" value="1" inputmode="numeric">
             </div>
         </div>
-        <div class="grid-2">
-            <div class="input-group">
-                <label for="setup-category">دسته‌بندی کلمات:</label>
-                <select id="setup-category" class="input-control">
-                    <option value="all">همه موضوعات</option>
-                    <option value="places">اماکن و فضاها</option>
-                    <option value="jobs">مشاغل و حرفه‌ها</option>
-                    <option value="foods">غذاها و خوراکی‌ها</option>
-                    <option value="objects">اشیاء و ابزارها</option>
-                    <option value="vehicles">وسایل نقلیه</option>
-                    <option value="animals">حیوانات و طبیعت</option>
-                    <option value="sports">ورزش‌ها و بازی‌ها</option>
-                    <option value="events">رویدادها و پدیده‌ها</option>
-                    <option value="custom">کلمات سفارشی شما</option>
-                </select>
+
+        <div class="input-group">
+            <div class="label-text">
+                <span>دسته‌بندی موضوعات کلمات:</span>
+                <button type="button" id="btn-toggle-all-cats" class="btn btn-ghost btn-sm" style="padding:2px 8px; font-size:0.75rem;">همه موضوعات (+500 کلمه)</button>
             </div>
+            <div class="chips-grid" id="category-chips-container">
+                <label class="chip-item"><input type="checkbox" name="setup-cat" value="places" checked> اماکن و فضاها</label>
+                <label class="chip-item"><input type="checkbox" name="setup-cat" value="jobs" checked> مشاغل و حرفه‌ها</label>
+                <label class="chip-item"><input type="checkbox" name="setup-cat" value="foods" checked> غذاها و خوراکی‌ها</label>
+                <label class="chip-item"><input type="checkbox" name="setup-cat" value="objects" checked> اشیاء و فناوری</label>
+                <label class="chip-item"><input type="checkbox" name="setup-cat" value="vehicles" checked> وسایل نقلیه</label>
+                <label class="chip-item"><input type="checkbox" name="setup-cat" value="animals" checked> حیوانات و طبیعت</label>
+                <label class="chip-item"><input type="checkbox" name="setup-cat" value="sports" checked> ورزش و بازی‌ها</label>
+                <label class="chip-item"><input type="checkbox" name="setup-cat" value="events" checked> رویدادها و پدیده‌ها</label>
+                <label class="chip-item"><input type="checkbox" name="setup-cat" value="custom"> کلمات سفارشی</label>
+            </div>
+        </div>
+
+        <div class="grid-2">
             <div class="input-group">
                 <label for="setup-difficulty">سطح دشواری:</label>
                 <select id="setup-difficulty" class="input-control">
@@ -511,28 +547,30 @@
                     <option value="hard">سخت</option>
                 </select>
             </div>
-        </div>
-        <div class="grid-2">
             <div class="input-group">
                 <label for="setup-timer">زمان گفتگو (دقیقه):</label>
                 <input type="text" id="setup-timer" class="input-control" value="4" inputmode="numeric">
             </div>
-            <div class="input-group">
-                <label for="setup-reveal-mode">نحوه مشاهده کارت:</label>
-                <select id="setup-reveal-mode" class="input-control">
-                    <option value="click">کلیک ساده</option>
-                    <option value="hold">نگه‌داشتن انگشت (Hold)</option>
-                </select>
-            </div>
         </div>
+
         <div class="input-group">
-            <label for="setup-hint-type">نوع راهنمای هویت جاسوس:</label>
-            <select id="setup-hint-type" class="input-control">
-                <option value="related_word">کلمه مرتبط راهنما (استاندارد)</option>
-                <option value="category">نام دسته‌بندی موضوع</option>
-                <option value="first_letter">حرف اول کلمه رمز</option>
-                <option value="none">بدون هیچ راهنمایی (سخت)</option>
+            <label for="setup-reveal-mode">نحوه مشاهده کارت:</label>
+            <select id="setup-reveal-mode" class="input-control">
+                <option value="click">کلیک ساده</option>
+                <option value="hold">نگه‌داشتن انگشت (Hold)</option>
             </select>
+        </div>
+
+        <div class="input-group">
+            <div class="label-text">
+                <span>نوع راهنمای جاسوس (انتخاب تصادفی از موارد فعال):</span>
+            </div>
+            <div class="chips-grid" id="hint-chips-container">
+                <label class="chip-item"><input type="checkbox" name="setup-hint" value="related_word" checked> کلمه مرتبط</label>
+                <label class="chip-item"><input type="checkbox" name="setup-hint" value="category" checked> نام موضوع</label>
+                <label class="chip-item"><input type="checkbox" name="setup-hint" value="first_letter"> حرف اول کلمه</label>
+                <label class="chip-item"><input type="checkbox" name="setup-hint" value="none"> بدون راهنما (سخت)</label>
+            </div>
         </div>
 
         <div class="grid-2">
@@ -713,7 +751,7 @@
         <h3 id="modal-player-name">نام بازیکن</h3>
         <div id="modal-role-badge" class="role-badge">نقش</div>
         <div class="secret-box">
-            <span class="color-secondary" style="font-size:0.8rem;">کلمه / راهنمای شما:</span>
+            <div id="modal-secret-title" class="color-secondary mb-4" style="font-size:0.82rem;">کلمه رمز شما:</div>
             <div id="modal-secret-content" class="secret-word">-</div>
         </div>
         <div id="modal-fellow-spies" class="quest-box hidden border-rose color-rose"><strong>🕵️ همکاران جاسوس:</strong> <span id="modal-fellow-spies-text"></span></div>
@@ -743,25 +781,10 @@
     window.lastTap = 0;
     let lastFocusedElement = null;
     let clientClockOffset = 0;
-    let clientRoomSecret = null;
-
-    if (window.location.hash) {
-        const hashVal = window.location.hash.substring(1);
-        if (hashVal.includes('_')) {
-            const parts = hashVal.split('_');
-            const codeInp = document.getElementById('join-room-code');
-            if (codeInp) codeInp.value = parts[0].toUpperCase();
-            clientRoomSecret = parts[1];
-        } else if (hashVal.length === 5) {
-            const codeInp = document.getElementById('join-room-code');
-            if (codeInp) codeInp.value = hashVal.toUpperCase();
-        }
-    }
 
     const VALID_PHASES = new Set([
         'welcome', 'multi', 'setup', 'reveal', 'timer', 'vote', 'wager', 'guess', 'result', 'leaderboard'
     ]);
-    const PEACEFUL_NAV_PHASES = new Set(['welcome', 'multi', 'setup', 'leaderboard']);
 
     function toLatinDigits(v) {
         const faDigits = '۰۱۲۳۴۵۶۷۸۹٠١٢٣٤٥٦٧٨٩';
@@ -825,15 +848,42 @@
     };
 
     const INFO_TEXTS = {
-        detective: { title: "🔍 نقش کارآگاه", text: "کارآگاه یک شهروند آگاه است که در هر دور می‌تواند فقط یک‌بار هویت یکی از بازیکنان را مخفیانه استعلام بگیرد تا مطمئن شود او جاسوس است یا شهروند." },
-        knownSpies: { title: "🕵️ همکاران جاسوس", text: "اگر بازی بیش از ۱ جاسوس داشته باشد، با فعال بودن این گزینه، تمام جاسوس‌ها اسامی یکدیگر را در کارت خود می‌بینند و می‌توانند هماهنگ عمل کنند." },
-        fool: { title: "👤 نقش ساده‌لوح", text: "ساده‌لوح فکر می‌کند شهروند عادی است، اما کلمه‌ای که می‌بیند کمی با کلمه بقیه فرق دارد (مثلاً بیمارستان به جای درمانگاه)! این باعث سوءظن بقیه به او می‌شود." },
-        director: { title: "🎯 دستیار نوبت", text: "بازی به صورت هوشمند و نوبتی مشخص می‌کند چه کسی از چه کسی سوال بپرسد تا گفتگو روان و بدون سکوت پیش برود." },
-        oneword: { title: "⚡ قانون تک‌کلمه‌ای", text: "در این حالت هر بازیکن در نوبت پرسش و پاسخ فقط حق دارد جواب‌های تک‌کلمه‌ای بدهد!" },
-        quests: { title: "🎯 ماموریت‌های جانبی", text: "هر بازیکن علاوه بر نقش خود، یک ماموریت بامزه مخفی دریافت می‌کند تا رفتارش مشکوک‌تر شود!" },
-        wager: { title: "🎲 سیستم شرط‌بندی", text: "هنگام اخراج یک مظنون، بازیکنان می‌توانند روی جاسوس بودن او امتیاز شرط ببندند." },
-        sudden: { title: "🔥 حذف درجا (مرگ ناگهانی)", text: "اگر شهروندان اشتباهاً به یک شهروند بی‌گناه رای بدهند، بازی بلافاصله با پیروزی جاسوس‌ها پایان می‌یابد!" },
-        voteLimit: { title: "🚨 سقف زنگ اضطراری", text: "تعداد دفعاتی که بازیکنان مجاز هستند تایمر را متوقف کرده و اعلام رای‌گیری کنند را محدود می‌سازد." }
+        detective: { 
+            title: "🔍 نقش کارآگاه", 
+            text: "کارآگاه یکی از شهروندان آگاه است. در هر دور، او می‌تواند مخفیانه یک‌بار هویت یکی از حاضرین را استعلام بگیرد تا مطمئن شود او جاسوس است یا شهروند بی‌گناه." 
+        },
+        knownSpies: { 
+            title: "🕵️ همکاران جاسوس", 
+            text: "در بازی‌های با بیش از ۱ جاسوس، فعال‌بودن این گزینه باعث می‌شود همه جاسوس‌ها اسامی یکدیگر را در کارت خود مشاهده کرده و هماهنگ تبانی کنند." 
+        },
+        fool: { 
+            title: "👤 نقش ساده‌لوح", 
+            text: "ساده‌لوح تصور می‌کند یک شهروند معمولی است؛ اما کلمه‌ای که روی کارتش می‌بیند اندکی با کلمه سایر شهروندان فرق دارد (مثلاً درمانگاه به‌جای بیمارستان)! این تفاوت ناخواسته او را مظنون می‌کند." 
+        },
+        director: { 
+            title: "🎯 دستیار نوبت", 
+            text: "سیستم هوشمند بازی در طول زمان گفتگو، به صورت پویا مشخص می‌کند چه کسی باید از چه کسی سوال بپرسد تا جریان بازی پیوسته و بدون سکوت ادامه یابد." 
+        },
+        oneword: { 
+            title: "⚡ قانون تک‌کلمه‌ای", 
+            text: "بازیکنان در پاسخ به هر پرسش فقط و فقط مجازند یک کلمه بیان کنند؛ ادای جملات بلند تخلف محسوب می‌شود." 
+        },
+        quests: { 
+            title: "🎯 ماموریت‌های جانبی", 
+            text: "علاوه بر نقش اصلی، یک چالش رفتاری خنده‌دار و مخفیانه به بازیکن داده می‌شود که انجام آن باعث مشکوک‌شدن رفتارش نزد دیگران می‌گردد." 
+        },
+        wager: { 
+            title: "🎲 سیستم شرط‌بندی و امتیازات", 
+            text: "نحوه امتیازدهی کلی بازی:\n• پیروزی شهروندان در دور: ۲+ امتیاز به همه شهروندان زنده\n• پیروزی جاسوس‌ها در دور: ۲+ امتیاز به همه جاسوس‌ها\n• اخراج اشتباه شهروند بی‌گناه: ۱+ امتیاز بقا به جاسوس‌های زنده\n• حدس صحیح کلمه توسط جاسوس: ۳+ امتیاز به جاسوس حدس‌زننده\n\nنحوه کارکرد شرط‌بندی:\nهنگامی که یک مظنون با رأی‌گیری انتخاب می‌شود، بازیکنان دارای امتیاز مثبت می‌توانند بخشی از امتیازات خود را شرط ببندند که مظنون، جاسوس است. اگر مظنون واقعاً جاسوس باشد، بازیکن معادل شرط خود سود می‌گیرد (ضریب ۲ برابر بازگشت اصل و سود). اگر مظنون شهروند بی‌گناه باشد، امتیاز شرط‌بسته‌شده از بازیکن کسر می‌گردد." 
+        },
+        sudden: { 
+            title: "🔥 حذف درجا (مرگ ناگهانی)", 
+            text: "اگر شهروندان در رأی‌گیری اشتباهاً به یک شهروند بی‌گناه رأی دهند و او اخراج شود، بازی در همان لحظه با پیروزی بلافاصله جاسوس‌ها به پایان می‌رسد." 
+        },
+        voteLimit: { 
+            title: "🚨 سقف زنگ اضطراری", 
+            text: "تعداد دفعاتی که بازیکنان اجازه دارند تایمر گفتگو را متوقف کرده و جمع را وادار به رأی‌گیری زودهنگام کنند را به عدد مشخصی محدود می‌سازد." 
+        }
     };
 
     const THEME_COLORS = {
@@ -842,7 +892,7 @@
         emerald: '#061412',
         crimson: '#14080a'
     };
-      const WORD_PACKS = {
+    const WORD_PACKS = {
         places: [
             { word: "مدرسه", foolWord: "دانشگاه", hint: "درس", diff: "easy" },
             { word: "دانشگاه", foolWord: "مدرسه", hint: "استاد", diff: "easy" },
@@ -1438,9 +1488,10 @@
         }
     }
 
-    const unlockAudioEvents = ['pointerdown', 'touchstart', 'touchend', 'click'];
+    const unlockAudioEvents = ['pointerdown', 'touchstart', 'touchend', 'click', 'keydown'];
     const unlockHandler = () => {
         initAudio();
+        requestWakeLock();
         unlockAudioEvents.forEach(evt => document.removeEventListener(evt, unlockHandler));
     };
     unlockAudioEvents.forEach(evt => document.addEventListener(evt, unlockHandler, { passive: true }));
@@ -1527,26 +1578,24 @@
     let wakeLockSentinel = null;
     async function requestWakeLock() {
         try {
-            if ('wakeLock' in navigator && !wakeLockSentinel) {
-                wakeLockSentinel = await navigator.wakeLock.request('screen');
-                wakeLockSentinel.addEventListener('release', () => { wakeLockSentinel = null; });
+            if ('wakeLock' in navigator) {
+                if (!wakeLockSentinel || wakeLockSentinel.released) {
+                    wakeLockSentinel = await navigator.wakeLock.request('screen');
+                    wakeLockSentinel.addEventListener('release', () => {
+                        wakeLockSentinel = null;
+                        if (document.visibilityState === 'visible') {
+                            requestWakeLock();
+                        }
+                    });
+                }
             }
         } catch(e) {}
     }
 
-    async function releaseWakeLock() {
-        if (wakeLockSentinel) {
-            try { await wakeLockSentinel.release(); } catch(e) {}
-            wakeLockSentinel = null;
-        }
-    }
-
     document.addEventListener('visibilitychange', async () => {
         if (document.visibilityState === 'visible') {
+            await requestWakeLock();
             if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume().catch(()=>{});
-            if (['reveal', 'timer', 'vote', 'wager', 'guess'].includes(gameState.phase)) {
-                await requestWakeLock();
-            }
             if (gameState.phase === 'timer' && gameState.timer.running) {
                 let nowRef = gameState.network.isClient ? (Date.now() + clientClockOffset) : Date.now();
                 const diff = Math.ceil((gameState.timer.endAt - nowRef) / 1000);
@@ -1578,25 +1627,25 @@
         }
     });
 
-    const SAVE_VERSION = 9;
+    const SAVE_VERSION = 10;
     let gameState = {
         version: SAVE_VERSION,
         phase: 'welcome',
         match: { usedWordKeys: [] },
         settings: {
-            playersCount: 4, spiesCount: 1, timerMin: 4, cat: 'all', diff: 'all',
-            revealHold: false, hint: 'related_word', fool: false, detective: false,
+            playersCount: 4, spiesCount: 1, timerMin: 4, cats: ['places', 'jobs', 'foods', 'objects', 'vehicles', 'animals', 'sports', 'events'], diff: 'all',
+            revealHold: false, hints: ['related_word', 'category'], fool: false, detective: false,
             knownSpies: false, director: false, oneword: false, quests: false,
             wager: false, sudden: false, voteLimitEnabled: false, maxVotes: 2,
             detectiveUsed: false
         },
         players: [],
-        round: { num: 0, category: null, pointsMap: {}, history: [], roundId: null },
+        round: { num: 0, category: null, currentHintType: 'related_word', pointsMap: {}, history: [], roundId: null },
         timer: { running: false, endAt: null, pausedSec: 0, reason: 'emergency', wasRunningBeforePanic: false },
         vote: { limit: Infinity, targetId: null, pendingId: null, tieNote: '' },
         localVoteIndex: 0,
         localWagerIndex: 0,
-        network: { isHost: false, isClient: false, peerId: null, code: null, roomSecret: null }
+        network: { isHost: false, isClient: false, peerId: null, code: null }
     };
 
     let hostSecretState = {
@@ -1618,6 +1667,7 @@
         reconnectToken: null,
         role: null,
         team: null,
+        hintTitle: 'کلمه رمز شما:',
         secretWord: null,
         quest: null,
         fellowSpies: [],
@@ -1741,10 +1791,10 @@
             playersCount: Math.min(RULES.players.max, Math.max(RULES.players.min, Number(s.playersCount) || 4)),
             spiesCount: Math.min(RULES.spies.max, Math.max(RULES.spies.min, Number(s.spiesCount) || 1)),
             timerMin: Math.min(RULES.timerMinutes.max, Math.max(RULES.timerMinutes.min, Number(s.timerMin) || 4)),
-            cat: typeof s.cat === 'string' ? s.cat : 'all',
+            cats: Array.isArray(s.cats) && s.cats.length > 0 ? s.cats : ['places', 'jobs', 'foods', 'objects', 'vehicles', 'animals', 'sports', 'events'],
             diff: typeof s.diff === 'string' ? s.diff : 'all',
             revealHold: Boolean(s.revealHold),
-            hint: typeof s.hint === 'string' ? s.hint : 'related_word',
+            hints: Array.isArray(s.hints) && s.hints.length > 0 ? s.hints : ['related_word', 'category'],
             fool: Boolean(s.fool),
             detective: Boolean(s.detective),
             knownSpies: Boolean(s.knownSpies),
@@ -1842,6 +1892,7 @@
         const item = INFO_TEXTS[key];
         if (!item) return;
         document.getElementById('info-modal-title').textContent = item.title;
+        document.getElementById('info-modal-desc').style.whiteSpace = 'pre-line';
         document.getElementById('info-modal-desc').textContent = item.text;
         dispatch({type: 'OPEN_MODAL', payload: 'info-modal'});
     }
@@ -2157,7 +2208,7 @@
                         const parsed = JSON.parse(rawCombined);
                         if (parsed.state && parsed.state.version === SAVE_VERSION && Array.isArray(parsed.state.players)) {
                             gameState = parsed.state;
-                            gameState.network = { isHost: false, isClient: false, peerId: null, code: null, roomSecret: null };
+                            gameState.network = { isHost: false, isClient: false, peerId: null, code: null };
                             hostSecretState = restoreSecrets(parsed.secrets);
                         }
                     }
@@ -2185,7 +2236,6 @@
                 clearInterval(timerInt);
                 timerInt = null;
                 stopAudioKeepAlive();
-                releaseWakeLock();
                 try {
                     localStorage.removeItem('spy_full_state_master');
                 } catch(e){}
@@ -2201,7 +2251,6 @@
                 clearInterval(timerInt);
                 timerInt = null;
                 stopAudioKeepAlive();
-                releaseWakeLock();
                 if (gameState.network.isHost || gameState.network.isClient) resetNetwork();
                 try {
                     localStorage.removeItem('spy_full_state_master');
@@ -2237,11 +2286,7 @@
     function setPhase(p) {
         if (!VALID_PHASES.has(p)) return;
         gameState.phase = p;
-        if (['reveal', 'timer', 'vote', 'wager', 'guess'].includes(p)) {
-            requestWakeLock();
-        } else if (p === 'welcome' || p === 'leaderboard') {
-            releaseWakeLock();
-        }
+        requestWakeLock();
         if (p === 'welcome' || p === 'leaderboard') {
             try {
                 Object.keys(localStorage).forEach(k => {
@@ -2297,12 +2342,27 @@
             return false;
         }
 
+        let selectedCats = Array.from(document.querySelectorAll('input[name="setup-cat"]:checked')).map(el => el.value);
+        if (selectedCats.length === 0) {
+            selectedCats = ['places', 'jobs', 'foods', 'objects', 'vehicles', 'animals', 'sports', 'events'];
+            document.querySelectorAll('input[name="setup-cat"]').forEach(el => {
+                if (el.value !== 'custom') el.checked = true;
+            });
+        }
+
+        let selectedHints = Array.from(document.querySelectorAll('input[name="setup-hint"]:checked')).map(el => el.value);
+        if (selectedHints.length === 0) {
+            selectedHints = ['related_word'];
+            const defHint = document.querySelector('input[name="setup-hint"][value="related_word"]');
+            if (defHint) defHint.checked = true;
+        }
+
         gameState.settings = {
             playersCount: c, spiesCount: s, timerMin: t,
-            cat: document.getElementById('setup-category').value,
+            cats: selectedCats,
             diff: document.getElementById('setup-difficulty').value,
             revealHold: document.getElementById('setup-reveal-mode').value === 'hold',
-            hint: document.getElementById('setup-hint-type').value,
+            hints: selectedHints,
             fool: isFool,
             detective: isDetective,
             knownSpies: document.getElementById('toggle-known').checked,
@@ -2360,6 +2420,7 @@
                 playerId: player.id,
                 role: 'spectator',
                 team: 'spectator',
+                hintTitle: 'وضعیت شما در این دور:',
                 secretWord: 'شما در این دست تماشاچی هستید (دست بعد وارد می‌شوید)',
                 quest: null,
                 fellowSpies: [],
@@ -2373,6 +2434,7 @@
             playerId: player.id,
             role: player.role,
             team: player.team,
+            hintTitle: player.role === 'spy' ? sec.hintTitle : 'کلمه رمز شما:',
             secretWord: player.role === 'spy' ? sec.hint : (player.role === 'fool' ? hostSecretState.foolWord : hostSecretState.secretWord),
             quest: player.quest,
             fellowSpies: (gameState.settings.knownSpies && player.role === 'spy') ? gameState.players.filter(x => x.role === 'spy' && x.id !== player.id).map(x => x.name) : [],
@@ -2388,19 +2450,32 @@
         sendPrivateRole(conn, player);
     }
 
+    function getRandomCryptoInt(max) {
+        if (window.crypto && crypto.getRandomValues) {
+            const arr = new Uint32Array(1);
+            crypto.getRandomValues(arr);
+            return arr[0] % max;
+        }
+        return Math.floor(Math.random() * max);
+    }
+
     function startNextRound() {
         let pool = [];
-        if (gameState.settings.cat === 'custom') {
-            pool = getCustomWords();
-        } else if (gameState.settings.cat === 'all') {
-            pool = Object.entries(WORD_PACKS).flatMap(([catKey, arr]) =>
-                arr.map(w => ({ ...w, _cat: catKey }))
-            );
-        } else {
-            pool = WORD_PACKS[gameState.settings.cat] || WORD_PACKS.places;
-        }
+        const activeCats = (gameState.settings.cats && gameState.settings.cats.length > 0) ? gameState.settings.cats : ['places', 'jobs', 'foods', 'objects', 'vehicles', 'animals', 'sports', 'events'];
+        
+        activeCats.forEach(catKey => {
+            if (catKey === 'custom') {
+                const customWords = getCustomWords().map(w => ({ ...w, _cat: 'custom' }));
+                pool.push(...customWords);
+            } else if (WORD_PACKS[catKey]) {
+                const mapped = WORD_PACKS[catKey].map(w => ({ ...w, _cat: catKey }));
+                pool.push(...mapped);
+            }
+        });
 
-        if (!pool || pool.length === 0) pool = WORD_PACKS.places;
+        if (pool.length === 0) {
+            pool = WORD_PACKS.places.map(w => ({ ...w, _cat: 'places' }));
+        }
 
         if (gameState.settings.diff !== 'all') {
             let f = pool.filter(w => w.diff === gameState.settings.diff);
@@ -2414,9 +2489,12 @@
             gameState.match.usedWordKeys = [];
             availablePool = pool;
         }
-        let chosen = availablePool[Math.floor(Math.random() * availablePool.length)];
+        let chosen = availablePool[getRandomCryptoInt(availablePool.length)];
         gameState.match.usedWordKeys.push(normalizeWord(chosen.word));
-        gameState.round.category = chosen._cat ? getCategoryLabel(chosen._cat) : getCategoryLabel(gameState.settings.cat);
+        gameState.round.category = getCategoryLabel(chosen._cat || 'places');
+
+        const activeHints = (gameState.settings.hints && gameState.settings.hints.length > 0) ? gameState.settings.hints : ['related_word'];
+        gameState.round.currentHintType = activeHints[getRandomCryptoInt(activeHints.length)];
 
         gameState.round.num++;
         gameState.round.roundId = generateId();
@@ -2487,15 +2565,25 @@
         }
 
         activePlayers.forEach(p => {
+            let hintTitle = "کلمه رمز شما:";
             let hint = "";
             if (p.role === 'spy') {
-                const hintType = gameState.settings.hint;
-                if (hintType === 'none') hint = "بدون راهنما";
-                else if (hintType === 'category') hint = `دسته‌بندی موضوع: ${gameState.round.category}`;
-                else if (hintType === 'first_letter') hint = `حرف اول کلمه رمز: «${chosen.word.charAt(0)}»`;
-                else hint = `راهنمای موضوعی: ${chosen.hint}`;
+                const hintType = gameState.round.currentHintType;
+                if (hintType === 'none') {
+                    hintTitle = "نوع راهنما:";
+                    hint = "بدون هیچ راهنمایی (سخت)";
+                } else if (hintType === 'category') {
+                    hintTitle = "دسته‌بندی موضوع:";
+                    hint = gameState.round.category;
+                } else if (hintType === 'first_letter') {
+                    hintTitle = "حرف اول کلمه رمز:";
+                    hint = `« ${chosen.word.charAt(0)} »`;
+                } else {
+                    hintTitle = "کلمه مرتبط راهنما:";
+                    hint = chosen.hint;
+                }
             }
-            hostSecretState.roles[p.id] = { role: p.role, team: p.team, hint };
+            hostSecretState.roles[p.id] = { role: p.role, team: p.team, hint, hintTitle };
         });
 
         if (gameState.settings.quests) {
@@ -2829,7 +2917,6 @@
         clearInterval(timerInt);
         timerInt = null;
         stopAudioKeepAlive();
-        releaseWakeLock();
         let tit = winner === 'spy' ? '😈 پیروزی جاسوس‌ها!' : '🎉 پیروزی شهروندان!';
         document.getElementById('result-title').textContent = tit;
         document.getElementById('result-title').style.color = winner === 'spy' ? 'var(--brand-rose)' : 'var(--brand-emerald)';
@@ -2863,7 +2950,6 @@
         clearInterval(timerInt);
         timerInt = null;
         stopAudioKeepAlive();
-        releaseWakeLock();
         let tit = data.winner === 'spy' ? '😈 پیروزی جاسوس‌ها!' : '🎉 پیروزی شهروندان!';
         document.getElementById('result-title').textContent = tit;
         document.getElementById('result-title').style.color = data.winner === 'spy' ? 'var(--brand-rose)' : 'var(--brand-emerald)';
@@ -2913,6 +2999,16 @@
         }
         return html;
     }
+    const PEER_CONFIG = {
+        config: {
+            iceServers: [
+                { urls: 'stun:stun.l.google.com:19302' },
+                { urls: 'stun:stun1.l.google.com:19302' },
+                { urls: 'stun:stun.cloudflare.com:3478' }
+            ]
+        }
+    };
+
     let previousPhase = null;
     function renderUI() {
         document.querySelectorAll('.screen-view').forEach(e => e.classList.add('hidden'));
@@ -3129,7 +3225,7 @@
         if (!p) return;
 
         let role = p.role;
-        let hint = "";
+        let hintTitle = "کلمه رمز شما:";
         let secretWord = hostSecretState.secretWord || "";
         let foolWord = hostSecretState.foolWord || "";
         let quest = p.quest;
@@ -3139,9 +3235,11 @@
         if (p.isSpectator || (gameState.network.isClient && clientPrivateState.isSpectator)) {
             document.getElementById('modal-player-name').textContent = p.name;
             let b = document.getElementById('modal-role-badge');
+            let t = document.getElementById('modal-secret-title');
             let c = document.getElementById('modal-secret-content');
             b.className = 'role-badge role-spectator';
             b.textContent = '👀 شما تماشاچی هستید';
+            t.textContent = 'وضعیت شما در این دور:';
             c.textContent = 'در دست بعدی وارد مسابقه می‌شوید';
             document.getElementById('modal-fellow-spies').classList.add('hidden');
             document.getElementById('modal-detective-action').classList.add('hidden');
@@ -3152,16 +3250,17 @@
 
         if (gameState.network.isClient && id === clientPrivateState.playerId) {
             role = clientPrivateState.role || p.role;
+            hintTitle = clientPrivateState.hintTitle || 'کلمه رمز شما:';
             secretWord = clientPrivateState.secretWord;
             foolWord = clientPrivateState.secretWord;
-            hint = clientPrivateState.secretWord;
             quest = clientPrivateState.quest;
             fellowSpies = clientPrivateState.fellowSpies || [];
             storedDetectiveInquiry = clientPrivateState.detectiveInquiryResult;
         } else if (hostSecretState.roles[id]) {
             let sec = hostSecretState.roles[id];
             role = sec.role;
-            hint = sec.hint;
+            hintTitle = sec.hintTitle || 'کلمه رمز شما:';
+            secretWord = sec.hint;
             quest = p.quest;
             storedDetectiveInquiry = hostSecretState.detectiveInquiryResult;
             if (gameState.settings.knownSpies && role === 'spy') {
@@ -3170,6 +3269,7 @@
         }
 
         let b = document.getElementById('modal-role-badge');
+        let t = document.getElementById('modal-secret-title');
         let c = document.getElementById('modal-secret-content');
         let f = document.getElementById('modal-fellow-spies');
         let d = document.getElementById('modal-detective-action');
@@ -3183,7 +3283,8 @@
         if (role === 'spy') {
             b.className = 'role-badge role-spy';
             b.textContent = '🕵️ شما جاسوس هستید!';
-            c.textContent = hint;
+            t.textContent = hintTitle;
+            c.textContent = secretWord;
             if (gameState.settings.knownSpies && fellowSpies.length > 0) {
                 f.classList.remove('hidden');
                 document.getElementById('modal-fellow-spies-text').textContent = fellowSpies.join(' ، ');
@@ -3191,10 +3292,12 @@
         } else if (role === 'fool') {
             b.className = 'role-badge role-citizen';
             b.textContent = '👤 شما شهروند هستید';
+            t.textContent = 'کلمه رمز شما:';
             c.textContent = gameState.network.isClient ? secretWord : foolWord;
         } else if (role === 'detective') {
             b.className = 'role-badge role-detective';
             b.textContent = '🔍 شما کارآگاه هستید';
+            t.textContent = 'کلمه رمز شما:';
             c.textContent = secretWord;
             
             d.classList.remove('hidden');
@@ -3207,10 +3310,10 @@
                 selDet.disabled = false;
                 btnDet.disabled = false;
                 selDet.innerHTML = '';
-                gameState.players.filter(x => x.id !== p.id && x.isAlive && !x.isSpectator).forEach(t => {
+                gameState.players.filter(x => x.id !== p.id && x.isAlive && !x.isSpectator).forEach(targetPlayer => {
                     let o = document.createElement('option');
-                    o.value = t.id;
-                    o.textContent = t.name;
+                    o.value = targetPlayer.id;
+                    o.textContent = targetPlayer.name;
                     selDet.appendChild(o);
                 });
                 resBox.textContent = '';
@@ -3226,6 +3329,7 @@
         } else {
             b.className = 'role-badge role-citizen';
             b.textContent = '👤 شما شهروند هستید';
+            t.textContent = 'کلمه رمز شما:';
             c.textContent = secretWord;
         }
 
@@ -3238,34 +3342,51 @@
         document.getElementById('btn-role-close').classList.toggle('hidden', gameState.settings.revealHold && !gameState.network.isClient && !isDetectivePending);
     }
 
+    function getTopPlayersForAccolade(statKey) {
+        if (!gameState.players || gameState.players.length === 0) return null;
+        const valid = gameState.players.filter(p => (Number(p.stats?.[statKey]) || 0) > 0);
+        if (valid.length === 0) return null;
+        const maxVal = Math.max(...valid.map(p => Number(p.stats[statKey]) || 0));
+        if (maxVal <= 0) return null;
+        const tops = valid.filter(p => (Number(p.stats[statKey]) || 0) === maxVal);
+        if ((tops.length / gameState.players.length) > 0.4) return null;
+        return tops;
+    }
+
     function renderAccolades() {
         const acc = document.getElementById('accolades-container');
         acc.innerHTML = '';
         
-        const topSpy = [...gameState.players].sort((a, b) => (b.stats.sw || 0) - (a.stats.sw || 0))[0];
-        const topDetective = [...gameState.players].sort((a, b) => (b.stats.spiesCaught || 0) - (a.stats.spiesCaught || 0))[0];
-        const topGuesser = [...gameState.players].sort((a, b) => (b.stats.spyGuesses || 0) - (a.stats.spyGuesses || 0))[0];
-        const topWagerer = [...gameState.players].sort((a, b) => (b.stats.wagerProfit || 0) - (a.stats.wagerProfit || 0))[0];
-        const topVictim = [...gameState.players].sort((a, b) => (b.stats.innocentVotesReceived || 0) - (a.stats.innocentVotesReceived || 0))[0];
-        const topFool = [...gameState.players].sort((a, b) => (b.stats.foolEscaped || 0) - (a.stats.foolEscaped || 0))[0];
+        const topSpies = getTopPlayersForAccolade('sw');
+        const topDetectives = getTopPlayersForAccolade('spiesCaught');
+        const topGuessers = getTopPlayersForAccolade('spyGuesses');
+        const topWagerers = getTopPlayersForAccolade('wagerProfit');
+        const topVictims = getTopPlayersForAccolade('innocentVotesReceived');
+        const topFools = getTopPlayersForAccolade('foolEscaped');
 
-        if (topSpy && topSpy.stats.sw > 0) {
-            acc.innerHTML += `<div class="accolade-card"><div class="accolade-icon">🕵️</div><div><div class="color-rose" style="font-weight:bold;">شبح سیاه: ${escapeHtml(topSpy.name)}</div><div class="color-secondary" style="font-size:0.75rem;">زیرک‌ترین جاسوس با بیشترین فرار از شناسایی</div></div></div>`;
+        if (topSpies) {
+            const names = topSpies.map(p => `<bdi>${escapeHtml(p.name)}</bdi>`).join(' و ');
+            acc.innerHTML += `<div class="accolade-card"><div class="accolade-icon">🕵️</div><div><div class="color-rose" style="font-weight:bold;">شبح سیاه: ${names}</div><div class="color-secondary" style="font-size:0.75rem;">زیرک‌ترین جاسوس با بیشترین فرار از شناسایی</div></div></div>`;
         }
-        if (topGuesser && topGuesser.stats.spyGuesses > 0) {
-            acc.innerHTML += `<div class="accolade-card"><div class="accolade-icon">🧠</div><div><div class="color-amber" style="font-weight:bold;">ذهن‌خوان برجسته: ${escapeHtml(topGuesser.name)}</div><div class="color-secondary" style="font-size:0.75rem;">حدس صحیح کلمه رمز اصلی در نقش جاسوس</div></div></div>`;
+        if (topGuessers) {
+            const names = topGuessers.map(p => `<bdi>${escapeHtml(p.name)}</bdi>`).join(' و ');
+            acc.innerHTML += `<div class="accolade-card"><div class="accolade-icon">🧠</div><div><div class="color-amber" style="font-weight:bold;">ذهن‌خوان برجسته: ${names}</div><div class="color-secondary" style="font-size:0.75rem;">حدس صحیح کلمه رمز اصلی در نقش جاسوس</div></div></div>`;
         }
-        if (topDetective && (topDetective.stats.spiesCaught || 0) > 0) {
-            acc.innerHTML += `<div class="accolade-card"><div class="accolade-icon">🔍</div><div><div class="color-emerald" style="font-weight:bold;">شرلوک هلمز: ${escapeHtml(topDetective.name)}</div><div class="color-secondary" style="font-size:0.75rem;">بیشترین شکار جاسوس‌ها در جلسات رای‌گیری</div></div></div>`;
+        if (topDetectives) {
+            const names = topDetectives.map(p => `<bdi>${escapeHtml(p.name)}</bdi>`).join(' و ');
+            acc.innerHTML += `<div class="accolade-card"><div class="accolade-icon">🔍</div><div><div class="color-emerald" style="font-weight:bold;">شرلوک هلمز: ${names}</div><div class="color-secondary" style="font-size:0.75rem;">بیشترین شکار جاسوس‌ها در جلسات رای‌گیری</div></div></div>`;
         }
-        if (topWagerer && (topWagerer.stats.wagerProfit || 0) > 0) {
-            acc.innerHTML += `<div class="accolade-card"><div class="accolade-icon">🐺</div><div><div class="color-primary" style="font-weight:bold;">گرگ وال‌استریت: ${escapeHtml(topWagerer.name)}</div><div class="color-secondary" style="font-size:0.75rem;">کسب بیشترین سود از شرط‌بندی روی مظنونین</div></div></div>`;
+        if (topWagerers) {
+            const names = topWagerers.map(p => `<bdi>${escapeHtml(p.name)}</bdi>`).join(' و ');
+            acc.innerHTML += `<div class="accolade-card"><div class="accolade-icon">🐺</div><div><div class="color-primary" style="font-weight:bold;">گرگ وال‌استریت: ${names}</div><div class="color-secondary" style="font-size:0.75rem;">کسب بیشترین سود از شرط‌بندی روی مظنونین</div></div></div>`;
         }
-        if (topVictim && (topVictim.stats.innocentVotesReceived || 0) > 0) {
-            acc.innerHTML += `<div class="accolade-card"><div class="accolade-icon">🕊️</div><div><div style="font-weight:bold; color:#a855f7;">قربانی بی‌گناه: ${escapeHtml(topVictim.name)}</div><div class="color-secondary" style="font-size:0.75rem;">مظلوم‌ترین شهروند که بیشترین اتهام اشتباه را خورد</div></div></div>`;
+        if (topVictims) {
+            const names = topVictims.map(p => `<bdi>${escapeHtml(p.name)}</bdi>`).join(' و ');
+            acc.innerHTML += `<div class="accolade-card"><div class="accolade-icon">🕊️</div><div><div style="font-weight:bold; color:#a855f7;">قربانی بی‌گناه: ${names}</div><div class="color-secondary" style="font-size:0.75rem;">مظلوم‌ترین شهروند که بیشترین اتهام اشتباه را خورد</div></div></div>`;
         }
-        if (topFool && (topFool.stats.foolEscaped || 0) > 0) {
-            acc.innerHTML += `<div class="accolade-card"><div class="accolade-icon">🎭</div><div><div class="color-amber" style="font-weight:bold;">بازیگر نقاب‌دار: ${escapeHtml(topFool.name)}</div><div class="color-secondary" style="font-size:0.75rem;">ساده‌لوحی که بدون سوءظن موفق به فرار شد</div></div></div>`;
+        if (topFools) {
+            const names = topFools.map(p => `<bdi>${escapeHtml(p.name)}</bdi>`).join(' و ');
+            acc.innerHTML += `<div class="accolade-card"><div class="accolade-icon">🎭</div><div><div class="color-amber" style="font-weight:bold;">بازیگر نقاب‌دار: ${names}</div><div class="color-secondary" style="font-size:0.75rem;">ساده‌لوحی که بدون سوءظن موفق به فرار شد</div></div></div>`;
         }
     }
 
@@ -3274,14 +3395,14 @@
             places: "اماکن و فضاها",
             jobs: "مشاغل و حرفه‌ها",
             foods: "غذاها و خوراکی‌ها",
-            objects: "اشیاء و ابزارها",
+            objects: "اشیاء و فناوری",
             vehicles: "وسایل نقلیه",
             animals: "حیوانات و طبیعت",
-            sports: "ورزش‌ها و بازی‌ها",
+            sports: "ورزش و بازی‌ها",
             events: "رویدادها و پدیده‌ها",
             custom: "کلمات سفارشی"
         };
-        return labels[key] || "همه موضوعات";
+        return labels[key] || "موضوعات بازی";
     }
 
     function bindHoldCard(cardEl, playerId) {
@@ -3420,20 +3541,18 @@
         }
 
         let code = generateRoomCode();
-        let roomSecret = generateId();
-        gameState.network.roomSecret = roomSecret;
         document.getElementById('room-code-display').textContent = code;
         document.getElementById('host-room-info').classList.remove('hidden');
 
         const qrBox = document.getElementById('qrcode-container');
         qrBox.innerHTML = '';
         if (typeof QRCode !== 'undefined') {
-            new QRCode(qrBox, { text: `${code}_${roomSecret}`, width: 120, height: 120, colorDark: "#090d16", colorLight: "#ffffff" });
+            new QRCode(qrBox, { text: code, width: 120, height: 120, colorDark: "#090d16", colorLight: "#ffffff" });
         }
 
         try {
             if (netPeer) { try { netPeer.destroy(); } catch(e){} }
-            netPeer = new Peer(`SPY_ROOM_V_${code}`);
+            netPeer = new Peer(`SPY_ROOM_V_${code}`, PEER_CONFIG);
             
             netPeer.on('error', (err) => {
                 console.error("PeerJS Host Error:", err);
@@ -3500,11 +3619,6 @@
 
                     if (data.type === 'JOIN') {
                         if (conn.joined) return;
-
-                        if (data.roomSecret && gameState.network.roomSecret && data.roomSecret !== gameState.network.roomSecret) {
-                            conn.close();
-                            return;
-                        }
 
                         if (netHostConns.filter(c => c.joined && c.connected).length + 1 >= RULES.players.max) {
                             conn.close();
@@ -3714,18 +3828,18 @@
 
         const connectGuard = setTimeout(() => {
             if (!conn || !conn.open) {
-                showToast("اتصال به میزبان برقرار نشد.");
+                showToast("اتصال به میزبان برقرار نشد. کد اتاق را بررسی فرمایید.");
                 resetNetwork(); 
                 setPhase('welcome');
             }
-        }, 10000);
+        }, 8000);
 
         conn.on('open', () => {
             clearTimeout(connectGuard);
             isReconnecting = false;
             lastHostPing = Date.now();
             gameState.network.isClient = true;
-            safeClientSend({ type: 'JOIN', name: name, reconnectToken: savedReconnectToken, roomSecret: clientRoomSecret });
+            safeClientSend({ type: 'JOIN', name: name, reconnectToken: savedReconnectToken });
             document.getElementById('client-wait-box').classList.remove('hidden');
             document.getElementById('connection-status-badge').textContent = `🟢 متصل به اتاق: ${rawCode}`;
         });
@@ -3805,6 +3919,7 @@
             } else if (data.type === PROTOCOL.PRIVATE_ROLE) {
                 clientPrivateState.role = data.role;
                 clientPrivateState.team = data.team;
+                clientPrivateState.hintTitle = data.hintTitle || 'کلمه رمز شما:';
                 clientPrivateState.secretWord = data.secretWord;
                 clientPrivateState.quest = typeof data.quest === 'string' ? data.quest : null;
                 clientPrivateState.fellowSpies = Array.isArray(data.fellowSpies) ? data.fellowSpies : [];
@@ -3903,7 +4018,7 @@
                         try { netClientConn.close(); } catch(err){}
                     }
                     if (!netPeer || netPeer.destroyed || netPeer.disconnected) {
-                        netPeer = new Peer();
+                        netPeer = new Peer(PEER_CONFIG);
                         netPeer.on('error', (err) => {
                             console.error("PeerJS Reconnect Error:", err);
                             resetNetwork();
@@ -3945,7 +4060,7 @@
 
         try {
             if (netPeer) { try { netPeer.destroy(); } catch(e){} }
-            netPeer = new Peer();
+            netPeer = new Peer(PEER_CONFIG);
 
             netPeer.on('error', (err) => {
                 console.error("PeerJS Client Error:", err);
@@ -4289,6 +4404,12 @@
     });
     document.getElementById('btn-info-modal-close').onclick = () => dispatch({type: 'CLOSE_MODAL', payload: 'info-modal'});
 
+    document.getElementById('btn-toggle-all-cats').onclick = () => {
+        const boxes = document.querySelectorAll('input[name="setup-cat"]');
+        const allChecked = Array.from(boxes).every(b => b.checked);
+        boxes.forEach(b => b.checked = !allChecked);
+    };
+
     document.getElementById('btn-copy-room-code').onclick = () => {
         const code = document.getElementById('room-code-display').textContent;
         if (navigator.clipboard && code && code !== '-') {
@@ -4405,12 +4526,6 @@
             } catch(e){}
         }
     });
-
-    const allCatOpt = document.querySelector('#setup-category option[value="all"]');
-    if (allCatOpt && typeof WORD_PACKS !== 'undefined') {
-        const totalWordsCount = Object.values(WORD_PACKS).flat().length;
-        allCatOpt.textContent = `همه موضوعات (${totalWordsCount} کلمه)`;
-    }
 
     renderNameInputs();
     renderCustomWordsList();
